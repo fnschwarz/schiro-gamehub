@@ -16,8 +16,7 @@ const handleClick = async (evt, reloadCardComponents) => {
         body: JSON.stringify(newApp)
     }).then((res) => {
         res.json().then( (data) => {
-            console.log(data);
-            if(data == "SUCCESS"){
+            if(data === "SUCCESS"){
                 reloadCardComponents();
             }
         });

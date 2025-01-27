@@ -1,8 +1,8 @@
-# Schiro Game Tracker
+# Schiro's GameHub
 
-Schiro Game Tracker is a private web application that allows users to track and manage their game collection.
+Schiro's GameHub is a private web application designed for creating and managing a personalized wishlist of games you plan to play in the near future.
 
-## Table of Contents
+## Navigation
 
 - [Features](#features)
 - [Installation](#installation)
@@ -13,8 +13,8 @@ Schiro Game Tracker is a private web application that allows users to track and 
 
 ## Features
 
-- Add games to your collection by entering their Steam App ID.
-- View a list of all games in your collection.
+- Add games to your wishlist by entering their Steam App ID.
+- View a list of all games in your wishlist.
 - Responsive design.
 
 ## Installation
@@ -37,7 +37,7 @@ Schiro Game Tracker is a private web application that allows users to track and 
     npm install
     ```
 
-3. Create a `.env` file in the [client](http://_vscodecontentref_/0) directory and add the following environment variables:
+3. Create a `.env` file in the `client` directory and add the following environment variables:
     ```env
     VITE_BACKEND_URL=http://localhost:8080
     ```
@@ -49,7 +49,7 @@ Schiro Game Tracker is a private web application that allows users to track and 
 
 ### Server
 
-1. Navigate to the [server](http://_vscodecontentref_/1) directory:
+1. Navigate to the `server` directory:
     ```sh
     cd server
     ```
@@ -59,7 +59,7 @@ Schiro Game Tracker is a private web application that allows users to track and 
     npm install
     ```
 
-3. Create a `.env` file in the [server](http://_vscodecontentref_/2) directory and add the following environment variables:
+3. Create a `.env` file in the `server` directory and add the following environment variables:
     ```env
     MONGODB_URI=<your-mongodb-uri>
     MONGODB_DATABASE_NAME=<your-database-name>
@@ -77,14 +77,14 @@ Schiro Game Tracker is a private web application that allows users to track and 
 ## Usage
 
 1. Open your browser and navigate to `http://localhost:5173`.
-2. Enter a Steam App ID in the input field and click "Spiel hinzufügen" to add a game to your collection.
-3. View the list of games in your collection.
+2. Enter a Steam App ID in the input field and click "Add Game" to add a game to your wishlist.
+3. View the list of games in your wishlist.
 
 ## API Endpoints
 
-- `GET /api/games`: Retrieve a list of all games in the collection.
+- `GET /api/games`: Retrieve a list of all games in the wishlist.
 - `GET /api/games/:id`: Retrieve details of a specific game by its Steam App ID.
-- `POST /api/games/post`: Add a new game to the collection.
+- `POST /api/games/post`: Add a new game to the wishlist.
 
 ## Contributing
 

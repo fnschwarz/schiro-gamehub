@@ -3,7 +3,7 @@ import style from './Header.module.css';
 function Header(){
     return(
         <header className={style.header}>
-            <h2>SCHIRO GAME TRACKER</h2>
+            <h2>Schiro's GameHub</h2>
         </header>
     );
 }
