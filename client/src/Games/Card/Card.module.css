@@ -1,0 +1,31 @@
+.card {
+    background-color: #111827;
+    border: 1px solid #1F2937;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+    padding-bottom: 2px;
+    text-align: center;
+    width: calc(33.33% - 20px);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+  
+.card-img {
+    max-width: 100%;
+    height: auto;
+}
+
+.card-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 40px; 
+    text-align: center;
+    overflow: hidden;
+}
+  
+.card-title {
+    font-family: "Roboto", sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+}
