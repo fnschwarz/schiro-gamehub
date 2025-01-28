@@ -14,9 +14,9 @@ const handleClick = async (evt, reloadCardComponents) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(newApp)
-    }).then((res) => {
-        res.json().then( (data) => {
-            if(data === "SUCCESS"){
+    }).then((res) => { res.json().then( (resToJSON) => {
+            console.log(resToJSON); // output for debugging purpose
+            if(resToJSON === "SUCCESS"){
                 reloadCardComponents();
             }
         });
@@ -28,7 +28,7 @@ function Button({ reloadCardComponentsFunc }){
         <button 
             className={style['button']}
             onClick={(evt) => handleClick(evt, reloadCardComponentsFunc)}
-        >Spiel hinzufügen</button>
+        >Add Game</button>
     );
 }
 
