@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
-import style from './Button.module.css';
+import style from './InputFieldButton.module.css';
 
 const handleClick = async (evt, reloadCardComponents) => {
-
     const newApp = {
-        "appId" : parseInt(document.getElementById("inputField").value) // double check the parse int in server 
+        "appId" : parseInt(document.getElementById("inputField").value)
     }
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games/post`, {
@@ -15,7 +14,7 @@ const handleClick = async (evt, reloadCardComponents) => {
         },
         body: JSON.stringify(newApp)
     }).then((res) => { res.json().then( (resToJSON) => {
-            console.log(resToJSON); // output for debugging purpose
+            console.log(resToJSON); // INFO: only needed for debugging
             if(resToJSON === "SUCCESS"){
                 reloadCardComponents();
             }
@@ -23,17 +22,18 @@ const handleClick = async (evt, reloadCardComponents) => {
     });
 }
 
-function Button({ reloadCardComponentsFunc }){
+function InputFieldButton({ reloadCardComponentsFunc, isFocused }){
     return(
         <button 
-            className={style['button']}
+            className={`${style.button} ${isFocused ? style.focused : ''}`}
             onClick={(evt) => handleClick(evt, reloadCardComponentsFunc)}
         >Add Game</button>
     );
 }
 
-Button.propTypes = {
-    reloadCardComponentsFunc : PropTypes.func.isRequired
+InputFieldButton.propTypes = {
+    reloadCardComponentsFunc : PropTypes.func.isRequired,
+    isFocused: PropTypes.bool.isRequired,
 }
 
-export default Button
+export default InputFieldButton

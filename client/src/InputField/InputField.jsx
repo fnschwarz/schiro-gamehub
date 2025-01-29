@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import style from './InputField.module.css';
-import Button from '../Button/Button.jsx';
+import InputFieldButton from '../InputFieldButton/InputFieldButton.jsx';
 
 function InputField({ value, setValue, onButtonClick }){
+    const [isFocused, setIsFocused] = useState(false);
+
     const handleChange = (evt) => {
         if (evt.target.value.length <= 7) {
             setValue(evt.target.value);
@@ -18,9 +21,11 @@ function InputField({ value, setValue, onButtonClick }){
                 min="0"
                 value={value}
                 onChange={handleChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
             />
-            <Button className={style.button} reloadCardComponentsFunc={onButtonClick} />
+            <InputFieldButton className={style.button} reloadCardComponentsFunc={onButtonClick} isFocused={isFocused} />
         </div>
     );
 }
@@ -28,6 +33,7 @@ function InputField({ value, setValue, onButtonClick }){
 InputField.propTypes = {
     value: PropTypes.string.isRequired,
     setValue: PropTypes.func.isRequired,
+    onButtonClick: PropTypes.func.isRequired
 };
 
 export default InputField
