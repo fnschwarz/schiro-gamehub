@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import style from './Section.module.css';
-import Button from '../Button/Button.jsx';
 import InputField from '../InputField/InputField.jsx';
 import Games from '../Games/Games.jsx';
 
@@ -15,8 +14,11 @@ function Section() {
 
     return (
         <div className={style.section}>
-            <InputField value={inputFieldValue} setValue={setInputFieldValue} />
-            <Button reloadCardComponentsFunc={handleReloadCardComponents} />
+            <InputField 
+                value={inputFieldValue} 
+                setValue={setInputFieldValue} 
+                onButtonClick={handleReloadCardComponents} 
+            />
             <div className={style.games}>
                 <Games reloadTrigger={reloadCardComponents} />
             </div>
