@@ -108,7 +108,7 @@ const initializeApiEndpoints = async () => {
              */
 
             // FUNC: Check if requested appId has valid number format -> NaN or 8-digit number leads to ERROR respond
-            if(isNaN(req.body.appId) || req.body.appId === null || req.body.appId > 9999999 || req.body.appId < 0){
+            if(isNaN(req.body.appId) || req.body.appId > 9999999 || req.body.appId <= 0){
                 console.log(`ERROR: Invalid number`)
                 res.send(JSON.stringify("ERROR"));
                 return;
