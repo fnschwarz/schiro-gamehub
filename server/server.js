@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require("express");
-const app = express();
+const server = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 
@@ -8,8 +8,8 @@ const corsOptions = {
     origin: [`${process.env.FRONTEND_SERVER_DOMAIN}`],
 }
 
-app.use(cors(corsOptions));
-app.use(express.json());
+server.use(cors(corsOptions));
+server.use(express.json());
 
 // MONGOOSE MODEL
 
@@ -68,7 +68,7 @@ const fetchAppIdsFromDatabase = async () => {
 
 const registerNewAppApiEndpoint = async (id) => {
     try {
-        app.get(`/api/apps/${id}`, async (req, res) => {
+        server.get(`/api/apps/${id}`, async (req, res) => {
             let appJSON = new Object();
             appJSON.id = id;
             appJSON.name = await fetchAppName(id);
@@ -87,7 +87,7 @@ const initializeApiEndpoints = async () => {
         // Initial fetch
         let appIdsInDatabase = await fetchAppIdsFromDatabase();
 
-        app.get(`/api/apps`, async(req, res) => {
+        server.get(`/api/apps`, async(req, res) => {
             appIdsInDatabase = await fetchAppIdsFromDatabase();
             res.json({ apps: appIdsInDatabase });
         });
@@ -97,7 +97,7 @@ const initializeApiEndpoints = async () => {
             registerNewAppApiEndpoint(appIdsInDatabase[i]);
         }
 
-        app.post('/api/apps', async (req, res) => {
+        server.post('/api/apps', async (req, res) => {
             /**
              *  IMPORTANT: Check if user has permission and is logged in
              *  otherwise it is possible for unauthorized users to access 
@@ -144,4 +144,4 @@ const initializeApiEndpoints = async () => {
     }
 }) ();
 
-app.listen(8080, () => console.log("Server running on port 8080..."));
+server.listen(8080, () => console.log("Server running on port 8080..."));
