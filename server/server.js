@@ -37,7 +37,7 @@ const fetchAppName = async(appId) => {
         
         return receivedDataToJSON[appId].data.name;
     } catch (error) {
-        console.error('WARNING: Error fetching game name', error);
+        console.error('WARNING: Error fetching app name', error);
         return null;
     }
 }
@@ -59,7 +59,7 @@ const fetchAppIdsFromDatabase = async () => {
         const apps = (await AppsModel.findById(process.env.APPS_DOC_ID)).apps;
         return apps;
     } catch (error) {
-        console.error('CRITICAL: Error fetching game IDs from database', error);
+        console.error('CRITICAL: Error fetching app IDs from database', error);
         return [];
     }
 }
@@ -68,7 +68,7 @@ const fetchAppIdsFromDatabase = async () => {
 
 const registerNewAppApiEndpoint = async (id) => {
     try {
-        app.get(`/api/games/${id}`, async (req, res) => {
+        app.get(`/api/apps/${id}`, async (req, res) => {
             let appJSON = new Object();
             appJSON.id = id;
             appJSON.name = await fetchAppName(id);
@@ -84,30 +84,27 @@ const registerNewAppApiEndpoint = async (id) => {
 
 const initializeApiEndpoints = async () => {
     try {
-        let appIdsInDatabase = await fetchAppIdsFromDatabase(); // TODO: better solution for this crap
+        // Initial fetch
+        let appIdsInDatabase = await fetchAppIdsFromDatabase();
 
-        app.get(`/api/games`, async(req, res) => {
-            //  NOTE: document in database could change but the appIdsInDatabase array wont be updated automatically.
-            //  The solution is to make a database query a second time inside the GET api request definition of '/games'
-            //  so that the presented json in the API will always be up to date -> better solution needed
-            
+        app.get(`/api/apps`, async(req, res) => {
             appIdsInDatabase = await fetchAppIdsFromDatabase();
             res.json({ apps: appIdsInDatabase });
         });
         
-        // create API access page for all app ids inside database array
+        // Create API endpoints for all apps inside saved in database
         for(let i = 0; i < appIdsInDatabase.length; i++){
             registerNewAppApiEndpoint(appIdsInDatabase[i]);
         }
 
-        app.post('/api/games/post', async (req, res) => {
+        app.post('/api/apps', async (req, res) => {
             /**
              *  IMPORTANT: Check if user has permission and is logged in
              *  otherwise it is possible for unauthorized users to access 
              *  database
              */
 
-            // FUNC: Check if requested appId has valid number format -> NaN or 8-digit number leads to ERROR respond
+            // FUNC: Check if requested appId has valid number format
             if(isNaN(req.body.appId) || req.body.appId > 9999999 || req.body.appId <= 0){
                 console.log(`ERROR: Invalid number`)
                 res.send(JSON.stringify("ERROR"));
@@ -121,7 +118,7 @@ const initializeApiEndpoints = async () => {
                 return;
             }
 
-            // add new app to database app list
+            // Add new app to database apps list
             const appsDoc = await AppsModel.findById(process.env.APPS_DOC_ID);
             const updatedAppsList = [req.body.appId].concat(appsDoc.apps);
             

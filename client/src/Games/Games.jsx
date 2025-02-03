@@ -11,13 +11,13 @@ function Games({ reloadTrigger }) {
             try {
 
                 // NOTE: get array of all games in database through backend api
-                const resAppsList = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games`);
+                const resAppsList = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`);
                 const dataAppsList = await resAppsList.json();
                 const appsList = dataAppsList.apps;
                 
                 // NOTE: return a card component for all ids in appsList and save it in const cards
                 const cards = await Promise.all(appsList.map(async (id) => {
-                    const resApp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games/${id}`);
+                    const resApp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/${id}`);
                     const dataApp = await resApp.json();
 
                     return (
