@@ -3,10 +3,10 @@ import style from './InputFieldButton.module.css';
 
 const handleClick = async (evt, reloadCardComponents) => {
     const newApp = {
-        "appId" : parseInt(document.getElementById("inputField").value)
+        "id" : parseInt(document.getElementById("inputField").value)
     }
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games/post`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',

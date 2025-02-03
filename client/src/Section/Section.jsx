@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import style from './Section.module.css';
 import InputField from '../InputField/InputField.jsx';
-import Games from '../Games/Games.jsx';
+import Apps from '../Apps/Apps.jsx';
 
 function Section() {
     const [reloadCardComponents, setReloadCardComponents] = useState(false);
@@ -19,8 +19,8 @@ function Section() {
                 setValue={setInputFieldValue} 
                 onButtonClick={handleReloadCardComponents} 
             />
-            <div className={style.games}>
-                <Games reloadTrigger={reloadCardComponents} />
+            <div className={style.apps}>
+                <Apps reloadTrigger={reloadCardComponents} />
             </div>
         </div>
     );

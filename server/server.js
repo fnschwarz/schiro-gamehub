@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require("express");
-const app = express();
+const server = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 
@@ -8,8 +8,8 @@ const corsOptions = {
     origin: [`${process.env.FRONTEND_SERVER_DOMAIN}`],
 }
 
-app.use(cors(corsOptions));
-app.use(express.json());
+server.use(cors(corsOptions));
+server.use(express.json());
 
 // MONGOOSE MODEL
 
@@ -37,7 +37,7 @@ const fetchAppName = async(appId) => {
         
         return receivedDataToJSON[appId].data.name;
     } catch (error) {
-        console.error('WARNING: Error fetching game name', error);
+        console.error('WARNING: Error fetching app name', error);
         return null;
     }
 }
@@ -54,26 +54,26 @@ const fetchAppExistence = async(appId) => {
     }
 }
 
-const fetchAppIdsFromDatabase = async () => {
+const fetchAppsFromDatabase = async () => {
     try {
         const apps = (await AppsModel.findById(process.env.APPS_DOC_ID)).apps;
         return apps;
     } catch (error) {
-        console.error('CRITICAL: Error fetching game IDs from database', error);
+        console.error('CRITICAL: Error fetching app IDs from database', error);
         return [];
     }
 }
 
 // API
 
-const registerNewAppApiEndpoint = async (id) => {
+const registerNewAppApiEndpoint = async (appId, appName) => {
     try {
-        app.get(`/api/games/${id}`, async (req, res) => {
+        server.get(`/api/apps/${appId}`, async (req, res) => {
             let appJSON = new Object();
-            appJSON.id = id;
-            appJSON.name = await fetchAppName(id);
-            appJSON.link = `${process.env.STEAM_BASE_URL}/app/${id}`;
-            appJSON.header = `${process.env.STEAM_HEADER_URL}/steam/apps/${id}/header.jpg`;
+            appJSON.id = appId;
+            appJSON.name = appName;
+            appJSON.link = `${process.env.STEAM_BASE_URL}/app/${appId}`;
+            appJSON.header = `${process.env.STEAM_HEADER_URL}/steam/apps/${appId}/header.jpg`;
         
             res.json(appJSON);
         });   
@@ -84,52 +84,67 @@ const registerNewAppApiEndpoint = async (id) => {
 
 const initializeApiEndpoints = async () => {
     try {
-        let appIdsInDatabase = await fetchAppIdsFromDatabase(); // TODO: better solution for this crap
+        // Initial fetch
+        let appsInDatabase = await fetchAppsFromDatabase();
 
-        app.get(`/api/games`, async(req, res) => {
-            //  NOTE: document in database could change but the appIdsInDatabase array wont be updated automatically.
-            //  The solution is to make a database query a second time inside the GET api request definition of '/games'
-            //  so that the presented json in the API will always be up to date -> better solution needed
-            
-            appIdsInDatabase = await fetchAppIdsFromDatabase();
-            res.json({ apps: appIdsInDatabase });
+        server.get(`/api/apps`, async(req, res) => {
+            appsInDatabase = await fetchAppsFromDatabase();
+
+            allAppIds = []
+
+            for(let i = 0; i < appsInDatabase.length; i++){
+                allAppIds.push(appsInDatabase[i][0]);
+            }
+
+            res.json({ apps: allAppIds });
         });
         
-        // create API access page for all app ids inside database array
-        for(let i = 0; i < appIdsInDatabase.length; i++){
-            registerNewAppApiEndpoint(appIdsInDatabase[i]);
+        // Create API endpoints for all apps inside saved in database
+        for(let i = 0; i < appsInDatabase.length; i++){
+            registerNewAppApiEndpoint(appsInDatabase[i][0], appsInDatabase[i][1]);
         }
 
-        app.post('/api/games/post', async (req, res) => {
+        server.post('/api/apps', async (req, res) => {
             /**
              *  IMPORTANT: Check if user has permission and is logged in
              *  otherwise it is possible for unauthorized users to access 
              *  database
              */
 
-            // FUNC: Check if requested appId has valid number format -> NaN or 8-digit number leads to ERROR respond
-            if(isNaN(req.body.appId) || req.body.appId > 9999999 || req.body.appId <= 0){
+            const appId = req.body.id;
+
+            // Check if requested appId has valid number format
+            if(isNaN(appId) || appId > 9999999 || appId <= 0){
                 console.log(`ERROR: Invalid number`)
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
 
-            // FUNC: Check if app exists in steam database
-            if(!await fetchAppExistence(req.body.appId)){
-                console.log(`ERROR: App ${req.body.appId} doesn't exist`)
+            // Check if app exists in steam database
+            if(!await fetchAppExistence(appId)){
+                console.log(`ERROR: App ${appId} doesn't exist`)
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
 
-            // add new app to database app list
-            const appsDoc = await AppsModel.findById(process.env.APPS_DOC_ID);
-            const updatedAppsList = [req.body.appId].concat(appsDoc.apps);
+            const appName = await fetchAppName(appId);
             
-            console.log('SUCCESS: New app', req.body.appId, 'registered');
+            // Check for errors when fetching app name from Steam API
+            if(appName === null){
+                console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`)
+                res.send(JSON.stringify("ERROR"));
+                return;
+            }
 
-            // UPDATE DATABASE AND REGISTER API ACCESS
+            // Add new app to database apps list
+            const appsDatabaseDocument = await AppsModel.findById(process.env.APPS_DOC_ID);
+            const updatedAppsList = [[appId, appName]].concat(appsDatabaseDocument.apps);
+            
+            console.log('SUCCESS: New app', appId, 'registered');
+
+            // Update database and register API endpoint
             await AppsModel.findByIdAndUpdate(process.env.APPS_DOC_ID, { $set: { apps: updatedAppsList } });
-            registerNewAppApiEndpoint(req.body.appId);
+            registerNewAppApiEndpoint(appId, appName);
 
             res.send(JSON.stringify("SUCCESS"));
         });
@@ -147,4 +162,4 @@ const initializeApiEndpoints = async () => {
     }
 }) ();
 
-app.listen(8080, () => console.log("Server running on port 8080..."));
+server.listen(8080, () => console.log("Server running on port 8080..."));
