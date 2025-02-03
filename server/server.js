@@ -54,7 +54,7 @@ const fetchAppExistence = async(appId) => {
     }
 }
 
-const fetchAppIdsFromDatabase = async () => {
+const fetchAppsFromDatabase = async () => {
     try {
         const apps = (await AppsModel.findById(process.env.APPS_DOC_ID)).apps;
         return apps;
@@ -66,14 +66,14 @@ const fetchAppIdsFromDatabase = async () => {
 
 // API
 
-const registerNewAppApiEndpoint = async (id) => {
+const registerNewAppApiEndpoint = async (appId, appName) => {
     try {
-        server.get(`/api/apps/${id}`, async (req, res) => {
+        server.get(`/api/apps/${appId}`, async (req, res) => {
             let appJSON = new Object();
-            appJSON.id = id;
-            appJSON.name = await fetchAppName(id);
-            appJSON.link = `${process.env.STEAM_BASE_URL}/app/${id}`;
-            appJSON.header = `${process.env.STEAM_HEADER_URL}/steam/apps/${id}/header.jpg`;
+            appJSON.id = appId;
+            appJSON.name = appName;
+            appJSON.link = `${process.env.STEAM_BASE_URL}/app/${appId}`;
+            appJSON.header = `${process.env.STEAM_HEADER_URL}/steam/apps/${appId}/header.jpg`;
         
             res.json(appJSON);
         });   
@@ -85,16 +85,23 @@ const registerNewAppApiEndpoint = async (id) => {
 const initializeApiEndpoints = async () => {
     try {
         // Initial fetch
-        let appIdsInDatabase = await fetchAppIdsFromDatabase();
+        let appsInDatabase = await fetchAppsFromDatabase();
 
         server.get(`/api/apps`, async(req, res) => {
-            appIdsInDatabase = await fetchAppIdsFromDatabase();
-            res.json({ apps: appIdsInDatabase });
+            appsInDatabase = await fetchAppsFromDatabase();
+
+            allAppIds = []
+
+            for(let i = 0; i < appsInDatabase.length; i++){
+                allAppIds.push(appsInDatabase[i][0]);
+            }
+
+            res.json({ apps: allAppIds });
         });
         
         // Create API endpoints for all apps inside saved in database
-        for(let i = 0; i < appIdsInDatabase.length; i++){
-            registerNewAppApiEndpoint(appIdsInDatabase[i]);
+        for(let i = 0; i < appsInDatabase.length; i++){
+            registerNewAppApiEndpoint(appsInDatabase[i][0], appsInDatabase[i][1]);
         }
 
         server.post('/api/apps', async (req, res) => {
@@ -104,29 +111,40 @@ const initializeApiEndpoints = async () => {
              *  database
              */
 
-            // FUNC: Check if requested appId has valid number format
-            if(isNaN(req.body.appId) || req.body.appId > 9999999 || req.body.appId <= 0){
+            const appId = req.body.id;
+
+            // Check if requested appId has valid number format
+            if(isNaN(appId) || appId > 9999999 || appId <= 0){
                 console.log(`ERROR: Invalid number`)
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
 
-            // FUNC: Check if app exists in steam database
-            if(!await fetchAppExistence(req.body.appId)){
-                console.log(`ERROR: App ${req.body.appId} doesn't exist`)
+            // Check if app exists in steam database
+            if(!await fetchAppExistence(appId)){
+                console.log(`ERROR: App ${appId} doesn't exist`)
+                res.send(JSON.stringify("ERROR"));
+                return;
+            }
+
+            const appName = await fetchAppName(appId);
+            
+            // Check for errors when fetching app name from Steam API
+            if(appName === null){
+                console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`)
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
 
             // Add new app to database apps list
-            const appsDoc = await AppsModel.findById(process.env.APPS_DOC_ID);
-            const updatedAppsList = [req.body.appId].concat(appsDoc.apps);
+            const appsDatabaseDocument = await AppsModel.findById(process.env.APPS_DOC_ID);
+            const updatedAppsList = [[appId, appName]].concat(appsDatabaseDocument.apps);
             
-            console.log('SUCCESS: New app', req.body.appId, 'registered');
+            console.log('SUCCESS: New app', appId, 'registered');
 
-            // UPDATE DATABASE AND REGISTER API ACCESS
+            // Update database and register API endpoint
             await AppsModel.findByIdAndUpdate(process.env.APPS_DOC_ID, { $set: { apps: updatedAppsList } });
-            registerNewAppApiEndpoint(req.body.appId);
+            registerNewAppApiEndpoint(appId, appName);
 
             res.send(JSON.stringify("SUCCESS"));
         });
