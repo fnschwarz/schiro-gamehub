@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import style from './Games.module.css';
-import Card from './Card/Card.jsx';
+import style from './Apps.module.css';
+import Card from '../Card/Card.jsx';
 
-function Games({ reloadTrigger }) {
-    const [gameCards, setGameCards] = useState(['Loading...']);
+function Apps({ reloadTrigger }) {
+    const [appCards, setAppCards] = useState(['Loading...']);
 
     useEffect(() => {
         (async () => {
             try {
 
-                // NOTE: get array of all games in database through backend api
+                // NOTE: get array of all apps in database through backend api
                 const resAppsList = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`);
                 const dataAppsList = await resAppsList.json();
                 const appsList = dataAppsList.apps;
@@ -25,12 +25,12 @@ function Games({ reloadTrigger }) {
                             key={dataApp.id}
                             link={dataApp.link}
                             img={dataApp.header}
-                            alt={`Header of game ${dataApp.name}`}
+                            alt={`Header of app ${dataApp.name}`}
                             title={dataApp.name}
                         />
                     );
                 }));
-                setGameCards(cards); // update gameCards array
+                setAppCards(cards); // update appCards array
             } catch (error) {
                 console.log(`ERROR: ${error}`);
             }
@@ -39,13 +39,13 @@ function Games({ reloadTrigger }) {
 
     return (
         <div className={style.cards}>
-            {gameCards}
+            {appCards}
         </div>
     );
 }
 
-Games.propTypes = {
+Apps.propTypes = {
     reloadTrigger: PropTypes.bool.isRequired,
 };
 
-export default Games;
+export default Apps;
