@@ -162,4 +162,4 @@ const initializeApiEndpoints = async () => {
     }
 }) ();
 
-server.listen(8080, () => console.log("Server running on port 8080..."));
+server.listen(process.env.BACKEND_SERVER_PORT, () => console.log(`Server running on port ${process.env.BACKEND_SERVER_PORT}...`));
