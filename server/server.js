@@ -14,7 +14,8 @@ server.use(express.json());
 // MONGOOSE MODEL
 
 const AppsModel = mongoose.model('AppsModel', {
-    apps: Array
+    id : Number,
+    name : String
 }, 'apps');
 
 // DATABASE CONNECTION
@@ -56,7 +57,7 @@ const fetchAppExistence = async(appId) => {
 
 const fetchAppsFromDatabase = async () => {
     try {
-        const apps = (await AppsModel.findById(process.env.APPS_DOC_ID)).apps;
+        const apps = await AppsModel.find({});
         return apps;
     } catch (error) {
         console.error('CRITICAL: Error fetching app IDs from database', error);
@@ -92,16 +93,16 @@ const initializeApiEndpoints = async () => {
 
             allAppIds = []
 
-            for(let i = 0; i < appsInDatabase.length; i++){
-                allAppIds.push(appsInDatabase[i][0]);
+            for (const app of appsInDatabase) {
+                allAppIds.push(app.id);
             }
 
             res.json({ apps: allAppIds });
         });
         
         // Create API endpoints for all apps inside saved in database
-        for(let i = 0; i < appsInDatabase.length; i++){
-            registerNewAppApiEndpoint(appsInDatabase[i][0], appsInDatabase[i][1]);
+        for(const app of appsInDatabase){
+            registerNewAppApiEndpoint(app.id, app.name);
         }
 
         server.post('/api/apps', async (req, res) => {
@@ -115,14 +116,14 @@ const initializeApiEndpoints = async () => {
 
             // Check if requested appId has valid number format
             if(isNaN(appId) || appId > 9999999 || appId <= 0){
-                console.log(`ERROR: Invalid number`)
+                console.log(`ERROR: Invalid number`);
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
 
             // Check if app exists in steam database
             if(!await fetchAppExistence(appId)){
-                console.log(`ERROR: App ${appId} doesn't exist`)
+                console.log(`ERROR: App ${appId} doesn't exist`);
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
@@ -131,21 +132,22 @@ const initializeApiEndpoints = async () => {
             
             // Check for errors when fetching app name from Steam API
             if(appName === null){
-                console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`)
+                console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`);
                 res.send(JSON.stringify("ERROR"));
                 return;
             }
 
-            // Add new app to database apps list
-            const appsDatabaseDocument = await AppsModel.findById(process.env.APPS_DOC_ID);
-            const updatedAppsList = [[appId, appName]].concat(appsDatabaseDocument.apps);
-            
-            console.log('SUCCESS: New app', appId, 'registered');
+            // New document for database
+            const newApp = new AppsModel({
+                id: appId,
+                name: appName
+            })
 
             // Update database and register API endpoint
-            await AppsModel.findByIdAndUpdate(process.env.APPS_DOC_ID, { $set: { apps: updatedAppsList } });
+            await newApp.save();
             registerNewAppApiEndpoint(appId, appName);
 
+            console.log('SUCCESS: New app', appId, 'registered');
             res.send(JSON.stringify("SUCCESS"));
         });
     } catch (error) {
