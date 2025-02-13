@@ -58,7 +58,7 @@ const fetchAppExistence = async(appId) => {
 const fetchAppsFromDatabase = async () => {
     try {
         const apps = await AppsModel.find({});
-        return apps;
+        return apps.reverse();
     } catch (error) {
         console.error('CRITICAL: Error fetching app IDs from database', error);
         return [];
