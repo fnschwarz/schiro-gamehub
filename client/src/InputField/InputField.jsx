@@ -25,7 +25,7 @@ function InputField({ value, setValue, onButtonClick }){
                 onBlur={() => setIsFocused(false)}
                 onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
             />
-            <InputFieldButton className={style.button} reloadCardComponentsFunc={onButtonClick} isFocused={isFocused} />
+            <InputFieldButton className={style.button} reloadCardComponents={onButtonClick} isFocused={isFocused} />
         </div>
     );
 }

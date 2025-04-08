@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import style from './Apps.module.css';
 import Card from '../Card/Card.jsx';
 
-function Apps({ reloadTrigger }) {
+function Apps({ reloadCardComponentsFunc, reloadTrigger }) {
     const [appCards, setAppCards] = useState(['Loading...']);
 
     useEffect(() => {
@@ -23,10 +23,12 @@ function Apps({ reloadTrigger }) {
                     return (
                         <Card
                             key={dataApp.id}
+                            id={dataApp.id}
                             link={dataApp.link}
                             img={dataApp.header}
                             alt={`Header of app ${dataApp.name}`}
                             title={dataApp.name}
+                            reloadCardComponents={reloadCardComponentsFunc}
                         />
                     );
                 }));

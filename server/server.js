@@ -79,7 +79,56 @@ const registerNewAppApiEndpoint = async (appId, appName) => {
             res.json(appJSON);
         });   
     } catch (error) {
-        console.error('CRITICAL: Error registering new app', error);
+        console.error('CRITICAL: Error registering new app api endpoint', error);
+    }
+}
+
+const createNewApp = async (req, res) => {
+    try {
+        /*  TODO: CHECK USER PERMISSION
+            TO ENSURE THAT NO UNAUTHORIZED
+            CLIENT CAN ACCESS THE DATABASE
+        */
+
+        const appId = req.body.id;
+
+        // Check if requested appId has valid number format
+        if(isNaN(appId) || appId > 9999999 || appId <= 0){
+            console.log(`ERROR: Invalid number`);
+            res.send(JSON.stringify("ERROR"));
+            return;
+        }
+
+        // Check if app exists in steam database
+        if(!await fetchAppExistence(appId)){
+            console.log(`ERROR: App ${appId} doesn't exist`);
+            res.send(JSON.stringify("ERROR"));
+            return;
+        }
+
+        const appName = await fetchAppName(appId);
+        
+        // Check for errors when fetching app name from Steam API
+        if(appName === null){
+            console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`);
+            res.send(JSON.stringify("ERROR"));
+            return;
+        }
+
+        // New document for database
+        const newApp = new AppsModel({
+            id: appId,
+            name: appName
+        })
+
+        // Update database and register API endpoint
+        await newApp.save();
+        registerNewAppApiEndpoint(appId, appName);
+
+        console.log(`SUCCESS: New app ${appId} registered`);
+        res.send(JSON.stringify("SUCCESS"));
+    } catch (error) {
+        console.error('CRITICAL: Error creating new app', error);
     }
 }
 
@@ -106,49 +155,40 @@ const initializeApiEndpoints = async () => {
         }
 
         server.post('/api/apps', async (req, res) => {
-            /**
-             *  IMPORTANT: Check if user has permission and is logged in
-             *  otherwise it is possible for unauthorized users to access 
-             *  database
-             */
+           createNewApp(req, res);
+        });
 
-            const appId = req.body.id;
+        server.post('/api/apps/delete', async (req, res) => {
+            try {
+                /*  TODO: CHECK USER PERMISSION
+                TO ENSURE THAT NO UNAUTHORIZED
+                CLIENT CAN ACCESS THE DATABASE
+                */
 
-            // Check if requested appId has valid number format
-            if(isNaN(appId) || appId > 9999999 || appId <= 0){
-                console.log(`ERROR: Invalid number`);
-                res.send(JSON.stringify("ERROR"));
-                return;
+                const appId = req.body.id;
+
+                // Check if requested appId has valid number format
+                if(isNaN(appId) || appId > 9999999 || appId <= 0){
+                    console.log(`ERROR: Invalid number`);
+                    res.send(JSON.stringify("ERROR"));
+                    return;
+                }
+
+                const deletedApp = await AppsModel.findOneAndDelete({ id: appId });
+
+                if (!deletedApp) {
+                    console.log(`ERROR: App with ID ${appId} not found`);
+                    res.send(JSON.stringify("ERROR"));
+                    return;
+                }
+                
+                console.log(`SUCCESS: App with ID ${appId} successfully deleted`);
+                res.send(JSON.stringify("SUCCESS"));
+            } catch (error) {
+                console.error('CRITICAL: Error deleting app', error);
             }
 
-            // Check if app exists in steam database
-            if(!await fetchAppExistence(appId)){
-                console.log(`ERROR: App ${appId} doesn't exist`);
-                res.send(JSON.stringify("ERROR"));
-                return;
-            }
 
-            const appName = await fetchAppName(appId);
-            
-            // Check for errors when fetching app name from Steam API
-            if(appName === null){
-                console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`);
-                res.send(JSON.stringify("ERROR"));
-                return;
-            }
-
-            // New document for database
-            const newApp = new AppsModel({
-                id: appId,
-                name: appName
-            })
-
-            // Update database and register API endpoint
-            await newApp.save();
-            registerNewAppApiEndpoint(appId, appName);
-
-            console.log('SUCCESS: New app', appId, 'registered');
-            res.send(JSON.stringify("SUCCESS"));
         });
     } catch (error) {
         console.error('CRITICAL: Error initializing api endpoints', error);
