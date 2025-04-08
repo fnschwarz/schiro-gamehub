@@ -47,6 +47,7 @@ function Apps({ reloadCardComponentsFunc, reloadTrigger }) {
 }
 
 Apps.propTypes = {
+    reloadCardComponentsFunc: PropTypes.func.isRequired,
     reloadTrigger: PropTypes.bool.isRequired,
 };
 

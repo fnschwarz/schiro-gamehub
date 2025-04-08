@@ -4,23 +4,23 @@ import style from './Card.module.css';
 function Card({ id, link, img, alt, title, reloadCardComponents}){
     const deleteApp = async (evt) => {
         const app = {
-            "id" : parseInt(id)
-        }
-    
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/delete`, {
+            id: parseInt(id),
+        };
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/delete`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(app)
-        }).then((res) => { 
-                res.json().then( (resToJSON) => {
-                    if(resToJSON === "SUCCESS"){
-                        reloadCardComponents();
-                    }
-            });
+            body: JSON.stringify(app),
         });
+
+        const result = await response.json();
+
+        if (result === "SUCCESS") {
+            reloadCardComponents();
+        }
     }
     
     return(

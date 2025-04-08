@@ -3,23 +3,24 @@ import style from './InputFieldButton.module.css';
 
 function InputFieldButton({ reloadCardComponents, isFocused }){
     const handleClick = async (evt) => {
-        const newApp = {
+        const app = {
             "id" : parseInt(document.getElementById("inputField").value)
         }
     
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newApp)
-        }).then((res) => { res.json().then( (resToJSON) => {
-                if(resToJSON === "SUCCESS"){
-                    reloadCardComponents();
-                }
-            });
+            body: JSON.stringify(app)
         });
+
+        const result = await response.json();
+
+        if (result === "SUCCESS") {
+            reloadCardComponents();
+        }
     }
 
     return(
