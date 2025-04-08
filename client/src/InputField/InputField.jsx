@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import style from './InputField.module.css';
 import InputFieldButton from '../InputFieldButton/InputFieldButton.jsx';
 
-function InputField({ value, setValue, onButtonClick }){
+function InputField({ reloadCardComponentsFunc, value, setValue }){
     const [isFocused, setIsFocused] = useState(false);
 
     const handleChange = (evt) => {
@@ -25,15 +25,15 @@ function InputField({ value, setValue, onButtonClick }){
                 onBlur={() => setIsFocused(false)}
                 onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
             />
-            <InputFieldButton className={style.button} reloadCardComponents={onButtonClick} isFocused={isFocused} />
+            <InputFieldButton className={style.button} reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
         </div>
     );
 }
 
 InputField.propTypes = {
+    reloadCardComponentsFunc: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
     setValue: PropTypes.func.isRequired,
-    onButtonClick: PropTypes.func.isRequired
 };
 
 export default InputField
