@@ -7,6 +7,9 @@ function Card({ link, img, alt, title }){
             <a href={link}>
                 <img className={style['card-img']} src={img} alt={alt} />
             </a>
+            <button className={style['card-delete-button']} onClick={() => {}}>
+                &times;
+            </button>
             <div className={style['card-title-container']}>
                 <h2 className={style['card-title']}>{title}</h2>
             </div>
