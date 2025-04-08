@@ -31,7 +31,7 @@ function InputFieldButton({ reloadCardComponents, isFocused }){
 }
 
 InputFieldButton.propTypes = {
-    reloadCardComponentsFunc : PropTypes.func.isRequired,
+    reloadCardComponents : PropTypes.func.isRequired,
     isFocused: PropTypes.bool.isRequired,
 }
 
