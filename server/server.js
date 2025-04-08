@@ -132,6 +132,37 @@ const createNewApp = async (req, res) => {
     }
 }
 
+const deleteApp = async (req, res) => {
+    try {
+        /*  TODO: CHECK USER PERMISSION
+        TO ENSURE THAT NO UNAUTHORIZED
+        CLIENT CAN ACCESS THE DATABASE
+        */
+
+        const appId = req.body.id;
+
+        // Check if requested appId has valid number format
+        if(isNaN(appId) || appId > 9999999 || appId <= 0){
+            console.log(`ERROR: Invalid number`);
+            res.send(JSON.stringify("ERROR"));
+            return;
+        }
+
+        const deletedApp = await AppsModel.findOneAndDelete({ id: appId });
+
+        if (!deletedApp) {
+            console.log(`ERROR: App ${appId} not found`);
+            res.send(JSON.stringify("ERROR"));
+            return;
+        }
+        
+        console.log(`SUCCESS: App with ID ${appId} successfully deleted`);
+        res.send(JSON.stringify("SUCCESS"));
+    } catch (error) {
+        console.error('CRITICAL: Error deleting app', error);
+    }
+}
+
 const initializeApiEndpoints = async () => {
     try {
         // Initial fetch
@@ -155,40 +186,11 @@ const initializeApiEndpoints = async () => {
         }
 
         server.post('/api/apps', async (req, res) => {
-           createNewApp(req, res);
+            createNewApp(req, res);
         });
 
         server.post('/api/apps/delete', async (req, res) => {
-            try {
-                /*  TODO: CHECK USER PERMISSION
-                TO ENSURE THAT NO UNAUTHORIZED
-                CLIENT CAN ACCESS THE DATABASE
-                */
-
-                const appId = req.body.id;
-
-                // Check if requested appId has valid number format
-                if(isNaN(appId) || appId > 9999999 || appId <= 0){
-                    console.log(`ERROR: Invalid number`);
-                    res.send(JSON.stringify("ERROR"));
-                    return;
-                }
-
-                const deletedApp = await AppsModel.findOneAndDelete({ id: appId });
-
-                if (!deletedApp) {
-                    console.log(`ERROR: App with ID ${appId} not found`);
-                    res.send(JSON.stringify("ERROR"));
-                    return;
-                }
-                
-                console.log(`SUCCESS: App with ID ${appId} successfully deleted`);
-                res.send(JSON.stringify("SUCCESS"));
-            } catch (error) {
-                console.error('CRITICAL: Error deleting app', error);
-            }
-
-
+            deleteApp(req, res);
         });
     } catch (error) {
         console.error('CRITICAL: Error initializing api endpoints', error);
