@@ -15,12 +15,12 @@ function Section() {
     return (
         <div className={style.section}>
             <InputField 
+                reloadCardComponentsFunc={handleReloadCardComponents} 
                 value={inputFieldValue} 
                 setValue={setInputFieldValue} 
-                onButtonClick={handleReloadCardComponents} 
             />
             <div className={style.apps}>
-                <Apps reloadTrigger={reloadCardComponents} />
+                <Apps reloadCardComponentsFunc={handleReloadCardComponents} reloadTrigger={reloadCardComponents} />
             </div>
         </div>
     );
