@@ -7,7 +7,7 @@ function InputFieldButton({ reloadCardComponents, isFocused }){
             "id" : parseInt(document.getElementById("inputField").value)
         }
     
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/create`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

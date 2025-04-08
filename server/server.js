@@ -185,7 +185,7 @@ const initializeApiEndpoints = async () => {
             registerNewAppApiEndpoint(app.id, app.name);
         }
 
-        server.post('/api/apps', async (req, res) => {
+        server.post('/api/apps/create', async (req, res) => {
             createNewApp(req, res);
         });
 
