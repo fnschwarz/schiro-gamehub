@@ -132,7 +132,7 @@ const createNewApp = async (req, res) => {
     }
 }
 
-const deleteApp = async (req, res) => {
+const deleteExistingApp = async (req, res) => {
     try {
         /*  TODO: CHECK USER PERMISSION
         TO ENSURE THAT NO UNAUTHORIZED
@@ -185,12 +185,21 @@ const initializeApiEndpoints = async () => {
             registerNewAppApiEndpoint(app.id, app.name);
         }
 
+        server.get('/auth/twitch', (req, res) => {
+            const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.FRONTEND_SERVER_DOMAIN}/auth/twitch/callback&response_type=code&scope=user:read:email`;
+            res.redirect(authUrl);
+        });
+
+        server.get('/auth/twitch/callback', (req, res) => {
+            
+        });
+
         server.post('/api/apps/create', async (req, res) => {
             createNewApp(req, res);
         });
 
         server.post('/api/apps/delete', async (req, res) => {
-            deleteApp(req, res);
+            deleteExistingApp(req, res);
         });
     } catch (error) {
         console.error('CRITICAL: Error initializing api endpoints', error);
