@@ -16,9 +16,7 @@ function InputFieldButton({ reloadCardComponents, isFocused }){
             body: JSON.stringify(app)
         });
 
-        const result = await response.json();
-
-        if (result === "SUCCESS") {
+        if (response.status === 201) {
             reloadCardComponents();
         }
     }

@@ -7,7 +7,7 @@ function InputField({ reloadCardComponentsFunc, value, setValue }){
     const [isFocused, setIsFocused] = useState(false);
 
     const handleChange = (evt) => {
-        if (evt.target.value.length <= 7) {
+        if (evt.target.value.length <= 10) {
             setValue(evt.target.value);
         }
     };

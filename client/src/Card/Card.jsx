@@ -16,9 +16,7 @@ function Card({ id, link, img, alt, title, reloadCardComponents}){
             body: JSON.stringify(app),
         });
 
-        const result = await response.json();
-
-        if (result === "SUCCESS") {
+        if (response.status === 200) {
             reloadCardComponents();
         }
     }

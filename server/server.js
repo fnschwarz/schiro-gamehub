@@ -23,9 +23,9 @@ const AppsModel = mongoose.model('AppsModel', {
 const connectToDatabase = async() => {
     try {
         await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DATABASE_NAME });
-        console.log('Connected to DB.');
+        console.log('[SERVER START] Connected to DB...');
     } catch (error) {
-        console.error('CRITICAL: Error connecting to the database', error);
+        console.error('[CRITICAL ERROR] Error connecting to database -', error);
     }
 }
 
@@ -38,7 +38,7 @@ const fetchAppName = async(appId) => {
         
         return receivedDataToJSON[appId].data.name;
     } catch (error) {
-        console.error('WARNING: Error fetching app name', error);
+        console.error('[ERROR] Error fetching app name -', error);
         return null;
     }
 }
@@ -50,7 +50,7 @@ const fetchAppExistence = async(appId) => {
         
         return receivedDataToJSON[appId].success;
     } catch (error) {
-        console.error('WARNING: Error verifying app existence', error);
+        console.error('[ERROR] Error verifying app existence', error);
         return false;
     }
 }
@@ -60,7 +60,7 @@ const fetchAppsFromDatabase = async () => {
         const apps = await AppsModel.find({});
         return apps.reverse();
     } catch (error) {
-        console.error('CRITICAL: Error fetching app IDs from database', error);
+        console.error('[CRITICAL ERROR] Error fetching app IDs from database -', error);
         return [];
     }
 }
@@ -79,7 +79,7 @@ const registerNewAppApiEndpoint = async (appId, appName) => {
             res.json(appJSON);
         });   
     } catch (error) {
-        console.error('CRITICAL: Error registering new app api endpoint', error);
+        console.error('[CRITICAL ERROR] Error registering new app API endpoint -', error);
     }
 }
 
@@ -93,25 +93,24 @@ const createNewApp = async (req, res) => {
         const appId = req.body.id;
 
         // Check if requested appId has valid number format
-        if(isNaN(appId) || appId > 9999999 || appId <= 0){
-            console.log(`ERROR: Invalid number`);
-            res.send(JSON.stringify("ERROR"));
+        if(isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1){
+            console.log(`[ERROR] Error creating list item. Invalid number format '${appId}'`);
+            res.status(400).send('Bad Request');
             return;
         }
 
         // Check if app exists in steam database
         if(!await fetchAppExistence(appId)){
-            console.log(`ERROR: App ${appId} doesn't exist`);
-            res.send(JSON.stringify("ERROR"));
+            console.log(`[ERROR] Error creating list item. App (ID ${appId}) doesn't exist`);
+            res.status(404).send('Not Found');
             return;
         }
-
-        const appName = await fetchAppName(appId);
         
         // Check for errors when fetching app name from Steam API
+        const appName = await fetchAppName(appId);
         if(appName === null){
-            console.log(`ERROR: App ${appId} couldn't be registered due to error when fetching app name`);
-            res.send(JSON.stringify("ERROR"));
+            console.log(`[ERROR] Error creating list item. App (ID ${appId}) couldn't be registered due to error when fetching app name`);
+            res.status(503).send('Service Unavailable');
             return;
         }
 
@@ -125,10 +124,10 @@ const createNewApp = async (req, res) => {
         await newApp.save();
         registerNewAppApiEndpoint(appId, appName);
 
-        console.log(`SUCCESS: New app ${appId} registered`);
-        res.send(JSON.stringify("SUCCESS"));
+        console.log(`[CREATE] App (ID ${appId}) successfully created`);
+        res.status(201).send('Created');
     } catch (error) {
-        console.error('CRITICAL: Error creating new app', error);
+        console.error('[CRITICAL ERROR] Error creating new app -', error);
     }
 }
 
@@ -142,24 +141,24 @@ const deleteExistingApp = async (req, res) => {
         const appId = req.body.id;
 
         // Check if requested appId has valid number format
-        if(isNaN(appId) || appId > 9999999 || appId <= 0){
-            console.log(`ERROR: Invalid number`);
-            res.send(JSON.stringify("ERROR"));
+        if(isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1){
+            console.log(`[ERROR] Error deleting list item. Invalid number format '${appId}'`);
+            res.status(400).send('Bad Request');
             return;
         }
 
         const deletedApp = await AppsModel.findOneAndDelete({ id: appId });
 
         if (!deletedApp) {
-            console.log(`ERROR: App ${appId} not found`);
-            res.send(JSON.stringify("ERROR"));
+            console.log(`[ERROR] Error deleting list item. App (ID ${appId}) not found`);
+            res.status(404).send('Not Found');
             return;
         }
         
-        console.log(`SUCCESS: App with ID ${appId} successfully deleted`);
-        res.send(JSON.stringify("SUCCESS"));
+        console.log(`[DELETE] App (ID ${appId}) successfully deleted`);
+        res.status(200).send('OK');
     } catch (error) {
-        console.error('CRITICAL: Error deleting app', error);
+        console.error('[CRITICAL ERROR] Error deleting existing app -', error);
     }
 }
 
@@ -202,7 +201,7 @@ const initializeApiEndpoints = async () => {
             deleteExistingApp(req, res);
         });
     } catch (error) {
-        console.error('CRITICAL: Error initializing api endpoints', error);
+        console.error('[CRITICAL ERROR] Error initializing api endpoints -', error);
     }
 }
 
@@ -211,8 +210,8 @@ const initializeApiEndpoints = async () => {
         connectToDatabase();
         initializeApiEndpoints();
     } catch (error) {
-        console.error('CRITICAL: Error', error);
+        console.error('[CRITICAL ERROR] Error when starting server -', error);
     }
 }) ();
 
-server.listen(process.env.BACKEND_SERVER_PORT, () => console.log(`Server running on port ${process.env.BACKEND_SERVER_PORT}...`));
+server.listen(process.env.BACKEND_SERVER_PORT, () => console.log(`[SERVER START] Server running on port ${process.env.BACKEND_SERVER_PORT}...`));
