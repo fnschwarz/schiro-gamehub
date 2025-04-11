@@ -18,6 +18,10 @@ const AppsModel = mongoose.model('AppsModel', {
     name : String
 }, 'apps');
 
+const UsersModel = mongoose.model('UsersModel', {
+    email: String
+}, 'users');
+
 // DATABASE CONNECTION
 
 const connectToDatabase = async() => {
@@ -62,6 +66,61 @@ const fetchAppsFromDatabase = async () => {
     } catch (error) {
         console.error('[CRITICAL ERROR] Error fetching app IDs from database -', error);
         return [];
+    }
+}
+
+// USER AUTHORIZATION
+
+const redirectToTwitchAuth = (req, res) => {
+    try {
+        const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.BACKEND_SERVER_DOMAIN}/auth/twitch/callback&response_type=code&scope=user:read:email`;
+        res.redirect(authUrl);
+    } catch (error) {
+        console.error('[ERROR] Error redirecting to Twitch authorization -', error);
+    }
+}
+
+const handleTwitchAuthCallback = async (req, res) => {
+    try {
+        const { code } = req.query;
+
+        const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                client_id: process.env.TWITCH_CLIENT_ID,
+                client_secret: process.env.TWITCH_CLIENT_SECRET,
+                code,
+                grant_type: 'authorization_code',
+                redirect_uri: `${process.env.BACKEND_SERVER_DOMAIN}/auth/twitch/callback`,
+            }),
+        });
+        
+        const tokenData = await tokenResponse.json();
+        const { access_token } = tokenData;
+
+        const userResponse = await fetch('https://api.twitch.tv/helix/users', {
+            headers: {
+                'Authorization': `Bearer ${access_token}`,
+                'Client-Id': process.env.TWITCH_CLIENT_ID
+            }
+        });
+    
+        const userData = await userResponse.json();
+        const user = userData.data[0];
+
+        // Check if users email is valid
+        const checkPermission = await UsersModel.findOne({ email: user.email });
+        if(!checkPermission){
+            console.log(`[FAILED LOGIN] ${user.email} is not whitelisted`)
+            res.redirect(`https://www.google.de/`);
+            return;
+        }
+        
+        console.log(`[LOGIN] ${user.email} successfully logged in`)
+        res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
+    } catch (error) {
+        console.error('[ERROR] Error handling Twitch authorization callback -', error);
     }
 }
 
@@ -185,12 +244,11 @@ const setupServer = async () => {
         }
 
         server.get('/auth/twitch', (req, res) => {
-            const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.FRONTEND_SERVER_DOMAIN}/auth/twitch/callback&response_type=code&scope=user:read:email`;
-            res.redirect(authUrl);
+            redirectToTwitchAuth(req, res);
         });
 
-        server.get('/auth/twitch/callback', (req, res) => {
-            
+        server.get('/auth/twitch/callback', async (req, res) => {
+            handleTwitchAuthCallback(req, res);
         });
 
         server.post('/api/apps/add', async (req, res) => {
