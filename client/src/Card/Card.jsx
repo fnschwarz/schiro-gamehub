@@ -7,7 +7,7 @@ function Card({ id, link, img, alt, title, reloadCardComponents}){
             id: parseInt(id),
         };
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/delete`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/remove`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

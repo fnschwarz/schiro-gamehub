@@ -193,11 +193,11 @@ const setupServer = async () => {
             
         });
 
-        server.post('/api/apps/create', async (req, res) => {
+        server.post('/api/apps/add', async (req, res) => {
             addAppToList(req, res);
         });
 
-        server.post('/api/apps/delete', async (req, res) => {
+        server.post('/api/apps/remove', async (req, res) => {
             removeAppFromList(req, res);
         });
     } catch (error) {
