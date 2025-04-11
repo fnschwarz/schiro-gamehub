@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import style from './Card.module.css';
+import style from './AppCard.module.css';
 
-function Card({ id, link, img, alt, title, reloadCardComponents}){
-    const deleteApp = async (evt) => {
+function AppCard({ id, link, img, alt, title, reloadCardComponents}){
+    const handleButtonClick = async (evt) => {
         const app = {
             id: parseInt(id),
         };
@@ -26,7 +26,7 @@ function Card({ id, link, img, alt, title, reloadCardComponents}){
             <a href={link}>
                 <img className={style['card-img']} src={img} alt={alt} />
             </a>
-            <button className={style['card-delete-button']} onClick={(evt) => deleteApp(evt)}>
+            <button className={style['card-delete-button']} onClick={(evt) => handleButtonClick(evt)}>
                 &times;
             </button>
             <div className={style['card-title-container']}>
@@ -36,11 +36,13 @@ function Card({ id, link, img, alt, title, reloadCardComponents}){
     );
 }
 
-Card.propTypes = {
+AppCard.propTypes = {
+    id: PropTypes.number.isRequired,
     link: PropTypes.string.isRequired,
     img: PropTypes.string.isRequired,
     alt: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
+    reloadCardComponents: PropTypes.func.isRequired,
 }
 
-export default Card
+export default AppCard

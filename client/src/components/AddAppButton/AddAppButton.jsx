@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import style from './InputFieldButton.module.css';
+import style from './AddAppButton.module.css';
 
-function InputFieldButton({ reloadCardComponents, isFocused }){
-    const handleClick = async (evt) => {
+function AddAppButton({ reloadCardComponents, isFocused }){
+    const handleButtonClick = async (evt) => {
         const app = {
             "id" : parseInt(document.getElementById("inputField").value)
         }
@@ -24,14 +24,14 @@ function InputFieldButton({ reloadCardComponents, isFocused }){
     return(
         <button 
             className={`${style.button} ${isFocused ? style.focused : ''}`}
-            onClick={(evt) => handleClick(evt)}
+            onClick={(evt) => handleButtonClick(evt)}
         >Add Game</button>
     );
 }
 
-InputFieldButton.propTypes = {
+AddAppButton.propTypes = {
     reloadCardComponents : PropTypes.func.isRequired,
     isFocused: PropTypes.bool.isRequired,
 }
 
-export default InputFieldButton
+export default AddAppButton
