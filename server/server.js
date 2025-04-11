@@ -31,19 +31,19 @@ const connectToDatabase = async() => {
 
 // UTILS
 
-const fetchAppName = async(appId) => {
+const getSteamAppName = async(appId) => {
     try {
         const receivedData = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
         const receivedDataToJSON = await receivedData.json();
         
         return receivedDataToJSON[appId].data.name;
     } catch (error) {
-        console.error('[ERROR] Error fetching app name -', error);
+        console.error('[ERROR] Error getting app name -', error);
         return null;
     }
 }
 
-const fetchAppExistence = async(appId) => {
+const checkSteamAppExists = async(appId) => {
     try {
         const receivedData = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
         const receivedDataToJSON = await receivedData.json();
@@ -67,7 +67,7 @@ const fetchAppsFromDatabase = async () => {
 
 // API
 
-const registerNewAppApiEndpoint = async (appId, appName) => {
+const registerAppEndpoint = async (appId, appName) => {
     try {
         server.get(`/api/apps/${appId}`, async (req, res) => {
             let appJSON = new Object();
@@ -79,11 +79,11 @@ const registerNewAppApiEndpoint = async (appId, appName) => {
             res.json(appJSON);
         });   
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error registering new app API endpoint -', error);
+        console.error('[CRITICAL ERROR] Error registering app API endpoint -', error);
     }
 }
 
-const createNewApp = async (req, res) => {
+const addAppToList = async (req, res) => {
     try {
         /*  TODO: CHECK USER PERMISSION
             TO ENSURE THAT NO UNAUTHORIZED
@@ -100,16 +100,16 @@ const createNewApp = async (req, res) => {
         }
 
         // Check if app exists in steam database
-        if(!await fetchAppExistence(appId)){
+        if(!await checkSteamAppExists(appId)){
             console.log(`[ERROR] Error creating list item. App (ID ${appId}) doesn't exist`);
             res.status(404).send('Not Found');
             return;
         }
         
         // Check for errors when fetching app name from Steam API
-        const appName = await fetchAppName(appId);
+        const appName = await getSteamAppName(appId);
         if(appName === null){
-            console.log(`[ERROR] Error creating list item. App (ID ${appId}) couldn't be registered due to error when fetching app name`);
+            console.log(`[ERROR] Error creating list item. App (ID ${appId}) couldn't be registered due to error getting app name`);
             res.status(503).send('Service Unavailable');
             return;
         }
@@ -122,16 +122,16 @@ const createNewApp = async (req, res) => {
 
         // Update database and register API endpoint
         await newApp.save();
-        registerNewAppApiEndpoint(appId, appName);
+        registerAppEndpoint(appId, appName);
 
-        console.log(`[CREATE] App (ID ${appId}) successfully created`);
+        console.log(`[ADD] App (ID ${appId}) successfully added`);
         res.status(201).send('Created');
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error creating new app -', error);
+        console.error('[CRITICAL ERROR] Error creating list item -', error);
     }
 }
 
-const deleteExistingApp = async (req, res) => {
+const removeAppFromList = async (req, res) => {
     try {
         /*  TODO: CHECK USER PERMISSION
         TO ENSURE THAT NO UNAUTHORIZED
@@ -155,14 +155,14 @@ const deleteExistingApp = async (req, res) => {
             return;
         }
         
-        console.log(`[DELETE] App (ID ${appId}) successfully deleted`);
+        console.log(`[REMOVE] App (ID ${appId}) successfully removed`);
         res.status(200).send('OK');
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error deleting existing app -', error);
+        console.error('[CRITICAL ERROR] Error deleting list item -', error);
     }
 }
 
-const initializeApiEndpoints = async () => {
+const setupServer = async () => {
     try {
         // Initial fetch
         let appsInDatabase = await fetchAppsFromDatabase();
@@ -181,7 +181,7 @@ const initializeApiEndpoints = async () => {
         
         // Create API endpoints for all apps inside saved in database
         for(const app of appsInDatabase){
-            registerNewAppApiEndpoint(app.id, app.name);
+            registerAppEndpoint(app.id, app.name);
         }
 
         server.get('/auth/twitch', (req, res) => {
@@ -194,11 +194,11 @@ const initializeApiEndpoints = async () => {
         });
 
         server.post('/api/apps/create', async (req, res) => {
-            createNewApp(req, res);
+            addAppToList(req, res);
         });
 
         server.post('/api/apps/delete', async (req, res) => {
-            deleteExistingApp(req, res);
+            removeAppFromList(req, res);
         });
     } catch (error) {
         console.error('[CRITICAL ERROR] Error initializing api endpoints -', error);
@@ -208,7 +208,7 @@ const initializeApiEndpoints = async () => {
 (async () => {
     try {
         connectToDatabase();
-        initializeApiEndpoints();
+        setupServer();
     } catch (error) {
         console.error('[CRITICAL ERROR] Error when starting server -', error);
     }
