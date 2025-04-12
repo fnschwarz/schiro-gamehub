@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const server = express();
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const cors = require("cors");
 const mongoose = require("mongoose");
 
@@ -11,6 +12,7 @@ const corsOptions = {
 
 server.use(cors(corsOptions));
 server.use(express.json());
+server.use(cookieParser());
 
 // MONGOOSE MODEL
 
@@ -117,7 +119,8 @@ const handleTwitchAuthCallback = async (req, res) => {
             res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
             return;
         }
-
+        
+        // Create JWT token cookie
         const token = jwt.sign(
             { email: user.email, id: user.id },
             process.env.JWT_SECRET,
@@ -135,6 +138,47 @@ const handleTwitchAuthCallback = async (req, res) => {
         res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
     } catch (error) {
         console.error('[ERROR] Error handling Twitch authorization callback -', error);
+    }
+}
+
+const verifyToken = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+
+        if(!token){
+            console.log(`[FAILED LOGIN] Error verifying token cookie - no cookies in web storage`);
+            return res.status(401).send('Unauthorized');
+        }
+
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Check if users email is still valid
+        const checkPermission = await UsersModel.findOne({ email: req.user.email });
+        if(!checkPermission){
+            console.log(`[FAILED LOGIN] Error verifying token cookie - ${req.user.email} is not whitelisted`)
+            return res.status(401).send('Unauthorized');
+        }
+
+        res.json({ user: req.user });
+    } catch (error) {
+        console.error('[ERROR] Error verifying token cookie -', error);
+        return res.status(403).send('Forbidden');
+    }
+}
+
+const clearTokens = (req, res) => {
+    try {
+        const token = req.cookies.token;
+
+        if(!token){
+            console.log(`[FAILED LOGOUT] Error clearing tokens - no cookies in web storage`);
+            return res.status(404).send('Not Found');
+        }
+
+        console.log(`[LOGOUT] User successfully logged out`)
+        res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
+    } catch (error) {
+        console.error('[CRITICAL ERROR] Error clearing tokens -', error);
     }
 }
 
@@ -257,12 +301,20 @@ const setupServer = async () => {
             registerAppEndpoint(app.id, app.name);
         }
 
-        server.get('/auth/twitch', (req, res) => {
+        server.get('/login', (req, res) => {
             redirectToTwitchAuth(req, res);
         });
 
         server.get('/auth/twitch/callback', async (req, res) => {
             handleTwitchAuthCallback(req, res);
+        });
+
+        server.get('/api/authenticate', (req, res) => {
+            verifyToken(req, res);
+        });
+
+        server.get('/logout', (req, res) => {
+            clearTokens(req, res);
         });
 
         server.post('/api/apps/add', async (req, res) => {

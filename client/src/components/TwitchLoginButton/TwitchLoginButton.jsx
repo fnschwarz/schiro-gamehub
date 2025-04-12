@@ -2,7 +2,7 @@ import style from './TwitchLoginButton.module.css';
 
 function TwitchLoginButton() {
     return (
-        <button className={style['twitch-login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/twitch`}>
+        <button className={style['twitch-login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/login`}>
             Login with Twitch
         </button>
     );
