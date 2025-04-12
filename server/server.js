@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require("express");
 const server = express();
 const jwt = require('jsonwebtoken');
@@ -8,82 +8,80 @@ const mongoose = require("mongoose");
 
 const corsOptions = {
     origin: [`${process.env.FRONTEND_SERVER_DOMAIN}`],
-}
+};
 
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());
 
-// MONGOOSE MODEL
+// MONGOOSE MODELS
 
-const AppsModel = mongoose.model('AppsModel', {
-    id : Number,
-    name : String
+const App = mongoose.model('App', {
+    id: Number,
+    name: String
 }, 'apps');
 
-const UsersModel = mongoose.model('UsersModel', {
+const User = mongoose.model('User', {
     email: String
 }, 'users');
 
-// DATABASE CONNECTION
+// DATABASE
 
-const connectToDatabase = async() => {
+const connectToDatabase = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DATABASE_NAME });
-        console.log('[SERVER START] Connected to DB...');
+        console.log('[SERVER START] Successfully connected to the database');
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error connecting to database -', error);
+        console.error('[CRITICAL ERROR] Failed to connect to the database:', error);
     }
-}
+};
 
 // UTILS
 
-const getSteamAppName = async(appId) => {
+const fetchSteamAppName = async (appId) => {
     try {
-        const receivedData = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
-        const receivedDataToJSON = await receivedData.json();
-        
-        return receivedDataToJSON[appId].data.name;
+        const response = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
+        const data = await response.json();
+        return data[appId]?.data?.name || null;
     } catch (error) {
-        console.error('[ERROR] Error getting app name -', error);
+        console.error('[ERROR] Failed to fetch app name from Steam API:', error);
         return null;
     }
-}
+};
 
-const checkSteamAppExists = async(appId) => {
+const isSteamAppValid = async (appId) => {
     try {
-        const receivedData = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
-        const receivedDataToJSON = await receivedData.json();
-        
-        return receivedDataToJSON[appId].success;
+        const response = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
+        const data = await response.json();
+        return data[appId]?.success || false;
     } catch (error) {
-        console.error('[ERROR] Error verifying app existence', error);
+        console.error('[ERROR] Failed to validate app ID with Steam API:', error);
         return false;
     }
-}
+};
 
-const fetchAppsFromDatabase = async () => {
+const getAllAppsFromDatabase = async () => {
     try {
-        const apps = await AppsModel.find({});
+        const apps = await App.find({});
         return apps.reverse();
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error fetching app IDs from database -', error);
+        console.error('[CRITICAL ERROR] Failed to fetch apps from the database:', error);
         return [];
     }
-}
+};
 
-// USER AUTHORIZATION
+// AUTH
 
-const redirectToTwitchAuth = (req, res) => {
+const redirectToTwitchAuthorization = (req, res) => {
     try {
         const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.BACKEND_SERVER_DOMAIN}/auth/twitch/callback&response_type=code&scope=user:read:email`;
         res.redirect(authUrl);
     } catch (error) {
-        console.error('[ERROR] Error redirecting to Twitch authorization -', error);
+        console.error('[ERROR] Failed to redirect to Twitch authorization:', error);
     }
-}
+};
 
-const handleTwitchAuthCallback = async (req, res) => {
+const handleTwitchAuthorizationCallback = async (req, res) => {
     try {
         const { code } = req.query;
 
@@ -98,7 +96,7 @@ const handleTwitchAuthCallback = async (req, res) => {
                 redirect_uri: `${process.env.BACKEND_SERVER_DOMAIN}/auth/twitch/callback`,
             }),
         });
-        
+
         const tokenData = await tokenResponse.json();
         const { access_token } = tokenData;
 
@@ -108,19 +106,17 @@ const handleTwitchAuthCallback = async (req, res) => {
                 'Client-Id': process.env.TWITCH_CLIENT_ID
             }
         });
-    
+
         const userData = await userResponse.json();
         const user = userData.data[0];
 
-        // Check if users email is valid
-        const checkPermission = await UsersModel.findOne({ email: user.email });
-        if(!checkPermission){
-            console.log(`[FAILED LOGIN] ${user.email} is not whitelisted`)
+        const isAuthorizedUser = await User.findOne({ email: user.email });
+        if (!isAuthorizedUser) {
+            console.log(`[FAILED LOGIN] Unauthorized email: ${user.email}`);
             res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
             return;
         }
-        
-        // Create JWT token cookie
+
         const token = jwt.sign(
             { email: user.email, id: user.id },
             process.env.JWT_SECRET,
@@ -133,74 +129,74 @@ const handleTwitchAuthCallback = async (req, res) => {
             sameSite: 'Lax',
             maxAge: 2 * 60 * 60 * 1000 // 2 hours
         });
-        
-        console.log(`[LOGIN] ${user.email} successfully logged in`)
+
+        console.log(`[LOGIN] User logged in: ${user.email}`);
         res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
     } catch (error) {
-        console.error('[ERROR] Error handling Twitch authorization callback -', error);
+        console.error('[ERROR] Failed to handle Twitch authorization callback:', error);
     }
-}
+};
 
-const verifyToken = async (req, res) => {
+const verifyUserToken = async (req, res) => {
     try {
         const token = req.cookies.token;
 
-        if(!token){
-            console.log(`[FAILED LOGIN] Error verifying token cookie - no cookies in web storage`);
+        if (!token) {
+            console.log('[FAILED LOGIN] No token found in cookies');
             return res.status(401).send('Unauthorized');
         }
 
         req.user = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Check if users email is still valid
-        const checkPermission = await UsersModel.findOne({ email: req.user.email });
-        if(!checkPermission){
-            console.log(`[FAILED LOGIN] Error verifying token cookie - ${req.user.email} is not whitelisted`)
+        const isAuthorizedUser = await User.findOne({ email: req.user.email });
+        if (!isAuthorizedUser) {
+            console.log(`[FAILED LOGIN] Unauthorized email: ${req.user.email}`);
             return res.status(401).send('Unauthorized');
         }
 
         res.json({ user: req.user });
     } catch (error) {
-        console.error('[ERROR] Error verifying token cookie -', error);
+        console.error('[ERROR] Failed to verify user token:', error);
         return res.status(403).send('Forbidden');
     }
-}
+};
 
-const clearTokens = (req, res) => {
+const clearUserToken = (req, res) => {
     try {
         const token = req.cookies.token;
 
-        if(!token){
-            console.log(`[FAILED LOGOUT] Error clearing tokens - no cookies in web storage`);
+        if (!token) {
+            console.log('[FAILED LOGOUT] No token found in cookies');
             return res.status(404).send('Not Found');
         }
 
-        console.log(`[LOGOUT] User successfully logged out`)
+        console.log('[LOGOUT] User logged out successfully');
         res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error clearing tokens -', error);
+        console.error('[CRITICAL ERROR] Failed to clear user token:', error);
     }
-}
+};
 
 // API
 
-const registerAppEndpoint = async (appId, appName) => {
+const registerAppApiEndpoint = async (appId, appName) => {
     try {
         server.get(`/api/apps/${appId}`, async (req, res) => {
-            let appJSON = new Object();
-            appJSON.id = appId;
-            appJSON.name = appName;
-            appJSON.link = `${process.env.STEAM_BASE_URL}/app/${appId}`;
-            appJSON.header = `${process.env.STEAM_HEADER_URL}/steam/apps/${appId}/header.jpg`;
-        
-            res.json(appJSON);
-        });   
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Error registering app API endpoint -', error);
-    }
-}
+            const appDetails = {
+                id: appId,
+                name: appName,
+                link: `${process.env.STEAM_BASE_URL}/app/${appId}`,
+                header: `${process.env.STEAM_HEADER_URL}/steam/apps/${appId}/header.jpg`
+            };
 
-const addAppToList = async (req, res) => {
+            res.json(appDetails);
+        });
+    } catch (error) {
+        console.error('[CRITICAL ERROR] Failed to register app API endpoint:', error);
+    }
+};
+
+const addAppToDatabase = async (req, res) => {
     try {
         /*  TODO: CHECK USER PERMISSION
             TO ENSURE THAT NO UNAUTHORIZED
@@ -209,133 +205,100 @@ const addAppToList = async (req, res) => {
 
         const appId = req.body.id;
 
-        // Check if requested appId has valid number format
-        if(isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1){
-            console.log(`[ERROR] Error creating list item. Invalid number format '${appId}'`);
+        if (isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1) {
+            console.log(`[ERROR] Invalid app ID format: '${appId}'`);
             res.status(400).send('Bad Request');
             return;
         }
 
-        // Check if app exists in steam database
-        if(!await checkSteamAppExists(appId)){
-            console.log(`[ERROR] Error creating list item. App (ID ${appId}) doesn't exist`);
+        if (!await isSteamAppValid(appId)) {
+            console.log(`[ERROR] App ID ${appId} does not exist on Steam`);
             res.status(404).send('Not Found');
             return;
         }
-        
-        // Check for errors when fetching app name from Steam API
-        const appName = await getSteamAppName(appId);
-        if(appName === null){
-            console.log(`[ERROR] Error creating list item. App (ID ${appId}) couldn't be registered due to error getting app name`);
+
+        const appName = await fetchSteamAppName(appId);
+        if (!appName) {
+            console.log(`[ERROR] Failed to fetch app name for ID ${appId}`);
             res.status(503).send('Service Unavailable');
             return;
         }
 
-        // New document for database
-        const newApp = new AppsModel({
-            id: appId,
-            name: appName
-        })
-
-        // Update database and register API endpoint
+        const newApp = new App({ id: appId, name: appName });
         await newApp.save();
-        registerAppEndpoint(appId, appName);
+        registerAppApiEndpoint(appId, appName);
 
-        console.log(`[ADD] App (ID ${appId}) successfully added`);
+        console.log(`[ADD] App added: ID ${appId}`);
         res.status(201).send('Created');
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error creating list item -', error);
+        console.error('[CRITICAL ERROR] Failed to add app to database:', error);
     }
-}
+};
 
-const removeAppFromList = async (req, res) => {
+const removeAppFromDatabase = async (req, res) => {
     try {
         /*  TODO: CHECK USER PERMISSION
-        TO ENSURE THAT NO UNAUTHORIZED
-        CLIENT CAN ACCESS THE DATABASE
+            TO ENSURE THAT NO UNAUTHORIZED
+            CLIENT CAN ACCESS THE DATABASE
         */
 
         const appId = req.body.id;
 
-        // Check if requested appId has valid number format
-        if(isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1){
-            console.log(`[ERROR] Error deleting list item. Invalid number format '${appId}'`);
+        if (isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1) {
+            console.log(`[ERROR] Invalid app ID format: '${appId}'`);
             res.status(400).send('Bad Request');
             return;
         }
 
-        const deletedApp = await AppsModel.findOneAndDelete({ id: appId });
+        const deletedApp = await App.findOneAndDelete({ id: appId });
 
         if (!deletedApp) {
-            console.log(`[ERROR] Error deleting list item. App (ID ${appId}) not found`);
+            console.log(`[ERROR] App not found: ID ${appId}`);
             res.status(404).send('Not Found');
             return;
         }
-        
-        console.log(`[REMOVE] App (ID ${appId}) successfully removed`);
+
+        console.log(`[REMOVE] App removed: ID ${appId}`);
         res.status(200).send('OK');
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error deleting list item -', error);
+        console.error('[CRITICAL ERROR] Failed to remove app from database:', error);
     }
-}
+};
 
-const setupServer = async () => {
+const initializeServer = async () => {
     try {
-        // Initial fetch
-        let appsInDatabase = await fetchAppsFromDatabase();
+        const appsInDatabase = await getAllAppsFromDatabase();
 
-        server.get(`/api/apps`, async(req, res) => {
-            appsInDatabase = await fetchAppsFromDatabase();
-
-            allAppIds = []
-
-            for (const app of appsInDatabase) {
-                allAppIds.push(app.id);
-            }
-
-            res.json({ apps: allAppIds });
+        server.get('/api/apps', async (req, res) => {
+            const apps = await getAllAppsFromDatabase();
+            const appIds = apps.map(app => app.id);
+            res.json({ apps: appIds });
         });
-        
-        // Create API endpoints for all apps inside saved in database
-        for(const app of appsInDatabase){
-            registerAppEndpoint(app.id, app.name);
+
+        for (const app of appsInDatabase) {
+            registerAppApiEndpoint(app.id, app.name);
         }
 
-        server.get('/login', (req, res) => {
-            redirectToTwitchAuth(req, res);
-        });
-
-        server.get('/auth/twitch/callback', async (req, res) => {
-            handleTwitchAuthCallback(req, res);
-        });
-
-        server.get('/api/authenticate', (req, res) => {
-            verifyToken(req, res);
-        });
-
-        server.get('/logout', (req, res) => {
-            clearTokens(req, res);
-        });
-
-        server.post('/api/apps/add', async (req, res) => {
-            addAppToList(req, res);
-        });
-
-        server.post('/api/apps/remove', async (req, res) => {
-            removeAppFromList(req, res);
-        });
+        server.get('/login', redirectToTwitchAuthorization);
+        server.get('/auth/twitch/callback', handleTwitchAuthorizationCallback);
+        server.get('/api/authenticate', verifyUserToken);
+        server.get('/logout', clearUserToken);
+        server.post('/api/apps/add', addAppToDatabase);
+        server.post('/api/apps/remove', removeAppFromDatabase);
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error initializing api endpoints -', error);
+        console.error('[CRITICAL ERROR] Failed to initialize server:', error);
     }
-}
+};
 
 (async () => {
     try {
-        connectToDatabase();
-        setupServer();
+        await connectToDatabase();
+        await initializeServer();
     } catch (error) {
-        console.error('[CRITICAL ERROR] Error when starting server -', error);
+        console.error('[CRITICAL ERROR] Failed to start server:', error);
     }
-}) ();
+})();
 
-server.listen(process.env.BACKEND_SERVER_PORT, () => console.log(`[SERVER START] Server running on port ${process.env.BACKEND_SERVER_PORT}...`));
+server.listen(process.env.BACKEND_SERVER_PORT, () => {
+    console.log(`[SERVER START] Server running on port ${process.env.BACKEND_SERVER_PORT}...`);
+});
