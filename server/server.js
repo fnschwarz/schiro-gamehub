@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require("express");
 const server = express();
+const jwt = require('jsonwebtoken');
 const cors = require("cors");
 const mongoose = require("mongoose");
 
@@ -113,9 +114,22 @@ const handleTwitchAuthCallback = async (req, res) => {
         const checkPermission = await UsersModel.findOne({ email: user.email });
         if(!checkPermission){
             console.log(`[FAILED LOGIN] ${user.email} is not whitelisted`)
-            res.redirect(`https://www.google.de/`);
+            res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
             return;
         }
+
+        const token = jwt.sign(
+            { email: user.email, id: user.id },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h' }
+        );
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Lax',
+            maxAge: 2 * 60 * 60 * 1000 // 2 hours
+        });
         
         console.log(`[LOGIN] ${user.email} successfully logged in`)
         res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);
