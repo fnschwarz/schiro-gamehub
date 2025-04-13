@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import style from './Apps.module.css';
-import Card from '../Card/Card.jsx';
+import style from './AppList.module.css';
+import AppCard from '../AppCard/AppCard.jsx';
 
-function Apps({ reloadCardComponentsFunc, reloadTrigger }) {
+function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
     const [appCards, setAppCards] = useState(['Loading...']);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ function Apps({ reloadCardComponentsFunc, reloadTrigger }) {
                     const dataApp = await resApp.json();
 
                     return (
-                        <Card
+                        <AppCard
                             key={dataApp.id}
                             id={dataApp.id}
                             link={dataApp.link}
@@ -46,9 +46,9 @@ function Apps({ reloadCardComponentsFunc, reloadTrigger }) {
     );
 }
 
-Apps.propTypes = {
+AppList.propTypes = {
     reloadCardComponentsFunc: PropTypes.func.isRequired,
     reloadTrigger: PropTypes.bool.isRequired,
 };
 
-export default Apps;
+export default AppList;

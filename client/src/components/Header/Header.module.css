@@ -1,0 +1,16 @@
+.header {
+    background-color: #1F2937;
+    text-align: center;
+    padding: 5px;
+}
+  
+.header h2 {
+    margin: 0;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 20%;
+    margin-right: 20%;
+}

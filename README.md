@@ -1,95 +1,29 @@
-# Schiro's GameHub
+![Schiro's GameHub](https://github.com/user-attachments/assets/b03a3c03-2842-4f28-89e2-80ad30105ac3)
 
-Schiro's GameHub is a private web application designed for creating and managing a personalized wishlist of games you plan to play in the near future.
+#
 
-## Navigation
+Schiro's GameHub is a React-based web application developed for Twitch streamer [xSchiro](https://www.twitch.tv/xschiro). It provides a visual overview of games scheduled to be played in the future, functioning as a public wishlist. Editing rights are restricted to whitelisted users. User authentication is handled via [Twitch OAuth 2.0](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/) and [JSON Web Tokens (JWT)](https://jwt.io/introduction). All data is stored in a [MongoDB](https://www.mongodb.com/) database.
 
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Contributing](#contributing)
-- [License](#license)
+## 🚀 Features
 
-## Features
+- Add games to the list by entering their **Steam App ID** in the input field and clicking `Add Game`
+- Delete games from the list by clicking the **$\times$ icon** in the top right corner of each list item
 
-- Add games to your wishlist by entering their Steam App ID.
-- View a list of all games in your wishlist.
-- Responsive design.
+## 🛠️ API Endpoints
 
-## Installation
+- `GET /login` — Redirects the user to Twitch OAuth 2.0
+- `GET /logout` — Deletes the JWT from cookie storage
+- `GET /auth/twitch/callback` — Generates a new JWT if Twitch authorization succeeds
+- `GET /api/authenticate` — Verifies the JWT and returns the authenticated user's `id` and `email`
+- `GET /api/apps` — Returns a list of all stored Steam App IDs
+- `POST /api/apps/add` — Adds a new app entry to the database using Steam App details
+- `POST /api/apps/remove` — Removes a app entry from the database
 
-### Prerequisites
+## 🤝 Contributing
 
-- Node.js
-- npm
-- MongoDB
+This project is private. For contribution requests, please contact the repository owner directly.
 
-### Client
+## 📄 License
 
-1. Navigate to the `client` directory:
-    ```sh
-    cd client
-    ```
-
-2. Install dependencies:
-    ```sh
-    npm install
-    ```
-
-3. Create a `.env` file in the `client` directory and add the following environment variables:
-    ```env
-    VITE_BACKEND_URL=http://localhost:8080
-    ```
-
-4. Start the development server:
-    ```sh
-    npm run dev
-    ```
-
-### Server
-
-1. Navigate to the `server` directory:
-    ```sh
-    cd server
-    ```
-
-2. Install dependencies:
-    ```sh
-    npm install
-    ```
-
-3. Create a `.env` file in the `server` directory and add the following environment variables:
-    ```env
-    MONGODB_URI=<your-mongodb-uri>
-    MONGODB_DATABASE_NAME=<your-database-name>
-    APPS_DOC_ID=<your-apps-document-id>
-    FRONTEND_SERVER_DOMAIN=http://localhost:5173
-    STEAM_BASE_URL=https://store.steampowered.com
-    STEAM_HEADER_URL=https://cdn.akamai.steamstatic.com/steam/apps
-    ```
-
-4. Start the server:
-    ```sh
-    npm run dev
-    ```
-
-## Usage
-
-1. Open your browser and navigate to `http://localhost:5173`.
-2. Enter a Steam App ID in the input field and click "Add Game" to add a game to your wishlist.
-3. View the list of games in your wishlist.
-
-## API Endpoints
-
-- `GET /api/games`: Retrieve a list of all games in the wishlist.
-- `GET /api/games/:id`: Retrieve details of a specific game by its Steam App ID.
-- `POST /api/games/post`: Add a new game to the wishlist.
-
-## Contributing
-
-This project is private. Please contact the repository owner for contributing guidelines.
-
-## License
-
-This project is private and copyrighted. All rights reserved.
+This project is private and copyrighted.  
+All rights reserved.
