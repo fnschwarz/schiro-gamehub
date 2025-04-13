@@ -142,8 +142,7 @@ const verifyUserToken = async (req, res) => {
         const token = req.cookies.token;
 
         if (!token) {
-            console.log('[FAILED LOGIN] No token found in cookies');
-            return res.status(401).send('Unauthorized');
+            return res.status(401).send('Unauthorized');;
         }
 
         req.user = jwt.verify(token, process.env.JWT_SECRET);
@@ -154,7 +153,7 @@ const verifyUserToken = async (req, res) => {
             return res.status(401).send('Unauthorized');
         }
 
-        res.json({ user: req.user });
+        res.status(200).json({ user: req.user });
     } catch (error) {
         console.error('[ERROR] Failed to verify user token:', error);
         return res.status(403).send('Forbidden');
@@ -169,6 +168,8 @@ const clearUserToken = (req, res) => {
             console.log('[FAILED LOGOUT] No token found in cookies');
             return res.status(404).send('Not Found');
         }
+
+        res.clearCookie('token');
 
         console.log('[LOGOUT] User logged out successfully');
         res.redirect(`${process.env.FRONTEND_SERVER_DOMAIN}`);

@@ -1,13 +1,26 @@
+import { useState, useEffect } from 'react';
+import AuthenticationContext from './context/AuthenticationContext.tsx';
 import Header from './components/Header/Header.jsx';
 import Section from './components/Section/Section.jsx';
 import Footer from './components/Footer/Footer.jsx';
 
 function App() {
+  const [hasValidAuthentication, setAuthenticationStatus] = useState(false);
+  
+  useEffect(() => {
+      (async () => {
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/authenticate`, { credentials: "include" });
+          setAuthenticationStatus(response.ok);
+      })();
+  }, []);
+
   return(
     <>
-      <Header />
-      <Section />
-      <Footer />
+      <AuthenticationContext.Provider value = {{ isAuthenticated: hasValidAuthentication }}>
+        <Header />
+        <Section />
+        <Footer />
+      </AuthenticationContext.Provider>
     </>
   );
 }
