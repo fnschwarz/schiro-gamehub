@@ -70,6 +70,31 @@ const getAllAppsFromDatabase = async () => {
     }
 };
 
+//MIDDLEWARE
+
+const authenticateToken = async (req, res, next) => {
+    try {
+        const token = req.cookies.token;
+
+        if (!token) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
+
+        const isAuthorizedUser = await User.findOne({ email: req.user.email });
+        if (!isAuthorizedUser) {
+            console.log(`[TOKEN AUTH FAILED] Unauthorized email: ${req.user.email}`);
+            return res.status(401).send('Unauthorized');
+        }
+
+        next();
+    } catch (error) {
+        console.error('[ERROR] Failed to verify user token:', error);
+        return res.status(403).send('Forbidden');
+    }
+};
+
 // AUTH
 
 const redirectToTwitchAuthorization = (req, res) => {
@@ -137,29 +162,6 @@ const handleTwitchAuthorizationCallback = async (req, res) => {
     }
 };
 
-const verifyUserToken = async (req, res) => {
-    try {
-        const token = req.cookies.token;
-
-        if (!token) {
-            return res.status(401).send('Unauthorized');;
-        }
-
-        req.user = jwt.verify(token, process.env.JWT_SECRET);
-
-        const isAuthorizedUser = await User.findOne({ email: req.user.email });
-        if (!isAuthorizedUser) {
-            console.log(`[FAILED LOGIN] Unauthorized email: ${req.user.email}`);
-            return res.status(401).send('Unauthorized');
-        }
-
-        res.status(200).json({ user: req.user });
-    } catch (error) {
-        console.error('[ERROR] Failed to verify user token:', error);
-        return res.status(403).send('Forbidden');
-    }
-};
-
 const clearUserToken = (req, res) => {
     try {
         const token = req.cookies.token;
@@ -177,6 +179,10 @@ const clearUserToken = (req, res) => {
         console.error('[CRITICAL ERROR] Failed to clear user token:', error);
     }
 };
+
+const sendStatusOK = (req, res) => {
+    res.status(200).send('OK');
+}
 
 // API
 
@@ -282,10 +288,10 @@ const initializeServer = async () => {
 
         server.get('/login', redirectToTwitchAuthorization);
         server.get('/auth/twitch/callback', handleTwitchAuthorizationCallback);
-        server.get('/api/authenticate', verifyUserToken);
+        server.get('/api/authenticate', authenticateToken, sendStatusOK);
         server.get('/logout', clearUserToken);
-        server.post('/api/apps/add', addAppToDatabase);
-        server.post('/api/apps/remove', removeAppFromDatabase);
+        server.post('/api/apps/add',authenticateToken ,addAppToDatabase);
+        server.post('/api/apps/remove',authenticateToken, removeAppFromDatabase);
     } catch (error) {
         console.error('[CRITICAL ERROR] Failed to initialize server:', error);
     }

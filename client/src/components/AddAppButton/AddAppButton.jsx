@@ -9,6 +9,7 @@ function AddAppButton({ reloadCardComponents, isFocused }){
     
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/add`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'

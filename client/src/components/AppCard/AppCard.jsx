@@ -9,6 +9,7 @@ function AppCard({ id, link, img, alt, title, reloadCardComponents}){
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/remove`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
