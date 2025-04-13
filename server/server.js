@@ -290,8 +290,8 @@ const initializeServer = async () => {
         server.get('/auth/twitch/callback', handleTwitchAuthorizationCallback);
         server.get('/api/authenticate', authenticateToken, sendStatusOK);
         server.get('/logout', clearUserToken);
-        server.post('/api/apps/add',authenticateToken ,addAppToDatabase);
-        server.post('/api/apps/remove',authenticateToken, removeAppFromDatabase);
+        server.post('/api/apps/add', authenticateToken, addAppToDatabase);
+        server.post('/api/apps/remove', authenticateToken, removeAppFromDatabase);
     } catch (error) {
         console.error('[CRITICAL ERROR] Failed to initialize server:', error);
     }
