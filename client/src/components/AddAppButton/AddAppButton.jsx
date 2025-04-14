@@ -1,8 +1,12 @@
+import { useContext } from 'react';
+import AuthenticationContext from '../../context/AuthenticationContext';
 import PropTypes from 'prop-types';
 import style from './AddAppButton.module.css';
 
 function AddAppButton({ reloadCardComponents, isFocused }){
-    const handleButtonClick = async (evt) => {
+    const { isAuthenticated } = useContext(AuthenticationContext);
+
+    const handleClick = async (evt) => {
         const app = {
             "id" : parseInt(document.getElementById("inputField").value)
         }
@@ -22,12 +26,14 @@ function AddAppButton({ reloadCardComponents, isFocused }){
         }
     }
 
-    return(
-        <button 
-            className={`${style.button} ${isFocused ? style.focused : ''}`}
-            onClick={(evt) => handleButtonClick(evt)}
-        >Add Game</button>
-    );
+    if (isAuthenticated) {
+        return(
+            <button 
+                className={`${style.button} ${isFocused ? style.focused : ''}`}
+                onClick={(evt) => handleClick(evt)}
+            >Add Game</button>
+        );
+    }
 }
 
 AddAppButton.propTypes = {

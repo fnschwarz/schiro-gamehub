@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import AuthenticationContext from '../../context/AuthenticationContext';
 import PropTypes from 'prop-types';
 import style from './AppIdInput.module.css';
 import AddAppButton from '../AddAppButton/AddAppButton.jsx';
 
 function AppIdInput({ reloadCardComponentsFunc, value, setValue }){
+    const { isAuthenticated } = useContext(AuthenticationContext);
+
     const [isFocused, setIsFocused] = useState(false);
 
     const handleChange = (evt) => {
@@ -12,22 +15,24 @@ function AppIdInput({ reloadCardComponentsFunc, value, setValue }){
         }
     };
 
-    return(
-        <div className={style['input-field-container']}>
-            <input className={style.input}
-                id="inputField"
-                type="number" 
-                placeholder="STEAM APP ID"
-                min="0"
-                value={value}
-                onChange={handleChange}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
-            />
-            <AddAppButton className={style.button} reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
-        </div>
-    );
+    if(isAuthenticated){
+        return(
+            <div className={style['input-field-container']}>
+                <input className={style.input}
+                    id="inputField"
+                    type="number" 
+                    placeholder="STEAM APP ID"
+                    min="0"
+                    value={value}
+                    onChange={handleChange}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
+                />
+                <AddAppButton className={style.button} reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
+            </div>
+        );
+    }
 }
 
 AppIdInput.propTypes = {
