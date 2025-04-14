@@ -205,11 +205,6 @@ const registerAppApiEndpoint = async (appId, appName) => {
 
 const addAppToDatabase = async (req, res) => {
     try {
-        /*  TODO: CHECK USER PERMISSION
-            TO ENSURE THAT NO UNAUTHORIZED
-            CLIENT CAN ACCESS THE DATABASE
-        */
-
         const appId = req.body.id;
 
         if (isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1) {
@@ -244,11 +239,6 @@ const addAppToDatabase = async (req, res) => {
 
 const removeAppFromDatabase = async (req, res) => {
     try {
-        /*  TODO: CHECK USER PERMISSION
-            TO ENSURE THAT NO UNAUTHORIZED
-            CLIENT CAN ACCESS THE DATABASE
-        */
-
         const appId = req.body.id;
 
         if (isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1) {
