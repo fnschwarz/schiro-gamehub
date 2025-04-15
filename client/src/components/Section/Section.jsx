@@ -13,13 +13,13 @@ function Section() {
     };
 
     return (
-        <div className={style.section}>
+        <div className={style['section-container']}>
             <IdInput
                 reloadCardComponentsFunc={handleReloadCardComponents} 
                 value={inputFieldValue} 
                 setValue={setInputFieldValue} 
             />
-            <div className={style.apps}>
+            <div className={style['game-list-wrapper']}>
                 <GameList reloadCardComponentsFunc={handleReloadCardComponents} reloadTrigger={reloadCardComponents} />
             </div>
         </div>

@@ -29,7 +29,7 @@ function RemoveGameButton({ id, reloadCardComponents }){
 
     if (isAuthenticated) {
         return(
-            <button className={style.button} onClick={handleClick}>
+            <button className={style['remove-game-button']} onClick={handleClick}>
                 &times;
             </button>
         );

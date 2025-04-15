@@ -17,8 +17,8 @@ function IdInput({ reloadCardComponentsFunc, value, setValue }){
 
     if(isAuthenticated){
         return(
-            <div className={style['input-field-container']}>
-                <input className={style.input}
+            <div className={style['game-id-input-container']}>
+                <input className={style['game-id-input']}
                     id="inputField"
                     type="number" 
                     placeholder="STEAM APP ID"
@@ -29,7 +29,7 @@ function IdInput({ reloadCardComponentsFunc, value, setValue }){
                     onBlur={() => setIsFocused(false)}
                     onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
                 />
-                <AddGameButton className={style.button} reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
+                <AddGameButton reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
             </div>
         );
     }

@@ -4,13 +4,13 @@ import RemoveGameButton from '../ui/RemoveGameButton/RemoveGameButton.jsx';
 
 function GameCard({ id, link, img, alt, title, reloadCardComponents}){
     return(
-        <div className={style['card']} id={id}>
+        <div className={style['game-card']} id={id}>
             <a href={link}>
-                <img className={style['card-img']} src={img} alt={alt} />
+                <img className={style['game-card-image']} src={img} alt={alt} />
             </a>
             <RemoveGameButton id={id} reloadCardComponents={reloadCardComponents} />
-            <div className={style['card-title-container']}>
-                <h2 className={style['card-title']}>{title}</h2>
+            <div className={style['game-card-title-wrapper']}>
+                <h2 className={style['game-card-title']}>{title}</h2>
             </div>
         </div>
     );

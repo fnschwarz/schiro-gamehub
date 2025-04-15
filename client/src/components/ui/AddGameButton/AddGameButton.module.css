@@ -1,4 +1,4 @@
-.button {
+.add-game-button {
     min-height: 50px;
     padding: .5em 1em;
     border: none;
@@ -10,14 +10,14 @@
     transition: background-color .2s ease-in-out;
 }
 
-.button:active {
+.add-game-button:active {
     background-color: #ffffff;
 }
 
-.button.focused {
+.add-game-button.focused {
     background-color: #6441a5;
 }
 
-button.focused:hover {
+.add-game-button.focused:hover {
     background-color: #8455db;
 }

@@ -28,10 +28,9 @@ function AddGameButton({ reloadCardComponents, isFocused }){
 
     if (isAuthenticated) {
         return(
-            <button 
-                className={`${style.button} ${isFocused ? style.focused : ''}`}
-                onClick={(evt) => handleClick(evt)}
-            >Add Game</button>
+            <button className={`${style['add-game-button']} ${isFocused ? style.focused : ''}`} onClick={(evt) => handleClick(evt)}>
+                Add Game
+            </button>
         );
     }
 }

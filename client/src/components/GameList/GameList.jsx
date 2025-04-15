@@ -40,7 +40,7 @@ function GameList({ reloadCardComponentsFunc, reloadTrigger }) {
     }, [reloadTrigger]);
 
     return (
-        <div className={style.cards}>
+        <div className={style['game-list']}>
             {appCards}
         </div>
     );

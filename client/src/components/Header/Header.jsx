@@ -4,7 +4,7 @@ import LoginButton from '../auth/twitch/LoginButton/LoginButton.jsx';
 function Header(){
     return(
         <header className={style.header}>
-            <div className={style['header-content']}>
+            <div className={style['header-content-wrapper']}>
                 <h2>Schiro&apos;s GameHub</h2>
                 <LoginButton />
             </div>
