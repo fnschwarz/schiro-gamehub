@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import style from './Section.module.css';
-import IdInput from '../IdInput/IdInput.jsx';
+import GameIdInput from '../GameIdInput/GameIdInput.jsx';
 import GameList from '../GameList/GameList.jsx';
 
 function Section() {
@@ -14,7 +14,7 @@ function Section() {
 
     return (
         <div className={style['section-container']}>
-            <IdInput
+            <GameIdInput
                 reloadCardComponentsFunc={handleReloadCardComponents} 
                 value={inputFieldValue} 
                 setValue={setInputFieldValue} 

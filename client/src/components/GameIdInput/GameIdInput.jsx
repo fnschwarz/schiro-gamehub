@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
-import style from './IdInput.module.css';
+import style from './GameIdInput.module.css';
 import PropTypes from 'prop-types';
 import AuthenticationContext from '../../context/AuthenticationContext.js';
 import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
 
-function IdInput({ reloadCardComponentsFunc, value, setValue }){
+function GameIdInput({ reloadCardComponentsFunc, value, setValue }){
     const { isAuthenticated } = useContext(AuthenticationContext);
 
     const [isFocused, setIsFocused] = useState(false);
@@ -35,10 +35,10 @@ function IdInput({ reloadCardComponentsFunc, value, setValue }){
     }
 }
 
-IdInput.propTypes = {
+GameIdInput.propTypes = {
     reloadCardComponentsFunc: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
     setValue: PropTypes.func.isRequired,
 };
 
-export default IdInput
+export default GameIdInput
