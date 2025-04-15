@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import style from './Section.module.css';
-import AppIdInput from '../AppIdInput/AppIdInput.jsx';
-import AppList from '../AppList/AppList.jsx';
+import IdInput from '../IdInput/IdInput.jsx';
+import GameList from '../GameList/GameList.jsx';
 
 function Section() {
     const [reloadCardComponents, setReloadCardComponents] = useState(false);
@@ -14,13 +14,13 @@ function Section() {
 
     return (
         <div className={style.section}>
-            <AppIdInput
+            <IdInput
                 reloadCardComponentsFunc={handleReloadCardComponents} 
                 value={inputFieldValue} 
                 setValue={setInputFieldValue} 
             />
             <div className={style.apps}>
-                <AppList reloadCardComponentsFunc={handleReloadCardComponents} reloadTrigger={reloadCardComponents} />
+                <GameList reloadCardComponentsFunc={handleReloadCardComponents} reloadTrigger={reloadCardComponents} />
             </div>
         </div>
     );

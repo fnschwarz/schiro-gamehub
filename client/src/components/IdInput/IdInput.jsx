@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
-import AuthenticationContext from '../../context/AuthenticationContext';
+import style from './IdInput.module.css';
 import PropTypes from 'prop-types';
-import style from './AppIdInput.module.css';
-import AddAppButton from '../AddAppButton/AddAppButton.jsx';
+import AuthenticationContext from '../../context/AuthenticationContext.js';
+import AddGameButton from '../_ui/AddGameButton/AddGameButton.jsx';
 
-function AppIdInput({ reloadCardComponentsFunc, value, setValue }){
+function IdInput({ reloadCardComponentsFunc, value, setValue }){
     const { isAuthenticated } = useContext(AuthenticationContext);
 
     const [isFocused, setIsFocused] = useState(false);
@@ -29,16 +29,16 @@ function AppIdInput({ reloadCardComponentsFunc, value, setValue }){
                     onBlur={() => setIsFocused(false)}
                     onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
                 />
-                <AddAppButton className={style.button} reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
+                <AddGameButton className={style.button} reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
             </div>
         );
     }
 }
 
-AppIdInput.propTypes = {
+IdInput.propTypes = {
     reloadCardComponentsFunc: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired,
     setValue: PropTypes.func.isRequired,
 };
 
-export default AppIdInput
+export default IdInput

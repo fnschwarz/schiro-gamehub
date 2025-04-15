@@ -1,14 +1,14 @@
+import style from './GameCard.module.css';
 import PropTypes from 'prop-types';
-import style from './AppCard.module.css';
-import RemoveAppButton from '../RemoveAppButton/RemoveAppButton';
+import RemoveGameButton from '../_ui/RemoveGameButton/RemoveGameButton.jsx';
 
-function AppCard({ id, link, img, alt, title, reloadCardComponents}){
+function GameCard({ id, link, img, alt, title, reloadCardComponents}){
     return(
         <div className={style['card']} id={id}>
             <a href={link}>
                 <img className={style['card-img']} src={img} alt={alt} />
             </a>
-            <RemoveAppButton id={id} reloadCardComponents={reloadCardComponents} />
+            <RemoveGameButton id={id} reloadCardComponents={reloadCardComponents} />
             <div className={style['card-title-container']}>
                 <h2 className={style['card-title']}>{title}</h2>
             </div>
@@ -16,7 +16,7 @@ function AppCard({ id, link, img, alt, title, reloadCardComponents}){
     );
 }
 
-AppCard.propTypes = {
+GameCard.propTypes = {
     id: PropTypes.number.isRequired,
     link: PropTypes.string.isRequired,
     img: PropTypes.string.isRequired,
@@ -25,4 +25,4 @@ AppCard.propTypes = {
     reloadCardComponents: PropTypes.func.isRequired,
 }
 
-export default AppCard
+export default GameCard

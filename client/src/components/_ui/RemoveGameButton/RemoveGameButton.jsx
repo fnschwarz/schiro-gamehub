@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import AuthenticationContext from '../../context/AuthenticationContext';
-import style from './RemoveAppButton.module.css';
+import style from './RemoveGameButton.module.css';
+import AuthenticationContext from '../../../context/AuthenticationContext';
 
-function RemoveAppButton({ id, reloadCardComponents }){
+function RemoveGameButton({ id, reloadCardComponents }){
     const { isAuthenticated } = useContext(AuthenticationContext);
 
     const handleClick = async () => {
@@ -36,4 +36,4 @@ function RemoveAppButton({ id, reloadCardComponents }){
     }
 }
 
-export default RemoveAppButton
+export default RemoveGameButton

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import style from './GameList.module.css';
 import PropTypes from 'prop-types';
-import style from './AppList.module.css';
-import AppCard from '../AppCard/AppCard.jsx';
+import GameCard from '../GameCard/GameCard.jsx';
 
-function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
+function GameList({ reloadCardComponentsFunc, reloadTrigger }) {
     const [appCards, setAppCards] = useState(['Loading...']);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
                     const dataApp = await resApp.json();
 
                     return (
-                        <AppCard
+                        <GameCard
                             key={dataApp.id}
                             id={dataApp.id}
                             link={dataApp.link}
@@ -46,9 +46,9 @@ function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
     );
 }
 
-AppList.propTypes = {
+GameList.propTypes = {
     reloadCardComponentsFunc: PropTypes.func.isRequired,
     reloadTrigger: PropTypes.bool.isRequired,
 };
 
-export default AppList;
+export default GameList;

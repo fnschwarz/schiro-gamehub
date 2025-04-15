@@ -1,13 +1,13 @@
 import { useContext } from 'react';
-import AuthenticationContext from '../../context/AuthenticationContext';
+import style from './AddGameButton.module.css';
 import PropTypes from 'prop-types';
-import style from './AddAppButton.module.css';
+import AuthenticationContext from '../../../context/AuthenticationContext';
 
-function AddAppButton({ reloadCardComponents, isFocused }){
+function AddGameButton({ reloadCardComponents, isFocused }){
     const { isAuthenticated } = useContext(AuthenticationContext);
 
     const handleClick = async (evt) => {
-        const app = {
+        const game = {
             "id" : parseInt(document.getElementById("inputField").value)
         }
     
@@ -18,7 +18,7 @@ function AddAppButton({ reloadCardComponents, isFocused }){
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(app)
+            body: JSON.stringify(game)
         });
 
         if (response.status === 201) {
@@ -36,9 +36,9 @@ function AddAppButton({ reloadCardComponents, isFocused }){
     }
 }
 
-AddAppButton.propTypes = {
+AddGameButton.propTypes = {
     reloadCardComponents : PropTypes.func.isRequired,
     isFocused: PropTypes.bool.isRequired,
 }
 
-export default AddAppButton
+export default AddGameButton
