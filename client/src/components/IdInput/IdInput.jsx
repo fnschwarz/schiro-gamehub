@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import style from './IdInput.module.css';
 import PropTypes from 'prop-types';
 import AuthenticationContext from '../../context/AuthenticationContext.js';
-import AddGameButton from '../_ui/AddGameButton/AddGameButton.jsx';
+import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
 
 function IdInput({ reloadCardComponentsFunc, value, setValue }){
     const { isAuthenticated } = useContext(AuthenticationContext);

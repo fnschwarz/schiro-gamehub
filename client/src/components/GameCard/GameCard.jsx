@@ -1,6 +1,6 @@
 import style from './GameCard.module.css';
 import PropTypes from 'prop-types';
-import RemoveGameButton from '../_ui/RemoveGameButton/RemoveGameButton.jsx';
+import RemoveGameButton from '../ui/RemoveGameButton/RemoveGameButton.jsx';
 
 function GameCard({ id, link, img, alt, title, reloadCardComponents}){
     return(
