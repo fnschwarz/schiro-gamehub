@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import style from './GameIdInput.module.css';
 import PropTypes from 'prop-types';
-import AuthenticationContext from '../../context/AuthenticationContext.js';
+import AuthenticationContext from '../../context/AuthenticationContext.tsx';
 import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
 
 function GameIdInput({ reloadCardComponentsFunc, value, setValue }){
