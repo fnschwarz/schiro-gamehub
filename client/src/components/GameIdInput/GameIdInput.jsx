@@ -1,44 +1,39 @@
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import style from './GameIdInput.module.css';
-import PropTypes from 'prop-types';
 import AuthenticationContext from '../../context/AuthenticationContext.tsx';
+import GameListReloadContext from '../../context/GameListReloadContext.tsx';
 import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
 
-function GameIdInput({ reloadCardComponentsFunc, value, setValue }){
+function GameIdInput(){
     const { isAuthenticated } = useContext(AuthenticationContext);
-
+    const { reloadTrigger } = useContext(GameListReloadContext);
+    const [inputValue, setInputValue] = useState('');
     const [isFocused, setIsFocused] = useState(false);
 
-    const handleChange = (evt) => {
-        if (evt.target.value.length <= 10) {
-            setValue(evt.target.value);
-        }
+    useEffect(() => {
+        setInputValue('');
+    }, [reloadTrigger]);
+
+    const handleChange = (e) => {
+        setInputValue(e.target.value.replace(/\D/g, ''));
     };
 
     if(isAuthenticated){
         return(
             <div className={style['game-id-input-container']}>
                 <input className={style['game-id-input']}
-                    id="inputField"
-                    type="number" 
+                    id="game-id-input"
+                    type="text" 
                     placeholder="STEAM APP ID"
-                    min="0"
-                    value={value}
+                    value={inputValue}
                     onChange={handleChange}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    onKeyDown={(evt) => ["e", "E", "+", "-", "."].includes(evt.key) && evt.preventDefault()} 
                 />
-                <AddGameButton reloadCardComponents={reloadCardComponentsFunc} isFocused={isFocused} />
+                <AddGameButton isFocused={isFocused} />
             </div>
         );
     }
 }
 
-GameIdInput.propTypes = {
-    reloadCardComponentsFunc: PropTypes.func.isRequired,
-    value: PropTypes.string.isRequired,
-    setValue: PropTypes.func.isRequired,
-};
-
-export default GameIdInput
+export default GameIdInput;

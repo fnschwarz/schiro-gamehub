@@ -1,9 +1,12 @@
 import React, { useContext } from 'react';
 import style from './RemoveGameButton.module.css';
+import PropTypes from 'prop-types';
 import AuthenticationContext from '../../../context/AuthenticationContext';
+import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
-function RemoveGameButton({ id, reloadCardComponents }){
+function RemoveGameButton({ id }){
     const { isAuthenticated } = useContext(AuthenticationContext);
+    const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
     const handleClick = async () => {
         const app = {
@@ -23,7 +26,7 @@ function RemoveGameButton({ id, reloadCardComponents }){
         });
 
         if (response.ok) {
-            reloadCardComponents();
+            setReloadTrigger(!reloadTrigger);
         }
     }
 
@@ -36,4 +39,8 @@ function RemoveGameButton({ id, reloadCardComponents }){
     }
 }
 
-export default RemoveGameButton
+RemoveGameButton.propTypes = {
+    id: PropTypes.number.isRequired,
+}
+
+export default RemoveGameButton;

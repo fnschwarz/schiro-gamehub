@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import style from './GameList.module.css';
-import PropTypes from 'prop-types';
 import GameCard from '../GameCard/GameCard.jsx';
+import GameListReloadContext from '../../context/GameListReloadContext.tsx';
 
-function GameList({ reloadCardComponentsFunc, reloadTrigger }) {
+function GameList() {
+    const { reloadTrigger } = useContext(GameListReloadContext);
     const [appCards, setAppCards] = useState(['Loading...']);
 
     useEffect(() => {
@@ -28,7 +29,6 @@ function GameList({ reloadCardComponentsFunc, reloadTrigger }) {
                             img={dataApp.header}
                             alt={`Header of app ${dataApp.name}`}
                             title={dataApp.name}
-                            reloadCardComponents={reloadCardComponentsFunc}
                         />
                     );
                 }));
@@ -45,10 +45,5 @@ function GameList({ reloadCardComponentsFunc, reloadTrigger }) {
         </div>
     );
 }
-
-GameList.propTypes = {
-    reloadCardComponentsFunc: PropTypes.func.isRequired,
-    reloadTrigger: PropTypes.bool.isRequired,
-};
 
 export default GameList;

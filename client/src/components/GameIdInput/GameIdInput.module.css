@@ -19,6 +19,3 @@
     border-color: #6441a5;
     outline: none;
 }
-
-.game-id-input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
-.game-id-input[type="number"]::-webkit-outer-spin-button, .game-id-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
