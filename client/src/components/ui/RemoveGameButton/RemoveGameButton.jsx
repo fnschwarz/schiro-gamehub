@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import style from './RemoveGameButton.module.css';
 import PropTypes from 'prop-types';
-import useAuthQuery from '../../../hooks/useAuthQuery.js';
+import useAuthQuery from '../../../hooks/useAuthQuery.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
 function RemoveGameButton({ id }){

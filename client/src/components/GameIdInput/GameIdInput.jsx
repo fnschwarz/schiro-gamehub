@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import style from './GameIdInput.module.css';
 import GameListReloadContext from '../../context/GameListReloadContext.tsx';
-import useAuthQuery from '../../hooks/useAuthQuery.js';
+import useAuthQuery from '../../hooks/useAuthQuery.ts';
 import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
 
 function GameIdInput(){
