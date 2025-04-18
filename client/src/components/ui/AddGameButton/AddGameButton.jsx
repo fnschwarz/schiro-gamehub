@@ -1,11 +1,9 @@
 import { useContext } from 'react';
 import style from './AddGameButton.module.css';
 import PropTypes from 'prop-types';
-import AuthenticationContext from '../../../context/AuthenticationContext.tsx';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
 function AddGameButton({ isFocused }){
-    const { isAuthenticated } = useContext(AuthenticationContext);
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
     const handleClick = async (evt) => {
@@ -27,14 +25,12 @@ function AddGameButton({ isFocused }){
             setReloadTrigger(!reloadTrigger);
         }
     }
-
-    if (isAuthenticated) {
-        return(
-            <button className={`${style['add-game-button']} ${isFocused ? style.focused : ''}`} onClick={(evt) => handleClick(evt)}>
-                Add Game
-            </button>
-        );
-    }
+    
+    return(
+        <button className={`${style['add-game-button']} ${isFocused ? style.focused : ''}`} onClick={(evt) => handleClick(evt)}>
+            Add Game
+        </button>
+    );
 }
 
 AddGameButton.propTypes = {

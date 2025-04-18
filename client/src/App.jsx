@@ -1,27 +1,21 @@
-import { useState, useEffect } from 'react';
-import AuthenticationContext from './context/AuthenticationContext.tsx';
+import { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import GameListReloadContext from './context/GameListReloadContext.tsx';
 import Header from './components/Header/Header.jsx';
 import Section from './components/Section/Section.jsx';
 
+const queryClient = new QueryClient();
+
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [reloadTrigger, setReloadTrigger] = useState(false);
-    
-    useEffect(() => {
-        (async () => {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/authenticate`, { credentials: "include" });
-            setIsAuthenticated(response.ok);
-        })();
-    }, []);
 
     return(
-        <AuthenticationContext.Provider value = {{ isAuthenticated }}>
+        <QueryClientProvider client={queryClient}>
             <GameListReloadContext.Provider value = {{ reloadTrigger, setReloadTrigger }}>
                 <Header />
                 <Section />
             </GameListReloadContext.Provider>
-        </AuthenticationContext.Provider>
+        </QueryClientProvider>
     );
 }
 

@@ -1,12 +1,11 @@
 import style from './LoginButton.module.css';
-import { useContext } from 'react';
-import AuthenticationContext from '../../../../context/AuthenticationContext';
+import useAuthQuery from '../../../../hooks/useAuthQuery.js';
 
 
 function LoginButton() {
-    const authentication = useContext(AuthenticationContext);
+    const { data: isAuthenticated } = useAuthQuery();
 
-    if(authentication.isAuthenticated){
+    if(isAuthenticated){
         return (
             <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/logout`}>
                 Logout

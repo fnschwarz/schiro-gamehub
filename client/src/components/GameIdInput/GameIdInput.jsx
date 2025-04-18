@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import style from './GameIdInput.module.css';
-import AuthenticationContext from '../../context/AuthenticationContext.tsx';
 import GameListReloadContext from '../../context/GameListReloadContext.tsx';
+import useAuthQuery from '../../hooks/useAuthQuery.js';
 import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
 
 function GameIdInput(){
-    const { isAuthenticated } = useContext(AuthenticationContext);
+    const { data: isAuthenticated } = useAuthQuery();
     const { reloadTrigger } = useContext(GameListReloadContext);
     const [inputValue, setInputValue] = useState('');
     const [isFocused, setIsFocused] = useState(false);
