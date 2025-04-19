@@ -1,15 +1,15 @@
 import style from './Header.module.css';
-import TwitchLoginButton from '../TwitchLoginButton/TwitchLoginButton.jsx';
+import LoginButton from '../auth/twitch/LoginButton/LoginButton.tsx';
 
 function Header(){
     return(
         <header className={style.header}>
-            <div className={style['header-content']}>
+            <div className={style['header-content-wrapper']}>
                 <h2>Schiro&apos;s GameHub</h2>
-                <TwitchLoginButton></TwitchLoginButton>
+                <LoginButton />
             </div>
         </header>
     );
 }
 
-export default Header
+export default Header;

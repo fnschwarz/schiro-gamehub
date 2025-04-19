@@ -1,9 +1,9 @@
-.input-field-container {
+.game-id-input-container {
     display: flex;
     align-items: center;
 }
   
-.input {
+.game-id-input {
     min-height: 48px;
     max-width: 150px;
     padding: 0 1rem;
@@ -15,18 +15,7 @@
     transition: border-color .2s ease-in-out;
 }
 
-.input:focus, .input:focus-visible {
+.game-id-input:focus, .game-id-input:focus-visible {
     border-color: #6441a5;
     outline: none;
-}
-
-input[type="number"] {
-    appearance: textfield;
-    -moz-appearance: textfield;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
 }

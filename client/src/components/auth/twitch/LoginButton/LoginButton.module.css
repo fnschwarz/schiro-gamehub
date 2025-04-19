@@ -1,4 +1,4 @@
-.twitch-login-button {
+.login-button {
     font-weight: bold;
     color: #8C68CE;
     background-color: transparent;
@@ -8,7 +8,7 @@
     transition: background-color .2s;
 }
 
-.twitch-login-button:hover {
+.login-button:hover {
     background-color: #33435a;
     transition: background-color cubic-bezier(0.895, 0.03, 0.685, 0.22)s;
 }

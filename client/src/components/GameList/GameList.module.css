@@ -1,11 +1,11 @@
-.cards {
+.game-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     margin: auto;
 }
 
-.cards::after {
+.game-list::after {
     content: "";
     flex-basis: calc(33.33% - 20px);
 }

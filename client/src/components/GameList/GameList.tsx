@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import style from './AppList.module.css';
-import AppCard from '../AppCard/AppCard.jsx';
+import { useState, useEffect, useContext } from 'react';
+import style from './GameList.module.css';
+import GameCard from '../GameCard/GameCard.tsx';
+import GameListReloadContext from '../../context/GameListReloadContext.tsx';
 
-function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
+function GameList() {
+    const { reloadTrigger } = useContext(GameListReloadContext);
     const [appCards, setAppCards] = useState(['Loading...']);
 
     useEffect(() => {
@@ -16,19 +17,18 @@ function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
                 const appsList = dataAppsList.apps;
                 
                 // NOTE: return a card component for all ids in appsList and save it in const cards
-                const cards = await Promise.all(appsList.map(async (id) => {
+                const cards = await Promise.all(appsList.map(async (id: number) => {
                     const resApp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/${id}`);
                     const dataApp = await resApp.json();
 
                     return (
-                        <AppCard
+                        <GameCard
                             key={dataApp.id}
                             id={dataApp.id}
                             link={dataApp.link}
                             img={dataApp.header}
                             alt={`Header of app ${dataApp.name}`}
                             title={dataApp.name}
-                            reloadCardComponents={reloadCardComponentsFunc}
                         />
                     );
                 }));
@@ -40,15 +40,10 @@ function AppList({ reloadCardComponentsFunc, reloadTrigger }) {
     }, [reloadTrigger]);
 
     return (
-        <div className={style.cards}>
+        <div className={style['game-list']}>
             {appCards}
         </div>
     );
 }
 
-AppList.propTypes = {
-    reloadCardComponentsFunc: PropTypes.func.isRequired,
-    reloadTrigger: PropTypes.bool.isRequired,
-};
-
-export default AppList;
+export default GameList;
