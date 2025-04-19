@@ -1,10 +1,8 @@
-import { createContext, Dispatch, SetStateAction } from "react";
+import { createContext } from "react";
 
-interface GameListReloadContextType {
-    reloadTrigger: boolean,
-    setReloadTrigger: Dispatch<SetStateAction<boolean>>;
-}
-
-const GameListReloadContext = createContext<GameListReloadContextType | null>(null);
+const GameListReloadContext = createContext<client.context.IGameListReload>({
+    reloadTrigger: false, 
+    setReloadTrigger: () => {}
+});
 
 export default GameListReloadContext;

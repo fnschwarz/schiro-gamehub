@@ -1,16 +1,16 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import style from './RemoveGameButton.module.css';
 import PropTypes from 'prop-types';
 import useAuth from '../../../hooks/useAuth.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
-function RemoveGameButton({ id }){
+function RemoveGameButton({ id }: client.props.IGameId){
     const { data: isAuthenticated } = useAuth();
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
     const handleClick = async () => {
         const app = {
-            id: parseInt(id),
+            id: id,
         };
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/remove`, {

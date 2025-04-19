@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import style from './GameIdInput.module.css';
 import GameListReloadContext from '../../context/GameListReloadContext.tsx';
 import useAuth from '../../hooks/useAuth.ts';
-import AddGameButton from '../ui/AddGameButton/AddGameButton.jsx';
+import AddGameButton from '../ui/AddGameButton/AddGameButton.tsx';
 
 function GameIdInput(){
     const { data: isAuthenticated } = useAuth();
@@ -14,7 +14,7 @@ function GameIdInput(){
         setInputValue('');
     }, [reloadTrigger]);
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         setInputValue(e.target.value.replace(/\D/g, ''));
     };
 

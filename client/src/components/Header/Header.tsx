@@ -1,5 +1,5 @@
 import style from './Header.module.css';
-import LoginButton from '../auth/twitch/LoginButton/LoginButton.jsx';
+import LoginButton from '../auth/twitch/LoginButton/LoginButton.tsx';
 
 function Header(){
     return(

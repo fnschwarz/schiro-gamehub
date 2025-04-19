@@ -1,6 +1,6 @@
 import style from './Section.module.css';
-import GameIdInput from '../GameIdInput/GameIdInput.jsx';
-import GameList from '../GameList/GameList.jsx';
+import GameIdInput from '../GameIdInput/GameIdInput.tsx';
+import GameList from '../GameList/GameList.tsx';
 
 function Section() {
     return (

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import style from './GameList.module.css';
-import GameCard from '../GameCard/GameCard.jsx';
+import GameCard from '../GameCard/GameCard.tsx';
 import GameListReloadContext from '../../context/GameListReloadContext.tsx';
 
 function GameList() {
@@ -17,7 +17,7 @@ function GameList() {
                 const appsList = dataAppsList.apps;
                 
                 // NOTE: return a card component for all ids in appsList and save it in const cards
-                const cards = await Promise.all(appsList.map(async (id) => {
+                const cards = await Promise.all(appsList.map(async (id: number) => {
                     const resApp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/${id}`);
                     const dataApp = await resApp.json();
 
