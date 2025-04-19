@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-const useAuthQuery = () =>
+const useAuth = () =>
     useQuery({
         queryKey: ['authenticate'],
         queryFn: async () => {
@@ -10,4 +10,4 @@ const useAuthQuery = () =>
         staleTime: 1000 * 60 * 5,
     });
 
-export default useAuthQuery;
+export default useAuth;

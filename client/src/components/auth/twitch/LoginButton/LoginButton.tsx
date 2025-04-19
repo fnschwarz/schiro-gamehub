@@ -1,8 +1,8 @@
 import style from './LoginButton.module.css';
-import useAuthQuery from '../../../../hooks/useAuthQuery.ts';
+import useAuth from '../../../../hooks/useAuth.ts';
 
 function LoginButton() {
-    const { data: isAuthenticated } = useAuthQuery();
+    const { data: isAuthenticated } = useAuth();
 
     if(isAuthenticated){
         return (

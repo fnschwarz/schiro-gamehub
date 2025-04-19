@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import style from './RemoveGameButton.module.css';
 import PropTypes from 'prop-types';
-import useAuthQuery from '../../../hooks/useAuthQuery.ts';
+import useAuth from '../../../hooks/useAuth.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
 function RemoveGameButton({ id }){
-    const { data: isAuthenticated } = useAuthQuery();
+    const { data: isAuthenticated } = useAuth();
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
     const handleClick = async () => {
