@@ -38,7 +38,7 @@ const connectToDatabase = async () => {
 
 // UTILS
 
-const fetchSteamAppName = async (appId) => {
+const fetchSteamAppName = async (appId: number) => {
     try {
         const response = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
         const data = await response.json();
@@ -49,7 +49,7 @@ const fetchSteamAppName = async (appId) => {
     }
 };
 
-const isSteamAppValid = async (appId) => {
+const isSteamAppValid = async (appId: number) => {
     try {
         const response = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
         const data = await response.json();
@@ -72,7 +72,7 @@ const getAllAppsFromDatabase = async () => {
 
 //MIDDLEWARE
 
-const authenticateToken = async (req, res, next) => {
+const authenticateToken = async (req: any, res: any, next: any) => {
     try {
         const token = req.cookies.token;
 
@@ -97,7 +97,7 @@ const authenticateToken = async (req, res, next) => {
 
 // AUTH
 
-const redirectToTwitchAuthorization = (req, res) => {
+const redirectToTwitchAuthorization = (req: any, res: any) => {
     try {
         const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.BACKEND_SERVER_DOMAIN}/auth/twitch/callback&response_type=code&scope=user:read:email`;
         res.redirect(authUrl);
@@ -106,7 +106,7 @@ const redirectToTwitchAuthorization = (req, res) => {
     }
 };
 
-const handleTwitchAuthorizationCallback = async (req, res) => {
+const handleTwitchAuthorizationCallback = async (req: any, res: any) => {
     try {
         const { code } = req.query;
 
@@ -114,9 +114,9 @@ const handleTwitchAuthorizationCallback = async (req, res) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
-                client_id: process.env.TWITCH_CLIENT_ID,
-                client_secret: process.env.TWITCH_CLIENT_SECRET,
-                code,
+                client_id: process.env.TWITCH_CLIENT_ID || '',
+                client_secret: process.env.TWITCH_CLIENT_SECRET || '',
+                code: code?.toString() || '',
                 grant_type: 'authorization_code',
                 redirect_uri: `${process.env.BACKEND_SERVER_DOMAIN}/auth/twitch/callback`,
             }),
@@ -128,7 +128,7 @@ const handleTwitchAuthorizationCallback = async (req, res) => {
         const userResponse = await fetch('https://api.twitch.tv/helix/users', {
             headers: {
                 'Authorization': `Bearer ${access_token}`,
-                'Client-Id': process.env.TWITCH_CLIENT_ID
+                'Client-Id': process.env.TWITCH_CLIENT_ID || ''
             }
         });
 
@@ -162,7 +162,7 @@ const handleTwitchAuthorizationCallback = async (req, res) => {
     }
 };
 
-const clearUserToken = (req, res) => {
+const clearUserToken = (req: any, res: any) => {
     try {
         const token = req.cookies.token;
 
@@ -180,15 +180,15 @@ const clearUserToken = (req, res) => {
     }
 };
 
-const sendStatusOK = (req, res) => {
+const sendStatusOK = (req: any, res: any) => {
     res.status(200).send('OK');
 }
 
 // API
 
-const registerAppApiEndpoint = async (appId, appName) => {
+const registerAppApiEndpoint = async (appId: number, appName: string) => {
     try {
-        server.get(`/api/apps/${appId}`, async (req, res) => {
+        server.get(`/api/apps/${appId}`, async (req: any, res: any) => {
             const appDetails = {
                 id: appId,
                 name: appName,
@@ -203,7 +203,7 @@ const registerAppApiEndpoint = async (appId, appName) => {
     }
 };
 
-const addAppToDatabase = async (req, res) => {
+const addAppToDatabase = async (req: any, res: any) => {
     try {
         const appId = req.body.id;
 
@@ -237,7 +237,7 @@ const addAppToDatabase = async (req, res) => {
     }
 };
 
-const removeAppFromDatabase = async (req, res) => {
+const removeAppFromDatabase = async (req: any, res: any) => {
     try {
         const appId = req.body.id;
 
@@ -266,9 +266,9 @@ const initializeServer = async () => {
     try {
         const appsInDatabase = await getAllAppsFromDatabase();
 
-        server.get('/api/apps', async (req, res) => {
+        server.get('/api/apps', async (req: any, res: any) => {
             const apps = await getAllAppsFromDatabase();
-            const appIds = apps.map(app => app.id);
+            const appIds = apps.map((app: any) => app.id);
             res.json({ apps: appIds });
         });
 
