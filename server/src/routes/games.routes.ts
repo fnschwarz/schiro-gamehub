@@ -8,7 +8,6 @@ import { authenticate } from '../middlewares/auth';
 
 const router = Router();
 
-
 router.get('/api/apps', getAllGameIds);
 router.get('/api/apps/:id', getGame);
 router.post('/api/apps/add', authenticate, addAppToDatabase);
