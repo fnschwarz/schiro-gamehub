@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
 const mongoose = require("mongoose");
+import { Game } from './models/game.model';
+import { User } from './models/user.model';
 
 const corsOptions = {
     origin: [`${process.env.FRONTEND_SERVER_DOMAIN}`],
@@ -13,17 +15,6 @@ const corsOptions = {
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());
-
-// MONGOOSE MODELS
-
-const App = mongoose.model('App', {
-    id: Number,
-    name: String
-}, 'apps');
-
-const User = mongoose.model('User', {
-    email: String
-}, 'users');
 
 // DATABASE
 
@@ -62,7 +53,7 @@ const isSteamAppValid = async (appId: number) => {
 
 const getAllAppsFromDatabase = async () => {
     try {
-        const apps = await App.find({});
+        const apps = await Game.find({});
         return apps.reverse();
     } catch (error) {
         console.error('[CRITICAL ERROR] Failed to fetch apps from the database:', error);
@@ -226,7 +217,7 @@ const addAppToDatabase = async (req: any, res: any) => {
             return;
         }
 
-        const newApp = new App({ id: appId, name: appName });
+        const newApp = new Game({ id: appId, name: appName });
         await newApp.save();
         registerAppApiEndpoint(appId, appName);
 
@@ -247,7 +238,7 @@ const removeAppFromDatabase = async (req: any, res: any) => {
             return;
         }
 
-        const deletedApp = await App.findOneAndDelete({ id: appId });
+        const deletedApp = await Game.findOneAndDelete({ id: appId });
 
         if (!deletedApp) {
             console.log(`[ERROR] App not found: ID ${appId}`);
@@ -273,7 +264,7 @@ const initializeServer = async () => {
         });
 
         for (const app of appsInDatabase) {
-            registerAppApiEndpoint(app.id, app.name);
+            registerAppApiEndpoint(app.id, app.name || '');
         }
 
         server.get('/login', redirectToTwitchAuthorization);
