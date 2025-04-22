@@ -1,9 +1,9 @@
-import { fetchSteamAppName, isSteamAppValid, getAllAppsFromDatabase } from "../utils/utils";
+import { getGames, getGameName, isGameIdValid } from "../utils/utils";
 import { Game } from "../models/game.model";
 
 export const getAllGameIds = async (req: any, res: any) => {
     try {
-        const apps = await getAllAppsFromDatabase();
+        const apps = await getGames();
         const appIds = apps.map((app: any) => app.id);
         res.json({ apps: appIds });
     } catch (error) {
@@ -41,13 +41,13 @@ export const addAppToDatabase = async (req: any, res: any) => {
             return;
         }
 
-        if (!await isSteamAppValid(appId)) {
+        if (!await isGameIdValid(appId)) {
             console.log(`[ERROR] App ID ${appId} does not exist on Steam`);
             res.status(404).send('Not Found');
             return;
         }
 
-        const appName = await fetchSteamAppName(appId);
+        const appName = await getGameName(appId);
         if (!appName) {
             console.log(`[ERROR] Failed to fetch app name for ID ${appId}`);
             res.status(503).send('Service Unavailable');

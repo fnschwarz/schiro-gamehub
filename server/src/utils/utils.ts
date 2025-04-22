@@ -1,33 +1,30 @@
 import { Game } from "../models/game.model";
 
-export const fetchSteamAppName = async (appId: number) => {
-    try {
-        const response = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
-        const data = await response.json();
-        return data[appId]?.data?.name || null;
-    } catch (error) {
-        console.error('[ERROR] Failed to fetch app name from Steam API:', error);
-        return null;
-    }
+export const getGames = () => {
+    return Game.find({})
+        .then(games => games.reverse())
+        .catch((error) => {
+            console.error(`[${new Date().toISOString()}] [error] Failed to fetch game entries from database // `, error);
+            return [];  
+        });
 };
 
-export const isSteamAppValid = async (appId: number) => {
-    try {
-        const response = await fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${appId}`);
-        const data = await response.json();
-        return data[appId]?.success || false;
-    } catch (error) {
-        console.error('[ERROR] Failed to validate app ID with Steam API:', error);
-        return false;
-    }
+export const getGameName = (gameId: number) => {
+    return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
+        .then(response => response.json())
+        .then(data => data[gameId]?.data?.name || null)
+        .catch((error) => {
+            console.error(`[${new Date().toISOString()}] [error] Failed to fetch game name of ID ${gameId} from Steam API // `, error);
+            return null;  
+        });
 };
 
-export const getAllAppsFromDatabase = async () => {
-    try {
-        const apps = await Game.find({});
-        return apps.reverse();
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to fetch apps from the database:', error);
-        return [];
-    }
+export const isGameIdValid = (gameId: number) => {
+    return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
+        .then(response => response.json())
+        .then(data => data[gameId]?.success || false)
+        .catch((error) => {
+            console.error(`[${new Date().toISOString()}] [error] Failed to validate ID ${gameId} from Steam API // `, error);
+            return false;  
+        });
 };
