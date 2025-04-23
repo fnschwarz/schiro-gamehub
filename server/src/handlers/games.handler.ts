@@ -1,91 +1,84 @@
-import { getGames, getGameName, isGameIdValid } from "../utils/utils";
+import { Request, Response } from 'express';
+import { logError, getGames, getGameName, isGameIdValid } from "../utils/utils";
 import { Game } from "../models/game.model";
 
-export const getAllGameIds = async (req: any, res: any) => {
-    try {
-        const apps = await getGames();
-        const appIds = apps.map((app: any) => app.id);
-        res.json({ apps: appIds });
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to get all game ids:', error);
-    }
+export const getAllGameIds = async (req: Request, res: Response) => {
+    const games = await getGames();
+    const gameIds = games.map((game) => game.id);
+    res.json({ apps: gameIds }); // TODO: change to 'games' instead of 'apps'
 };
 
-export const getGame = async (req: any, res: any) => {
-    try {
-        const appId: number = req.params.id;
-        const app = await Game.findOne({ id: appId });
+export const getGame = async (req: Request, res: Response) => {
+    const gameId = parseInt(req?.params?.id, 10); // TODO: validate with express-validator to prevent injections
 
-        if(!app) return res.status(404);
-
-        const appDetails = {
-            id: app.id,
-            name: app.name,
-            link: `${process.env.STEAM_BASE_URL}/app/${app.id}`,
-            header: `${process.env.STEAM_HEADER_URL}/steam/apps/${app.id}/header.jpg`
-        }
-
-        res.status(200).json(appDetails);
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to register app API endpoint:', error);
+    // Check if game id has proper format
+    if (isNaN(gameId) || gameId <= 0) {
+        logError(`Failed fetching game details: invalid game id format '${req?.params?.id}'`);
+        res.status(400).json({ status: 400, message: 'Invalid game id format. Please provide a valid game id.' }); return;
     }
+
+    // Get game details through database
+    const game = await Game.findOne({ id: gameId }).catch(() => { return null });
+    if (!game) {
+        logError(`Failed fetching game details: game does not exist in database`);
+        res.status(404).json({ status: 404, message: 'Game does not exist in database.' }); return;
+    }
+
+    res.status(200).json({
+        id: game.id,
+        name: game.name,
+        link: `${process.env.STEAM_BASE_URL}/app/${game.id}`,
+        header: `${process.env.STEAM_HEADER_URL}/steam/apps/${game.id}/header.jpg`
+    });
 }
 
-export const addAppToDatabase = async (req: any, res: any) => {
-    try {
-        const appId = req.body.id;
+export const addGameToDatabase = async (req: Request, res: Response) => {
+    const gameId = parseInt(req.body.id, 10); // TODO: validate with express-validator to prevent injections
 
-        if (isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1) {
-            console.log(`[ERROR] Invalid app ID format: '${appId}'`);
-            res.status(400).send('Bad Request');
-            return;
-        }
-
-        if (!await isGameIdValid(appId)) {
-            console.log(`[ERROR] App ID ${appId} does not exist on Steam`);
-            res.status(404).send('Not Found');
-            return;
-        }
-
-        const appName = await getGameName(appId);
-        if (!appName) {
-            console.log(`[ERROR] Failed to fetch app name for ID ${appId}`);
-            res.status(503).send('Service Unavailable');
-            return;
-        }
-
-        const newApp = new Game({ id: appId, name: appName });
-        await newApp.save();
-        //registerAppApiEndpoint(appId, appName);
-
-        console.log(`[ADD] App added: ID ${appId}`);
-        res.status(201).send('Created');
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to add app to database:', error);
+    // Check if game id has proper format
+    if (isNaN(gameId) || gameId <= 0 || gameId > Math.pow(2, 32) - 1) { // TODO: replace with function
+        logError(`Failed adding game to database: invalid game id format '${gameId}'`);
+        res.status(400).json({ status: 400, message: 'Invalid game id format. Please provide a valid game id.' }); return;
     }
+
+    // Check if game is a Steam app
+    if (!await isGameIdValid(gameId)) {
+        logError(`Failed adding game to database: provided game id '${gameId}' does not refer to an existing Steam app`);
+        res.status(404).json({ status: 404, message: 'Game is not a Steam app. Please provide a valid game id.' }); return;
+    }
+
+    // Get game name through Steam API
+    const gameName = await getGameName(gameId);
+    if (!gameName) {
+        logError(`Failed adding game to database: game name couldn't be fetched due to Steam API not responding`);
+        res.status(503).json({ status: 503, message: 'Steam API not responding.' }); return;
+    }
+
+    // Save game details (id, name) in database
+    const newGame = new Game({ id: gameId, name: gameName });
+    await newGame.save(); // TODO: Catch error when saving
+
+    console.log(`[ADD] App added: ID ${gameId}`); // TODO: replace with custom log function
+    res.status(201).send('Created'); // TODO: better respond message
 };
 
-export const removeAppFromDatabase = async (req: any, res: any) => {
-    try {
-        const appId = req.body.id;
+export const removeGameFromDatabase = async (req: Request, res: Response) => {
+    const gameId = parseInt(req.body.id, 10); // TODO: validate with express-validator to prevent injections
 
-        if (isNaN(appId) || appId <= 0 || appId > Math.pow(2, 32) - 1) {
-            console.log(`[ERROR] Invalid app ID format: '${appId}'`);
-            res.status(400).send('Bad Request');
-            return;
-        }
-
-        const deletedApp = await Game.findOneAndDelete({ id: appId });
-
-        if (!deletedApp) {
-            console.log(`[ERROR] App not found: ID ${appId}`);
-            res.status(404).send('Not Found');
-            return;
-        }
-
-        console.log(`[REMOVE] App removed: ID ${appId}`);
-        res.status(200).send('OK');
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to remove app from database:', error);
+    // Check if game id has proper format
+    if (isNaN(gameId) || gameId <= 0 || gameId > Math.pow(2, 32) - 1) { // TODO: replace with function
+        logError(`Failed removing game from database: invalid game id format '${gameId}'`);
+        res.status(400).json({ status: 400, message: 'Invalid game id format. Please provide a valid game id.' }); return;
     }
+
+    const gameToDelete = await Game.findOneAndDelete({ id: gameId }).catch(() => { return null });
+
+    // Check if game has entry in database
+    if (!gameToDelete) {
+        logError(`Failed removing game from database: Game '${gameId}' not found`);
+        res.status(404).json({ status: 404, message: 'Game not found.' }); return;
+    }
+
+    console.log(`[REMOVE] App removed: ID ${gameId}`); // TODO: replace with custom log function
+    res.status(200).send('OK'); // TODO: better respond message
 };
