@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { logError, getGames, getGameName, isGameIdValid, hasValidGameIdFormat } from "../utils/utils";
+import { logError, getGames, getGameName, isSteamApp, hasValidGameIdFormat } from "../utils/utils";
 import { Game } from "../models/game.model";
 
 export const getAllGameIds = async (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     }
 
     // Check if game is a Steam app
-    if (!await isGameIdValid(gameId)) {
+    if (!await isSteamApp(gameId)) {
         logError(`Failed adding game to database: provided game id '${gameId}' does not refer to an existing Steam app`);
         res.status(404).json({ status: 404, message: 'Game is not a Steam app. Please provide a valid game id.' }); return;
     }

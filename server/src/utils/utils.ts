@@ -25,13 +25,13 @@ export const getGameName = (gameId: number): Promise<string> => {
         });
 };
 
-export const isGameIdValid = (gameId: number): Promise<boolean> => {
+export const isSteamApp = (gameId: number): Promise<boolean> => {
     return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
         .then(response => response.json())
         .then(data => data[gameId]?.success || false)
         .catch((error) => {
-            logError(`Failed to validate ID ${gameId} from Steam API`, error);
-            return false;  
+            logError(`Failed to verify ID ${gameId} from Steam API`, error);
+            return false;
         });
 };
 
