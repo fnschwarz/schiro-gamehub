@@ -41,4 +41,4 @@ export const hasValidGameIdFormat = (gameId: number): boolean => {
     }
 
     return false;
-}
+};
