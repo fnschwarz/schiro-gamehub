@@ -56,7 +56,10 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
 
     // Save game details (id, name) in database
     const newGame = new Game({ id: gameId, name: gameName });
-    await newGame.save(); // TODO: Catch error when saving
+    await newGame.save().catch((error) => {
+        logError(`Failed adding game to database: couldn't save new game document in database`, error);
+        res.status(502).json({ status: 502, message: 'Database not responding.' }); return;
+    });
 
     console.log(`[ADD] App added: ID ${gameId}`); // TODO: replace with custom log function
     res.status(201).send('Created'); // TODO: better respond message
