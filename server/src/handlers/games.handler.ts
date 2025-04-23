@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { logError, getGames, getGameName, isGameIdValid } from "../utils/utils";
+import { logError, getGames, getGameName, isGameIdValid, hasValidGameIdFormat } from "../utils/utils";
 import { Game } from "../models/game.model";
 
 export const getAllGameIds = async (req: Request, res: Response) => {
@@ -12,7 +12,7 @@ export const getGame = async (req: Request, res: Response) => {
     const gameId = parseInt(req?.params?.id, 10); // TODO: validate with express-validator to prevent injections
 
     // Check if game id has proper format
-    if (isNaN(gameId) || gameId <= 0) {
+    if (!hasValidGameIdFormat(gameId)) {
         logError(`Failed fetching game details: invalid game id format '${req?.params?.id}'`);
         res.status(400).json({ status: 400, message: 'Invalid game id format. Please provide a valid game id.' }); return;
     }
@@ -36,7 +36,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     const gameId = parseInt(req.body.id, 10); // TODO: validate with express-validator to prevent injections
 
     // Check if game id has proper format
-    if (isNaN(gameId) || gameId <= 0 || gameId > Math.pow(2, 32) - 1) { // TODO: replace with function
+    if (!hasValidGameIdFormat(gameId)) {
         logError(`Failed adding game to database: invalid game id format '${gameId}'`);
         res.status(400).json({ status: 400, message: 'Invalid game id format. Please provide a valid game id.' }); return;
     }
@@ -66,7 +66,7 @@ export const removeGameFromDatabase = async (req: Request, res: Response) => {
     const gameId = parseInt(req.body.id, 10); // TODO: validate with express-validator to prevent injections
 
     // Check if game id has proper format
-    if (isNaN(gameId) || gameId <= 0 || gameId > Math.pow(2, 32) - 1) { // TODO: replace with function
+    if (!hasValidGameIdFormat(gameId)) {
         logError(`Failed removing game from database: invalid game id format '${gameId}'`);
         res.status(400).json({ status: 400, message: 'Invalid game id format. Please provide a valid game id.' }); return;
     }

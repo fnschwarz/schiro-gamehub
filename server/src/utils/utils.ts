@@ -34,3 +34,11 @@ export const isGameIdValid = (gameId: number): Promise<boolean> => {
             return false;  
         });
 };
+
+export const hasValidGameIdFormat = (gameId: number): boolean => {
+    if (!isNaN(gameId) || gameId > 0 || gameId < Math.pow(2, 32)) {
+        return true;
+    }
+
+    return false;
+}
