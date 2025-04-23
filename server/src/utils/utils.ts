@@ -20,7 +20,7 @@ export const getGameName = (gameId: number): Promise<string> => {
         .then(response => response.json())
         .then(data => data[gameId]?.data?.name || null)
         .catch((error) => {
-            logError(`Failed to fetch game name of ID ${gameId} from Steam API`, error);
+            logError(`Failed to fetch game name of game id '${gameId}' from Steam API`, error);
             return null;
         });
 };
@@ -30,7 +30,7 @@ export const isSteamApp = (gameId: number): Promise<boolean> => {
         .then(response => response.json())
         .then(data => data[gameId]?.success || false)
         .catch((error) => {
-            logError(`Failed to verify ID ${gameId} from Steam API`, error);
+            logError(`Failed to verify game id '${gameId}' from Steam API`, error);
             return false;
         });
 };
