@@ -1,9 +1,9 @@
 require('dotenv').config();
-const express = require("express");
+const express = require('express');
 const server = express();
 const cookieParser = require('cookie-parser');
-const cors = require("cors");
-const mongoose = require("mongoose");
+const cors = require('cors');
+const mongoose = require('mongoose');
 
 import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';

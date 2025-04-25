@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { logError, getGames, getGameName, isSteamApp, hasValidGameIdFormat } from "../utils/utils";
-import { Game } from "../models/game.model";
+import { logError, getGames, getGameName, isSteamApp, hasValidGameIdFormat } from '../utils/utils';
+import { Game } from '../models/game.model';
 
 export const getAllGameIds = async (req: Request, res: Response) => {
     const games = await getGames();

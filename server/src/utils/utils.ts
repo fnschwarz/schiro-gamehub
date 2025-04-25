@@ -1,4 +1,4 @@
-import { Game } from "../models/game.model";
+import { Game } from '../models/game.model';
 
 export const logError = (message: string, error?: Error) => {
     const date = new Date().toISOString();

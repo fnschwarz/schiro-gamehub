@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import { User } from "../models/user.model";
+import jwt from 'jsonwebtoken';
+import { User } from '../models/user.model';
 
 export const redirectToTwitchAuthorization = (req: any, res: any) => {
     try {
