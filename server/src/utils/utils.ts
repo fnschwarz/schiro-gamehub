@@ -1,5 +1,10 @@
 import { Game } from '../models/game.model';
 
+export const log = (type: string, message: string) => {
+    const date = new Date().toISOString();
+    console.log(`[${date}] [${type}] ${message}`);
+}
+
 export const logError = (message: string, error?: Error) => {
     const date = new Date().toISOString();
     const errorMessage = error ? ` // ${error}` : '';
