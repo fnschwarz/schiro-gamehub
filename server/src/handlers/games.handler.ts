@@ -1,11 +1,16 @@
 import { Request, Response } from 'express';
-import { log, logError, getGames, getGameName, isSteamApp, hasValidGameIdFormat } from '../utils/utils';
+import { log, logError, getGamesFromDatabase, getGameName, isSteamApp, hasValidGameIdFormat } from '../utils/utils';
 import { Game } from '../models/game.model';
 
-export const getAllGameIds = async (req: Request, res: Response) => {
-    const games = await getGames();
-    const gameIds = games.map((game) => game.id);
-    res.json({ apps: gameIds }); // TODO: change to 'games' instead of 'apps'
+export const getGames = async (req: Request, res: Response) => {
+    const gameDocuments = await getGamesFromDatabase();
+    const games = gameDocuments.map((game) => ({
+        id: game.id,
+        name: game.name,
+        link: `https://store.steampowered.com/app/${game.id}`,
+        header: `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`,
+    }));
+    res.json(games);
 };
 
 export const getGame = async (req: Request, res: Response) => {

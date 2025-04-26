@@ -11,7 +11,7 @@ export const logError = (message: string, error?: Error) => {
     console.error(`[${date}] [error] ${message}${errorMessage}`);
 };
 
-export const getGames = () => {
+export const getGamesFromDatabase = () => {
     return Game.find({})
         .then(games => games.reverse())
         .catch((error) => {

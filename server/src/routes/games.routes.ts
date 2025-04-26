@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllGameIds,
+import { getGames,
         getGame, 
         addGameToDatabase,
         removeGameFromDatabase }
@@ -8,8 +8,8 @@ import { authenticate } from '../middlewares/auth';
 
 const router = Router();
 
-router.get('/api/apps', getAllGameIds);
-router.get('/api/apps/:id', getGame);
+router.get('/api/games', getGames);
+router.get('/api/games/:id', getGame);
 router.post('/api/apps/add', authenticate, addGameToDatabase);
 router.post('/api/apps/remove', authenticate, removeGameFromDatabase);
 
