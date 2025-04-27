@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { logError } from '../utils/utils';
 import { User } from '../models/user.model';
 
@@ -18,7 +18,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     }
 
     try {
-        req.body.user = jwt.verify(token, secret);   
+        req.body.user = verify(token, secret);   
     } catch (error) {
         res.status(403).json({ status: 403, message: 'Invalid or expired token.' }); return;
     }
