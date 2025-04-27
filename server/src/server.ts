@@ -16,8 +16,8 @@ server.use(cors(corsOptions));
 server.use(express.json());
 server.use(cookieParser());
 
-server.use('/', AuthRouter);
-server.use('/', GamesRouter);
+server.use('/auth', AuthRouter);
+server.use('/api/games', GamesRouter);
 
 // DATABASE
 

@@ -13,7 +13,7 @@ function RemoveGameButton({ id }: client.props.IGameId){
             id: id,
         };
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/remove`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games/remove`, {
             method: 'POST',
             credentials: 'include',
             headers: {

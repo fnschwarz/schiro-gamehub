@@ -10,7 +10,7 @@ function AddGameButton({ isFocused }: client.props.IButton){
             id : parseInt((document.getElementById('game-id-input') as HTMLInputElement)?.value || '0')
         }
     
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/add`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games/add`, {
             method: 'POST',
             credentials: 'include',
             headers: {

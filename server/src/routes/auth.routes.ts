@@ -8,9 +8,9 @@ import { authenticate } from '../middlewares/auth';
 
 const router = Router();
 
-router.get('/login', redirectToTwitchAuthorization);
-router.get('/auth/twitch/callback', handleTwitchAuthorizationCallback);
-router.get('/api/authenticate', authenticate, sendStatusOK);
+router.get('/', authenticate, sendStatusOK);
+router.get('/twitch', redirectToTwitchAuthorization);
+router.get('/twitch/callback', handleTwitchAuthorizationCallback);
 router.get('/logout', clearUserToken);
 
 export default router;
