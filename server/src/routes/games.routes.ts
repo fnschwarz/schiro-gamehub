@@ -4,13 +4,13 @@ import { getGames,
         addGameToDatabase,
         removeGameFromDatabase }
 from '../handlers/games.handler';
-import { authenticate } from '../middlewares/auth';
+import { authenticateToken } from '../middlewares/auth';
 
 const router = Router();
 
 router.get('/', getGames);
 router.get('/:id', getGame);
-router.post('/add', authenticate, addGameToDatabase);
-router.post('/remove', authenticate, removeGameFromDatabase);
+router.post('/add', authenticateToken, addGameToDatabase);
+router.post('/remove', authenticateToken, removeGameFromDatabase);
 
 export default router;

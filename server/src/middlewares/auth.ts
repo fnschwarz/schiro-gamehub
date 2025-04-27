@@ -1,25 +1,37 @@
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { logError } from '../utils/utils';
 import { User } from '../models/user.model';
 
-export const authenticate = async (req: any, res: any, next: any) => {
-    try {
-        const token = req.cookies.token;
+export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
+    const secret = process.env.JWT_SECRET;
 
-        if (!token) {
-            return res.status(401).send('Unauthorized');
-        }
-
-        req.user = jwt.verify(token, process.env.JWT_SECRET || ''); // TODO: throw error when env var undefined
-
-        const isAuthorizedUser = await User.findOne({ email: req.user.email });
-        if (!isAuthorizedUser) {
-            console.log(`[TOKEN AUTH FAILED] Unauthorized email: ${req.user.email}`);
-            return res.status(401).send('Unauthorized');
-        }
-
-        next();
-    } catch (error) {
-        console.error('[ERROR] Failed to verify user token:', error);
-        return res.status(403).send('Forbidden');
+    if(!secret){
+        logError('Token authentication failed: JWT_SECRET environment variable is not defined');
+        res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
     }
+
+    const token: string = req.cookies.token;
+
+    if (!token) {
+        res.status(401).json({ status: 401, message: 'No authentication token found.'}); return;
+    }
+
+    try {
+        req.body.user = jwt.verify(token, secret);   
+    } catch (error) {
+        res.status(403).json({ status: 403, message: 'Invalid or expired token.' }); return;
+    }
+    
+    const isAuthorizedUser = await User.findOne({ email: req.body.user.email }).catch((error) => {
+        logError('Token authentication failed: database cannot be accessed', error); 
+        return null;
+    });
+
+    if (!isAuthorizedUser) {
+        logError('Token authentication failed: unauthorized email');
+        res.status(401).json({ status: 401, message: 'Unauthorized email.' }); return;
+    }
+
+    next();
 };
