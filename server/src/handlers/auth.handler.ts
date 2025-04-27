@@ -55,7 +55,7 @@ export const handleTwitchAuthorizationCallback = async (req: any, res: any) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            sameSite: 'Strict',
             maxAge: 2 * 60 * 60 * 1000 // 2 hours
         });
 
