@@ -1,47 +1,33 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import style from './GameList.module.css';
-import GameCard from '../GameCard/GameCard.tsx';
 import GameListReloadContext from '../../context/GameListReloadContext.tsx';
+import useGames from '../../hooks/useGames.ts';
+import GameCard from '../GameCard/GameCard.tsx';
 
 function GameList() {
     const { reloadTrigger } = useContext(GameListReloadContext);
-    const [appCards, setAppCards] = useState(['Loading...']);
+    const { data: games = [], isLoading, refetch } = useGames();
 
     useEffect(() => {
-        (async () => {
-            try {
-
-                // NOTE: get array of all apps in database through backend api
-                const resAppsList = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps`);
-                const dataAppsList = await resAppsList.json();
-                const appsList = dataAppsList.apps;
-                
-                // NOTE: return a card component for all ids in appsList and save it in const cards
-                const cards = await Promise.all(appsList.map(async (id: number) => {
-                    const resApp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/apps/${id}`);
-                    const dataApp = await resApp.json();
-
-                    return (
-                        <GameCard
-                            key={dataApp.id}
-                            id={dataApp.id}
-                            link={dataApp.link}
-                            img={dataApp.header}
-                            alt={`Header of app ${dataApp.name}`}
-                            title={dataApp.name}
-                        />
-                    );
-                }));
-                setAppCards(cards); // update appCards array
-            } catch (error) {
-                console.log(`ERROR: ${error}`);
-            }
-        })();
+        refetch();
     }, [reloadTrigger]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className={style['game-list']}>
-            {appCards}
+            {games.map((game) => (
+                <GameCard
+                    key={game.id}
+                    id={game.id}
+                    title={game.name}
+                    img={game.header}
+                    link={game.link}
+                    alt={`${game.name}`}
+                />
+            ))}
         </div>
     );
 }

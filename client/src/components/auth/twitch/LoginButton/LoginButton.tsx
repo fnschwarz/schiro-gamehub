@@ -6,14 +6,14 @@ function LoginButton() {
 
     if(isAuthenticated){
         return (
-            <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/logout`}>
+            <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/logout`}>
                 Logout
             </button>
         )
     }
 
     return (
-        <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/login`}>
+        <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/twitch`}>
             Login with Twitch
         </button>
     );

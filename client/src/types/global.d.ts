@@ -33,4 +33,13 @@ namespace client {
             isFocused: boolean;
         }
     }
+
+    namespace objects {
+        interface IGame {
+            id: number;
+            name: string;
+            link: string;
+            header: string;
+        }
+    }
 }
