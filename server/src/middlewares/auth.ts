@@ -18,17 +18,21 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     }
 
     try {
-        req.body.user = verify(token, secret);   
+        req.body.user = verify(token, secret);
     } catch (error) {
         res.status(403).json({ status: 403, message: 'Invalid or expired token.' }); return;
     }
     
-    const isAuthorizedUser = await User.findOne({ email: req.body.user.email }).catch((error) => {
-        logError('Token authentication failed: database cannot be accessed', error); 
-        return null;
+    const isAuthorizedUser = await User.findOne({ email: req.body.user.email }).catch((error) => { 
+        logError('Token authentication failed: database cannot be accessed', error);
+        return undefined;
     });
 
-    if (!isAuthorizedUser) {
+    if(isAuthorizedUser === undefined){
+        res.status(500).json({ status: 500, message: 'Internal Server Error: database could not be accessed.' }); return;
+    }
+
+    if (isAuthorizedUser === null) {
         logError('Token authentication failed: unauthorized email');
         res.status(401).json({ status: 401, message: 'Unauthorized email.' }); return;
     }
