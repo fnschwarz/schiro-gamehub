@@ -25,7 +25,7 @@ export const getGame = async (req: Request, res: Response) => {
     // Get game details through database
     const game = await Game.findOne({ id: gameId }).catch(() => { return null });
     if (!game) {
-        logError(`Failed fetching game details: game does not exist in database`);
+        logError(`Failed fetching game details: game (ID ${gameId}) does not exist in database`);
         res.status(404).json({ status: 404, message: 'Game does not exist in database.' }); return;
     }
 
