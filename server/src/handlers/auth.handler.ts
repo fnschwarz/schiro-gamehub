@@ -5,7 +5,7 @@ import { User } from '../models/user.model';
 
 export const redirectToTwitchAuth = (req: Request, res: Response) => {
     const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_DOMAIN;
+    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
 
     if (!TWITCH_CLIENT_ID || !BACKEND_SERVER_URL) {
         logError('Authorization redirect failed: environment variable(s) not defined');
@@ -26,8 +26,8 @@ export const redirectToTwitchAuth = (req: Request, res: Response) => {
 export const handleTwitchAuth = async (req: Request, res: Response) => {
     const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
     const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
-    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_DOMAIN;
-    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_DOMAIN;
+    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
+    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
     const JWT_SECRET = process.env.JWT_SECRET;
     const NODE_ENV = process.env.NODE_ENV;
 
@@ -147,7 +147,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 };
 
 export const clearUserToken = (req: Request, res: Response) => {
-    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_DOMAIN;
+    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
     const NODE_ENV = process.env.NODE_ENV;
 
     if(!FRONTEND_SERVER_URL || !NODE_ENV){
