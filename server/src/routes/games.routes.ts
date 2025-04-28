@@ -10,7 +10,7 @@ const router = Router();
 
 router.get('/', getGames);
 router.get('/:id', getGame);
-router.post('/add', authenticateToken, addGameToDatabase);
-router.post('/remove', authenticateToken, removeGameFromDatabase);
+router.post('/', authenticateToken, addGameToDatabase);
+router.delete('/', authenticateToken, removeGameFromDatabase);
 
 export default router;
