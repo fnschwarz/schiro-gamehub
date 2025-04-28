@@ -1,12 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import { logError } from '../utils/utils';
 import { User } from '../models/user.model';
 
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-    const secret = process.env.JWT_SECRET;
+interface AuthRequest extends Request {
+    user?: string | JwtPayload;
+}
 
-    if(!secret){
+export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    const JWT_SECRET = process.env.JWT_SECRET;
+
+    if(!JWT_SECRET){
         logError('Token authentication failed: JWT_SECRET environment variable is not defined');
         res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
     }
@@ -18,7 +22,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     }
 
     try {
-        req.user = verify(token, secret);
+        req.user = verify(token, JWT_SECRET);
     } catch (error) {
         res.status(403).json({ status: 403, message: 'Invalid or expired token.' }); return;
     }
