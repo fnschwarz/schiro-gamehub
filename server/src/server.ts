@@ -1,43 +1,53 @@
 require('dotenv').config();
-const express = require('express');
-const server = express();
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import mongoose from 'mongoose';
 import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';
+import { log, logError } from './utils/utils';
+
+const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
+const BACKEND_SERVER_PORT = process.env.BACKEND_SERVER_PORT;
+const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_DATABASE_NAME = process.env.MONGODB_DATABASE_NAME;
+
+if (!BACKEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME) {
+    logError('Server start failed: environment variable(s) not defined');
+    process.exit(1);
+}
+
+const port = parseInt(BACKEND_SERVER_PORT, 10);
+if (isNaN(port) || port < 1 || port > 65535) {
+    logError('Server start failed: BACKEND_SERVER_PORT must be valid port number (1-65535)`');
+    process.exit(1);
+}
+
+const server = express();
 
 const corsOptions = {
-    origin: [`${process.env.FRONTEND_SERVER_DOMAIN}`],
+    origin: [`${BACKEND_SERVER_URL}`]
 };
 
-server.use(cors(corsOptions));
 server.use(express.json());
+server.use(cors(corsOptions));
 server.use(cookieParser());
 
 server.use('/auth', AuthRouter);
 server.use('/api/games', GamesRouter);
 
-// DATABASE
-
-const connectToDatabase = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DATABASE_NAME });
-        console.log('[SERVER START] Successfully connected to the database');
-    } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to connect to the database:', error);
-    }
-};
-
 (async () => {
+    // connect to database
     try {
-        await connectToDatabase();
+        await mongoose.connect(MONGODB_URI, { dbName: MONGODB_DATABASE_NAME });
     } catch (error) {
-        console.error('[CRITICAL ERROR] Failed to start server:', error);
+        logError('Server start failed: could not connect to database', undefined, error as Error);
+        process.exit(1);
     }
+
+    log('database_connect', 'Successfully connected to database');
 })();
 
-server.listen(process.env.BACKEND_SERVER_PORT, () => {
-    console.log(`[SERVER START] Server running on port ${process.env.BACKEND_SERVER_PORT}...`);
+server.listen(BACKEND_SERVER_PORT, () => {
+    log('server_start', `Server running on port ${BACKEND_SERVER_PORT}...`);
 });
