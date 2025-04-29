@@ -20,7 +20,7 @@ function AddGameButton({ isFocused }: client.props.IButton){
             body: JSON.stringify(game)
         });
 
-        if (response.status === 201) {
+        if (response.ok) {
             setReloadTrigger(!reloadTrigger);
         }
     }

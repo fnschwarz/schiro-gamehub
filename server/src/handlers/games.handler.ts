@@ -67,7 +67,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     });
 
     log('database_add', `${gameName} (ID ${gameId}) successfully added to database`);
-    res.status(201).send('Created'); // TODO: better respond message
+    res.status(200).json({ status: 200, message: 'Game added.' });
 };
 
 export const removeGameFromDatabase = async (req: Request, res: Response) => {
@@ -88,5 +88,5 @@ export const removeGameFromDatabase = async (req: Request, res: Response) => {
     }
 
     log('database_remove', `${gameToDelete.name || 'Game'} (ID ${gameId}) successfully removed from database`);
-    res.status(200).send('OK'); // TODO: better respond message
+    res.status(200).json({ status: 200, message: 'Game removed.' });
 };
