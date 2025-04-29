@@ -32,8 +32,8 @@ export const getGame = async (req: Request, res: Response) => {
     res.status(200).json({
         id: game.id,
         name: game.name,
-        link: `${process.env.STEAM_BASE_URL}/app/${game.id}`,
-        header: `${process.env.STEAM_HEADER_URL}/steam/apps/${game.id}/header.jpg`
+        link: `https://store.steampowered.com/app/${game.id}`,
+        header: `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`
     });
 }
 
