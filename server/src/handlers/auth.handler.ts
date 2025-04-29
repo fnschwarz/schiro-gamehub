@@ -8,7 +8,7 @@ export const redirectToTwitchAuth = (req: Request, res: Response) => {
     const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
 
     if (!TWITCH_CLIENT_ID || !BACKEND_SERVER_URL) {
-        logError('Authorization redirect failed: environment variable(s) not defined');
+        logError('Authorization redirect failed: environment variable(s) not defined', req);
         res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
     }
 
@@ -33,7 +33,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if env variables are defined
     if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET || !FRONTEND_SERVER_URL || !BACKEND_SERVER_URL || !JWT_SECRET || !NODE_ENV) {
-        logError('Token creation failed: environment variable(s) not defined');
+        logError('Token creation failed: environment variable(s) not defined', req);
         res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
     }
 
@@ -41,7 +41,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if Twitch API sent an auth code for token post request
     if (!code) {
-        logError('Token creation failed: missing authorization code');
+        logError('Token creation failed: missing authorization code', req);
         res.status(400).json({ status: 400, message: 'Missing authorization code.' }); return;
     }
 
@@ -57,7 +57,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
             redirect_uri: `${BACKEND_SERVER_URL}/auth/twitch/callback`
         }),
     }).catch( (error) => {
-        logError('Token creation failed: error during Twitch token fetch', error);
+        logError('Token creation failed: error during Twitch token fetch', req, error);
         return undefined;
     });
 
@@ -67,7 +67,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     }
 
     if (!tokenResponse.ok) {
-        logError(`Token creation failed: received error response status '${tokenResponse.status}: ${tokenResponse.statusText}' when trying to fetch token`);
+        logError(`Token creation failed: received error response status '${tokenResponse.status}: ${tokenResponse.statusText}' when trying to fetch token`, req);
         res.status(502).json({ status: 502, message: 'Failed to fetch Twitch token.' }); return;
     }
     
@@ -75,7 +75,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if there is a access token in response data and if it has proper type
     if (!responseData || typeof(responseData.access_token) !== 'string') {
-        logError('Token creation failed: invalid response structure or missing access token');
+        logError('Token creation failed: invalid response structure or missing access token', req);
         res.status(500).json({ status: 500, message: 'Internal Server Error: invalid token response.' }); return;
     }
 
@@ -88,7 +88,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
             'Client-Id': TWITCH_CLIENT_ID
         }
     }).catch( (error) => {
-        logError('Token creation failed: error fetching user details from Twitch using access token', error);
+        logError('Token creation failed: error fetching user details from Twitch using access token', req, error);
         return undefined;
     });
 
@@ -98,7 +98,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     }
 
     if (!userResponse.ok) {
-        logError(`Token creation failed: received error response status '${userResponse.status}: ${userResponse.statusText}' when trying to fetch user details`);
+        logError(`Token creation failed: received error response status '${userResponse.status}: ${userResponse.statusText}' when trying to fetch user details`, req);
         res.status(502).json({ status: 502, message: 'Failed to fetch Twitch user.' }); return;
     }
 
@@ -106,7 +106,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if userData has expected structure
     if (!userData || !Array.isArray(userData.data) || userData.data.length === 0) {
-        logError('Token creation failed: invalid response structure or missing user data');
+        logError('Token creation failed: invalid response structure or missing user data', req);
         res.status(500).json({ status: 500, message: 'Internal Server Error: invalid user response.' }); return;
     }
 
@@ -114,7 +114,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if user is whitelisted
     const isAuthorizedUser = await User.findOne({ email: user.email }).catch((error) => { 
-        logError('Token creation failed: database cannot be accessed', error);
+        logError('Token creation failed: database cannot be accessed', req, error);
         return undefined;
     });
 
@@ -123,7 +123,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     }
 
     if (isAuthorizedUser === null) {
-        logError('Token creation failed: unauthorized email');
+        logError('Token creation failed: unauthorized email', req);
         res.status(401).json({ status: 401, message: 'Unauthorized email.' }); return;
     }
 
@@ -142,7 +142,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
         maxAge: 2 * 60 * 60 * 1000 // 2 hours
     });
 
-    log('login', 'User logged in successfully');
+    log('login', 'User logged in successfully', req);
     res.redirect(FRONTEND_SERVER_URL);
 };
 
@@ -151,7 +151,7 @@ export const clearUserToken = (req: Request, res: Response) => {
     const NODE_ENV = process.env.NODE_ENV;
 
     if(!FRONTEND_SERVER_URL || !NODE_ENV){
-        logError('Clearing token failed: environment variable(s) not defined');
+        logError('Clearing token failed: environment variable(s) not defined', req);
         res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
     }
 
@@ -165,7 +165,7 @@ export const clearUserToken = (req: Request, res: Response) => {
         sameSite: 'lax'
     });
 
-    log('logout', 'User logged out successfully');
+    log('logout', 'User logged out successfully', req);
     res.redirect(FRONTEND_SERVER_URL);
 };
 

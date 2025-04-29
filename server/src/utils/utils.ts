@@ -1,14 +1,38 @@
+import { Request } from 'express';
+import { createHmac } from 'crypto';
 import { Game } from '../models/game.model';
 
-export const log = (type: string, message: string) => {
-    const date = new Date().toISOString();
-    console.log(`[${date}] [${type}] ${message}`);
+const generateClientId = (ip: string, userAgent: string, secret: string): string => {
+    const hash = createHmac('sha256', secret);
+    hash.update(`${ip}${userAgent}`);
+    return hash.digest('hex').substring(0,10);
 }
 
-export const logError = (message: string, error?: Error) => {
+export const log = (type: string, message: string, req?: Request) => {
+    const HASH_SECRET = process.env.HASH_SECRET;
+
+    if(!HASH_SECRET){
+        console.log('Logging failed: HASH_SECRET environment variable is not defined.'); return;
+    }
+
     const date = new Date().toISOString();
+    const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
+    
+    console.log(`[${date}] [${type}] ${clientId}${message}`);
+}
+
+export const logError = (message: string, req? : Request, error?: Error) => {
+    const HASH_SECRET = process.env.HASH_SECRET;
+
+    if(!HASH_SECRET){
+        console.log('Logging failed: HASH_SECRET environment variable is not defined.'); return;
+    }
+
+    const date = new Date().toISOString();
+    const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
     const errorMessage = error ? ` // ${error}` : '';
-    console.error(`[${date}] [error] ${message}${errorMessage}`);
+
+    console.error(`[${date}] [error] ${clientId}${message}${errorMessage}`);
 };
 
 export const getGamesFromDatabase = () => {
