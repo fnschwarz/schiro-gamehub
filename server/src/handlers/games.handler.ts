@@ -14,7 +14,7 @@ export const getGames = async (req: Request, res: Response) => {
 };
 
 export const getGame = async (req: Request, res: Response) => {
-    const gameId = parseInt(req?.params?.id, 10); // TODO: validate with express-validator to prevent injections
+    const gameId = parseInt(req?.params?.id, 10);
 
     // Check if game id has proper format
     if (!hasValidGameIdFormat(gameId)) {
@@ -38,7 +38,7 @@ export const getGame = async (req: Request, res: Response) => {
 }
 
 export const addGameToDatabase = async (req: Request, res: Response) => {
-    const gameId = parseInt(req.body.id, 10); // TODO: validate with express-validator to prevent injections
+    const gameId = parseInt(req.body.id, 10);
 
     // Check if game id has proper format
     if (!hasValidGameIdFormat(gameId)) {
@@ -71,7 +71,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
 };
 
 export const removeGameFromDatabase = async (req: Request, res: Response) => {
-    const gameId = parseInt(req.body.id, 10); // TODO: validate with express-validator to prevent injections
+    const gameId = parseInt(req.body.id, 10);
 
     // Check if game id has proper format
     if (!hasValidGameIdFormat(gameId)) {

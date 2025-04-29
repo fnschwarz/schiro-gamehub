@@ -41,9 +41,6 @@ export const isSteamApp = (gameId: number): Promise<boolean> => {
 };
 
 export const hasValidGameIdFormat = (gameId: number): boolean => {
-    if (!isNaN(gameId) || gameId > 0 || gameId < Math.pow(2, 32)) {
-        return true;
-    }
-
-    return false;
+    const MAX_UINT32 = 2 ** 32;
+    return Number.isSafeInteger(gameId) && gameId >= 10 && gameId < MAX_UINT32;
 };
