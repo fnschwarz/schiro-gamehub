@@ -1,5 +1,5 @@
 import style from './LoginButton.module.css';
-import { API_BASE_URL } from '../../../../config/api.config.ts';
+import { API_BASE_URL } from '../../../../configs/api.config.ts';
 import Icon from '@mdi/react';
 import { mdiTwitch } from '@mdi/js';
 import useAuth from '../../../../hooks/useAuth.ts';

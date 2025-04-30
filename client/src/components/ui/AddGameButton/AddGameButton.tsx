@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import style from './AddGameButton.module.css';
-import { API_BASE_URL } from '../../../config/api.config.ts';
+import { API_BASE_URL } from '../../../configs/api.config.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
 function AddGameButton({ isFocused }: client.props.IButton){
