@@ -1,3 +1,9 @@
+a {
+    color: inherit;
+    text-decoration: inherit;
+    display: flex;
+}
+
 .login-button {
     display: flex;
     align-items: center;
