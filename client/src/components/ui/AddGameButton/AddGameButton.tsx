@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import style from './AddGameButton.module.css';
+import { API_BASE_URL } from '../../../config/api.config.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
 function AddGameButton({ isFocused }: client.props.IButton){
@@ -10,7 +11,7 @@ function AddGameButton({ isFocused }: client.props.IButton){
             id : parseInt((document.getElementById('game-id-input') as HTMLInputElement)?.value || '0')
         }
     
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games`, {
+        const response = await fetch(`${API_BASE_URL}/api/games`, {
             method: 'POST',
             credentials: 'include',
             headers: {

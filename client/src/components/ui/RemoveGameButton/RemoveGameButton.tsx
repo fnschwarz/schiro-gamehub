@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import style from './RemoveGameButton.module.css';
-import PropTypes from 'prop-types';
+import { API_BASE_URL } from '../../../config/api.config.ts';
 import useAuth from '../../../hooks/useAuth.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
@@ -13,7 +13,7 @@ function RemoveGameButton({ id }: client.props.IGameId){
             id: id,
         };
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/games`, {
+        const response = await fetch(`${API_BASE_URL}/api/games`, {
             method: 'DELETE',
             credentials: 'include',
             headers: {
@@ -35,10 +35,6 @@ function RemoveGameButton({ id }: client.props.IGameId){
             </button>
         );
     }
-}
-
-RemoveGameButton.propTypes = {
-    id: PropTypes.number.isRequired,
 }
 
 export default RemoveGameButton;
