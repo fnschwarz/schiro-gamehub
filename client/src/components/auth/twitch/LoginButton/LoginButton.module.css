@@ -1,14 +1,15 @@
 .login-button {
-    font-weight: bold;
-    color: #8C68CE;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #c084fc;
     background-color: transparent;
     border: 0px;
     border-radius: 4px;
     cursor:pointer;
-    transition: background-color .2s;
 }
 
 .login-button:hover {
-    background-color: #33435a;
+    background-color: #6034b2;
     transition: background-color cubic-bezier(0.895, 0.03, 0.685, 0.22)s;
 }
