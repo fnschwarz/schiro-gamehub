@@ -1,12 +1,13 @@
 .game-card {
+    margin-bottom: 10px;
+    flex: 1 1 calc(33.33% - 20px);
+    min-width: 355px;
+    max-width: calc(33.33% - 20px);
     background-color: #111827;
     border: 1px solid #1F2937;
     border-radius: 10px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
-    padding-bottom: 2px;
     text-align: center;
-    width: calc(33.33% - 20px);
-    margin-bottom: 10px;
     overflow: hidden;
     position: relative;
 }

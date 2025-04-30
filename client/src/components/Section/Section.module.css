@@ -1,9 +1,8 @@
 .section-container {
-    max-width: 60%;
-    margin:auto;
     margin-top: 15px;
 }
 
 .game-list-wrapper {
-    margin-top: 15px;
+    max-width: 1152px;
+    margin: 0 auto;
 }

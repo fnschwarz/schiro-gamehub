@@ -2,10 +2,17 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin: auto;
+    gap: 5px;
 }
 
 .game-list::after {
     content: "";
     flex-basis: calc(33.33% - 20px);
+}
+
+@media (max-width: 1080px) {
+    .game-list {
+        flex-direction: column;
+        align-items: center;
+    }
 }
