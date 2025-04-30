@@ -14,7 +14,7 @@ export const redirectToTwitchAuth = (req: Request, res: Response) => {
 
     const params = new URLSearchParams({
         client_id: TWITCH_CLIENT_ID,
-        redirect_uri: `${BACKEND_SERVER_URL}/auth/twitch/callback`,
+        redirect_uri: `${BACKEND_SERVER_URL}/api/auth/twitch/callback`,
         response_type: 'code',
         scope: 'user:read:email'
     });
@@ -54,7 +54,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
             client_secret: TWITCH_CLIENT_SECRET,
             code: code.toString(),
             grant_type: 'authorization_code',
-            redirect_uri: `${BACKEND_SERVER_URL}/auth/twitch/callback`
+            redirect_uri: `${BACKEND_SERVER_URL}/api/auth/twitch/callback`
         }),
     }).catch( (error) => {
         logError('Token creation failed: error during Twitch token fetch', req, error);

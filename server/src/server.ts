@@ -33,7 +33,7 @@ server.use(express.json());
 server.use(cors(corsOptions));
 server.use(cookieParser());
 
-server.use('/auth', AuthRouter);
+server.use('/api/auth', AuthRouter);
 server.use('/api/games', GamesRouter);
 
 (async () => {
