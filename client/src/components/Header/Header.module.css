@@ -1,16 +1,22 @@
 .header {
     background-color: #1F2937;
-    text-align: center;
-    padding: 5px;
+    padding: 20px;
 }
 
 .header-content-wrapper {
     display: flex;
     justify-content: space-between;
-    margin-left: 20%;
-    margin-right: 20%;
+    padding-left: 18%;
+    padding-right: 18%;
 }
   
 .header-content-wrapper h2 {
     margin: 0;
+}
+
+@media (max-width: 1080px) {
+    .header-content-wrapper {
+        padding-left: 2%;
+        padding-right: 2%
+    }
 }
