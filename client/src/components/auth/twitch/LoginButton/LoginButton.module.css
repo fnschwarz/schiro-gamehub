@@ -1,21 +1,29 @@
-a {
-    color: inherit;
-    text-decoration: inherit;
+.login-button, .logout-button {
     display: flex;
+    align-items: center;
+    border: 0px;
+    border-radius: 4px;
+    gap: 4px;
+    background-color: transparent;
+    font-family: "League Spartan", sans-serif;
+    cursor: pointer;
 }
 
 .login-button {
-    display: flex;
-    align-items: center;
-    gap: 4px;
     color: #c084fc;
-    background-color: transparent;
-    border: 0px;
-    border-radius: 4px;
-    cursor:pointer;
 }
 
 .login-button:hover {
     background-color: #6034b2;
+    transition: background-color cubic-bezier(0.895, 0.03, 0.685, 0.22)s;
+}
+
+.logout-button {
+    color: white;
+}
+
+.logout-button:hover {
+    color: #111827;
+    background-color: white;
     transition: background-color cubic-bezier(0.895, 0.03, 0.685, 0.22)s;
 }

@@ -4,11 +4,9 @@ import GameList from '../GameList/GameList.tsx';
 
 function Section() {
     return (
-        <div className={style['section-container']}>
-            <GameIdInput />
-            <div className={style['game-list-wrapper']}>
-                <GameList />
-            </div>
+        <div className={style.section}>
+            <span className={style['game-id-button']}><GameIdInput /></span>
+            <GameList />
         </div>
     );
 }

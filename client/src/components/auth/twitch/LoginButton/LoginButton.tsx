@@ -1,7 +1,7 @@
 import style from './LoginButton.module.css';
 import { API_BASE_URL } from '../../../../configs/api.config.ts';
 import Icon from '@mdi/react';
-import { mdiTwitch } from '@mdi/js';
+import { mdiTwitch, mdiLogout } from '@mdi/js';
 import useAuth from '../../../../hooks/useAuth.ts';
 
 function LoginButton() {
@@ -10,8 +10,9 @@ function LoginButton() {
     if(isAuthenticated){
         return (
             <a href={`${API_BASE_URL}/api/auth/logout`}>
-                <button className={style['login-button']}>
-                    Logout
+                <button className={style['logout-button']}>
+                    <Icon path={mdiLogout} size={0.9} />
+                    <span>Logout</span>
                 </button>
             </a>
         )
@@ -21,7 +22,7 @@ function LoginButton() {
         <a href={`${API_BASE_URL}/api/auth/twitch`}>
             <button className={style['login-button']}>
                 <Icon path={mdiTwitch} size={0.9} />
-                Login with Twitch
+                <span>Login with Twitch</span>
             </button>
         </a>
     );

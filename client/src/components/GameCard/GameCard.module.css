@@ -1,6 +1,6 @@
 .game-card {
     margin-bottom: 10px;
-    flex: 1 1 calc(33.33% - 20px);
+    flex: 0 0 calc(33.33% - 20px);
     min-width: 355px;
     max-width: calc(33.33% - 20px);
     background-color: #111827;
@@ -13,7 +13,7 @@
 }
 
 .game-card-image {
-    max-width: 100%;
+    width: 100%;
     height: auto;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .game-card-title {
-    font-family: "Roboto", sans-serif;
-    font-weight: 900;
+    font-family: "League Spartan", sans-serif;
+    font-weight: 400;
     font-size: 15px;
 }

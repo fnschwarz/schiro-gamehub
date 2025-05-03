@@ -1,8 +1,9 @@
-.section-container {
-    margin-top: 15px;
+.section {
+    margin: 0 auto;
+    padding-top: 15px;
+    max-width: 1152px;
 }
 
-.game-list-wrapper {
-    max-width: 1152px;
-    margin: 0 auto;
+.game-id-button {
+    padding-bottom: 5px;
 }

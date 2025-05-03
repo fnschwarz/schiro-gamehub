@@ -1,23 +1,30 @@
 .add-game-button {
-    min-height: 50px;
     padding: .5em 1em;
+    min-height: 50px;
     border: none;
     border-radius: 0 6px 6px 0;
+    color: #ffffff;
     background-color: #1F2937;
-    color: #fff;
+    font-family: "League Spartan", sans-serif;
     font-size: 15px;
+    font-weight: 400;
     cursor: pointer;
     transition: background-color .2s ease-in-out;
 }
 
 .add-game-button:active {
-    background-color: #ffffff;
+    background-color: #58f44c; /* 25% brighter */
 }
 
 .add-game-button.focused {
-    background-color: #6441a5;
+    color: #031b02;
+    background-color: #20f110; /* base color */
 }
 
 .add-game-button.focused:hover {
-    background-color: #8455db;
+    background-color: #118808; /* 25% darker */
+}
+
+.add-game-button-text {
+    padding-top: 2px;
 }
