@@ -1,31 +1,31 @@
 .header {
     background-color: #111827;
-    border-bottom: 1px solid #1F2937;
-    padding: 20px;
+    border-bottom: 0.063rem solid #1F2937;
+    padding: 1.25rem;
 }
 
 .header-content-wrapper {
     display: flex;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 3.125rem;
+    padding-right: 3.125rem;
     justify-content: space-between;
 }
 
 .header-logo {
     display: flex;
-    gap: 5px;
+    gap: 0.313rem;
 }
 
 .header-logo img {
     display: block;
-    height: 25px;
+    height: 1.5rem;
     width: auto;
 }
 
 @media (max-width: 419px) {
     .header-content-wrapper {
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 0.625rem;
+        padding-right: 0.625rem;
     }
 }
 
