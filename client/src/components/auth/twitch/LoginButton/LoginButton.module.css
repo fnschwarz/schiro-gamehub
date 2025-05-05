@@ -15,7 +15,6 @@
 
 .login-button:hover {
     background-color: #6034b2;
-    transition: background-color cubic-bezier(0.895, 0.03, 0.685, 0.22)s;
 }
 
 .logout-button {
@@ -25,5 +24,4 @@
 .logout-button:hover {
     color: #111827;
     background-color: white;
-    transition: background-color cubic-bezier(0.895, 0.03, 0.685, 0.22)s;
 }
