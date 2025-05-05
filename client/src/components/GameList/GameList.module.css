@@ -5,7 +5,7 @@
     gap: 12px;
 }
 
-@media (max-width: 1217px) {
+@media (max-width: 1000px) {
     .game-list {
         grid-template-columns: 1fr 1fr;
     }
