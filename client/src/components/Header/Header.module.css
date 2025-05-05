@@ -6,9 +6,12 @@
 
 .header-content-wrapper {
     display: flex;
-    padding-left: 3.125rem;
-    padding-right: 3.125rem;
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 72rem;
     justify-content: space-between;
+    align-items: center;
 }
 
 .header-logo {
