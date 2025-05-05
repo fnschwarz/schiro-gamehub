@@ -22,7 +22,6 @@ namespace client {
             title: string;
             img: string;
             link: string;
-            alt: string;
         }
 
         interface IGameId {

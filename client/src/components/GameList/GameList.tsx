@@ -25,7 +25,6 @@ function GameList() {
                     title={game.name}
                     img={game.header}
                     link={game.link}
-                    alt={`${game.name}`}
                 />
             ))}
         </div>
