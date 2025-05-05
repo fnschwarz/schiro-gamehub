@@ -23,9 +23,3 @@
     border-color: #20f110;
     outline: none;
 }
-
-@media (max-width: 1080px) {
-    .game-id-input-container{
-        justify-content: center;
-    }
-}

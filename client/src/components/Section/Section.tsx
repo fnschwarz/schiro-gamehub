@@ -5,7 +5,7 @@ import GameList from '../GameList/GameList.tsx';
 function Section() {
     return (
         <div className={style.section}>
-            <span className={style['game-id-button']}><GameIdInput /></span>
+            <GameIdInput />
             <GameList />
         </div>
     );
