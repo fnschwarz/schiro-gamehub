@@ -19,7 +19,6 @@
 
 .game-card__image-container:hover .game-card__image {
     transform: scale(1.1);
-    transition: transform .5s;
 }
 
 .game-card__image {
@@ -29,6 +28,7 @@
     height: 100%;
     object-fit: cover;
     position: absolute;
+    transition: transform .5s;
 }
 
 .game-card__remove-game-button {
