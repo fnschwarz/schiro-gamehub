@@ -1,6 +1,7 @@
 .game-id-input {
     display: flex;
     align-items: center;
+    padding-bottom: 1rem;
 }
   
 .game-id-input__input-field {
