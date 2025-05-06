@@ -1,7 +1,7 @@
 .header {
     background-color: #111827;
     border-bottom: 0.063rem solid #1F2937;
-    padding: 1.25rem;
+    padding: 1.25rem 0;
 }
 
 .header-content-wrapper {
