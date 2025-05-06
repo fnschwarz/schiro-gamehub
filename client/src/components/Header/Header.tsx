@@ -1,7 +1,7 @@
 import style from './Header.module.css';
 import LoginButton from '../auth/twitch/LoginButton/LoginButton.tsx';
-import logo1 from '../../assets/logo_part1.png';
-import logo2 from '../../assets/logo_part2.png';
+import logo1 from '../../assets/images/logo1.png';
+import logo2 from '../../assets/images/logo2.png';
 
 function Header(){
     return(

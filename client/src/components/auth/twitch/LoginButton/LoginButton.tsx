@@ -12,7 +12,7 @@ function LoginButton() {
             <a href={`${API_BASE_URL}/api/auth/logout`}>
                 <button className={style['logout-button']}>
                     <Icon path={mdiLogout} size={0.9} />
-                    Logout
+                    <div className={style['logout-button__text']}>Logout</div>
                 </button>
             </a>
         )
@@ -22,7 +22,7 @@ function LoginButton() {
         <a href={`${API_BASE_URL}/api/auth/twitch`}>
             <button className={style['login-button']}>
                 <Icon path={mdiTwitch} size={0.9} />
-                Login with Twitch
+                <div className={style['login-button__text']}>Login with Twitch</div>
             </button>
         </a>
     );

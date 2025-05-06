@@ -24,7 +24,3 @@
 .add-game-button.focused:hover {
     background-color: #118808; /* 25% darker */
 }
-
-.add-game-button__text {
-    padding-top: 0.125rem;
-}

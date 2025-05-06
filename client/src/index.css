@@ -1,11 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap');
+@font-face {
+    font-family: 'League Spartan';
+    src: url('./assets/fonts/LeagueSpartan.woff2') format('woff2');
+    ascent-override: 90%;
+}
 
-#body {
+* {
     margin: 0;
+    padding: 0;
+    font-family: 'League Spartan';
 }
 
 :root {
-    font-family: "League Spartan", sans-serif;
     color: white;
     background-color: #111827;
 }

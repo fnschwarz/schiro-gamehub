@@ -1,6 +1,6 @@
 import style from './GameCard.module.css';
 import RemoveGameButton from '../ui/RemoveGameButton/RemoveGameButton.tsx';
-import missing_header from '../../assets/missing_header.png'
+import missing_header from '../../assets/images/missing_header.png';
 
 function GameCard({ id, title, img, link }: client.props.IGame){
     return(

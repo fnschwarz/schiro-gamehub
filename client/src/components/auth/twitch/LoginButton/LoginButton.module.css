@@ -17,6 +17,10 @@
     background-color: #6034b2;
 }
 
+.login-button__text {
+    padding-bottom: 0.1rem;
+}
+
 .logout-button {
     color: white;
 }
@@ -24,4 +28,8 @@
 .logout-button:hover {
     color: #111827;
     background-color: white;
+}
+
+.logout-button__text {
+    padding-bottom: 0.025rem;
 }
