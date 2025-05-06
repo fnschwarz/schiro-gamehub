@@ -44,3 +44,9 @@
     font-weight: 400;
     font-size: 1rem;
 }
+
+@media (max-width: 730px) {
+    .game-card {
+        height: 12rem;
+    }
+}
