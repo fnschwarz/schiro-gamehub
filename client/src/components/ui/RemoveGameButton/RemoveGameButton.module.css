@@ -16,3 +16,79 @@
 .remove-game-button:hover {
     background-color: rgba(255, 0, 0, 0.7);
 }
+
+.dialog__backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.dialog {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.dialog__panel {
+    background-color: #111827;
+    border: 0.0625rem solid #1F2937;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dialog__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.dialog__description {
+    margin-bottom: 16px;
+}
+
+.dialog__buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.dialog__buttons button {
+    padding: 0.5rem 2rem;
+    border: unset;
+    border-radius: 1rem;
+    font-weight: 600;
+    font-size: 17px;
+    -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    transition: all 0.25s;
+}
+   
+.dialog__buttons button:hover {
+    cursor: pointer;
+}
+
+.dialog__button-cancel {
+    color: black;
+    background-color: white;
+}
+
+.dialog__button-cancel:hover {
+    background-color: #aaaaaa;;
+}
+
+.dialog__button-delete {
+    color: white;
+    background-color: #DC2323;
+}
+
+.dialog__button-delete:hover {
+    background-color: #E34F4F;
+}

@@ -1,10 +1,11 @@
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import style from './RemoveGameButton.module.css';
 import { API_BASE_URL } from '../../../configs/api.config.ts';
 import useAuth from '../../../hooks/useAuth.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
 function RemoveGameButton({ id }: client.props.IGameId){
+    const [isOpen, setIsOpen] = useState(false)
     const { data: isAuthenticated } = useAuth();
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
@@ -29,10 +30,31 @@ function RemoveGameButton({ id }: client.props.IGameId){
     }
 
     if (isAuthenticated) {
-        return(
-            <button className={style['remove-game-button']} onClick={handleClick}>
-                &times;
-            </button>
+        return (
+            <>
+                <button className={style['remove-game-button']} onClick={() => setIsOpen(true)}>
+                    &times;
+                </button>
+    
+                {isOpen && (
+                    <>
+                        <div className={style['dialog__backdrop']} onClick={() => setIsOpen(false)}>
+                            <div className={style['dialog']}>
+                                <div className={style['dialog__panel']}>
+                                    <h2 className={style['dialog__title']}>Are you sure?</h2>
+                                    <p className={style['dialog__description']}>
+                                        This will delete the game from the list.
+                                    </p>
+                                    <div className={style['dialog__buttons']}>
+                                        <button className={style['dialog__button-cancel']} onClick={() => setIsOpen(false)}>Cancel</button>
+                                        <button className={style['dialog__button-delete']} onClick={() => {setIsOpen(false); handleClick()}}>Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </>
         );
     }
 }
