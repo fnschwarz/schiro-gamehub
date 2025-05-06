@@ -10,6 +10,18 @@
     background-color: #111827;
 }
 
+header {
+    background-color: #111827;
+    border-bottom: 0.063rem solid #1F2937;
+    padding: 1.25rem 0;
+}
+
+section {
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    max-width: 80rem;
+}
+
 a {
     color: inherit;
     text-decoration: inherit;

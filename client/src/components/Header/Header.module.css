@@ -1,10 +1,4 @@
-.header {
-    background-color: #111827;
-    border-bottom: 0.063rem solid #1F2937;
-    padding: 1.25rem 0;
-}
-
-.header-content-wrapper {
+.header__nav-bar {
     display: flex;
     margin: 0 auto;
     padding-left: 2rem;
@@ -14,26 +8,26 @@
     align-items: center;
 }
 
-.header-logo {
+.header__nav-logo {
     display: flex;
     gap: 0.313rem;
 }
 
-.header-logo img {
+.header__nav-logo img {
     display: block;
     height: 1.5rem;
     width: auto;
 }
 
-@media (max-width: 340px) {
-    .header-content-wrapper {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+@media (max-width: 300px) {
+    .header__nav-bar {
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 }
 
 @media (max-width: 600px) {
-    .header-logo-part1 {
+    .header__nav-logo1 {
         display: none !important;
     }
 }

@@ -28,7 +28,7 @@ function AddGameButton({ isFocused }: client.props.IButton){
     
     return(
         <button className={`${style['add-game-button']} ${isFocused ? style.focused : ''}`} onClick={handleClick}>
-            <div className={`${style['add-game-button-text']}`}>Add Game</div>
+            <div className={`${style['add-game-button__text']}`}>Add Game</div>
         </button>
     );
 }

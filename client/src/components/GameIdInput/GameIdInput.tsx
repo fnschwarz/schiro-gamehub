@@ -20,8 +20,8 @@ function GameIdInput(){
 
     if(isAuthenticated){
         return(
-            <div className={style['game-id-input-container']}>
-                <input className={style['game-id-input']}
+            <div className={style['game-id-input']}>
+                <input className={style['game-id-input__input-field']}
                     id="game-id-input"
                     type="text" 
                     placeholder="Steam Game ID"

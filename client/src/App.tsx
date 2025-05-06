@@ -12,8 +12,8 @@ function App() {
     return(
         <QueryClientProvider client={queryClient}>
             <GameListReloadContext.Provider value = {{ reloadTrigger, setReloadTrigger }}>
-                <Header />
-                <Section />
+                <header><Header /></header>
+                <section><Section /></section>
             </GameListReloadContext.Provider>
         </QueryClientProvider>
     );

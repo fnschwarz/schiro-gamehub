@@ -11,18 +11,18 @@
     text-align: center;
 }
 
-.game-card-image-wrapper {
+.game-card__image-container {
     flex: 1;
     overflow: hidden;
     position: relative;
 }
 
-.game-card-image-wrapper:hover .game-card-image {
+.game-card__image-container:hover .game-card__image {
     transform: scale(1.1);
     transition: transform .5s;
 }
 
-.game-card-image {
+.game-card__image {
     top: 0;
     right: 0;
     min-width: 100%;
@@ -31,7 +31,13 @@
     position: absolute;
 }
 
-.game-card-title-wrapper {
+.game-card__remove-game-button {
+    position: absolute;
+    top: 0.625rem;
+    right: 0.625rem;
+}
+
+.game-card__title-container {
     display: flex;
     height: 2.5rem;
     justify-content: center;
@@ -39,7 +45,7 @@
     overflow: hidden;
 }
 
-.game-card-title {
+.game-card__title {
     font-family: "League Spartan", sans-serif;
     font-weight: 400;
     font-size: 1rem;

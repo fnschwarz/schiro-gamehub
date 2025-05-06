@@ -1,11 +1,8 @@
 .remove-game-button {
     display: flex;
-    position: absolute;
     justify-content: center;
     align-items: center;
     padding-bottom: 0.25rem;
-    top: 0.625rem;
-    right: 0.625rem;
     width: 1.563rem;
     height: 1.563rem;
     border: none;

@@ -5,14 +5,12 @@ import logo2 from '../../assets/logo_part2.png';
 
 function Header(){
     return(
-        <header className={style.header}>
-            <div className={style['header-content-wrapper']}>
-                <div className={style['header-logo']}>
-                    <img className={style['header-logo-part1']} src={logo1} /><img className={style['header-logo-part2']} src={logo2} />
-                </div>
-                <LoginButton />
+        <div className={style['header__nav-bar']}>
+            <div className={style['header__nav-logo']}>
+                <img className={style['header__nav-logo1']} src={logo1} /><img src={logo2} />
             </div>
-        </header>
+            <LoginButton />
+        </div>
     );
 }
 
