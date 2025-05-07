@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export const Game = mongoose.model('App', new mongoose.Schema({
+export const Game = mongoose.model('Game', new mongoose.Schema({
     id: Number,
     name: String
-}), 'apps');
+}), 'games');
