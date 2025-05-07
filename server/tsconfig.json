@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "commonjs",
-		"rootDir": "./src",
 		"outDir": "./dist",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
@@ -11,5 +10,6 @@
 		"strictNullChecks": true,
 		"strictFunctionTypes": true,
 		"skipLibCheck": true
-	}
+	},
+	"include": ["src", "tests"]
 }
