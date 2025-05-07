@@ -5,7 +5,7 @@ import { Game } from '../models/game.model';
 const generateClientId = (ip: string, userAgent: string, secret: string): string => {
     const hash = createHmac('sha256', secret);
     hash.update(`${ip}${userAgent}`);
-    return hash.digest('hex').substring(0,10);
+    return hash.digest('hex').substring(0, 10);
 }
 
 export const log = (type: string, message: string, req?: Request) => {
@@ -15,10 +15,13 @@ export const log = (type: string, message: string, req?: Request) => {
         console.log('Logging failed: HASH_SECRET environment variable is not defined.'); return;
     }
 
-    const date = new Date().toISOString();
+    const date = `[${new Date().toISOString()}] `;
+    type = `[${type}] `;
+
+    // provides hashed client ip and user agent reduced to 10 characters or empty string
     const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
     
-    console.log(`[${date}] [${type}] ${clientId}${message}`);
+    console.log(`${date}${type}${clientId}${message}`);
 }
 
 export const logError = (message: string, req? : Request, error?: Error) => {
@@ -28,11 +31,16 @@ export const logError = (message: string, req? : Request, error?: Error) => {
         console.log('Logging failed: HASH_SECRET environment variable is not defined.'); return;
     }
 
-    const date = new Date().toISOString();
+    const date = `[${new Date().toISOString()}] `;
+    const type = '[error] ';
+    
+    // provides hashed client ip and user agent reduced to 10 characters or empty string
     const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
+    
+    // provides error message or empty string
     const errorMessage = error ? ` // ${error}` : '';
 
-    console.error(`[${date}] [error] ${clientId}${message}${errorMessage}`);
+    console.error(`${date}${type}${clientId}${message}${errorMessage}`);
 };
 
 export const getGamesFromDatabase = () => {
