@@ -32,7 +32,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
         sendError(res, 500, 'Internal Server Error: invalid token payload.'); return;
     }
     
-    if (!isWhitelistedUser(req.user.email)) {
+    if (!await isWhitelistedUser(req.user.email)) {
         sendError(res, 403, 'User not whitelisted.'); return;
     }
 

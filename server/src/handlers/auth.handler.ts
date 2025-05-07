@@ -57,7 +57,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     }
 
     // check if user has whitelisted email address
-    if (!isWhitelistedUser(user.email)) {
+    if (!await isWhitelistedUser(user.email)) {
         sendError(res, 403, 'User not whitelisted.'); return;
     }
 
