@@ -5,12 +5,14 @@ import { Game } from '../models/game.model';
 
 export const getGames = async (req: Request, res: Response) => {
     const gameDocuments = await getGamesFromDatabase();
+
     const games = gameDocuments.map((game) => ({
         id: game.id,
         name: game.name,
         link: `https://store.steampowered.com/app/${game.id}`,
         header: `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`,
     }));
+    
     res.json(games);
 };
 

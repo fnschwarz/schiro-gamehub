@@ -1,31 +1,31 @@
 import { logError } from './utils';
 import { Game } from '../models/game.model';
 
-export const getGamesFromDatabase = () => {
-    return Game.find({})
-        .then(games => games.reverse())
-        .catch((error) => {
-            logError('Failed to fetch game entries from database', error);
-            return [];
-        });
+export const getGamesFromDatabase = async () => {
+    const games = await Game.find({}).catch((error) => {
+        logError('Failed to fetch game entries from database', error);
+        return [];
+    })
+    
+    return games.reverse();
 };
 
-export const getGameName = (gameId: number): Promise<string> => {
-    return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
-        .then(response => response.json())
+export const getGameName = async (gameId: number): Promise<string | null> => {
+    return fetch(`https://store.stempowered.com/api/appdetails?appids=${gameId}`)
+        .then(res => res.json())
         .then(data => data[gameId]?.data?.name || null)
         .catch((error) => {
-            logError(`Failed to fetch game name of game id '${gameId}' from Steam API`, error);
+            logError(`Failed to fetch game name of game id '${gameId}' from Steam API`, undefined, error);
             return null;
         });
 };
 
-export const isSteamApp = (gameId: number): Promise<boolean> => {
-    return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
-        .then(response => response.json())
+export const isSteamApp = async (gameId: number): Promise<boolean> => {
+    return fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
+        .then(res => res.json())
         .then(data => data[gameId]?.success || false)
         .catch((error) => {
-            logError(`Failed to verify game id '${gameId}' from Steam API`, error);
+            logError(`Failed to verify game id '${gameId}' from Steam API`, undefined, error);
             return false;
         });
 };
