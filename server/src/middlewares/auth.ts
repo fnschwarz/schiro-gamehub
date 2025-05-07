@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { JwtPayload, verify } from 'jsonwebtoken';
-import { logError } from '../utils/utils';
-import { User } from '../models/user.model';
+import { logError, sendError } from '../utils/utils';
+import { isWhitelistedUser } from '../utils/auth.utils';
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload;
@@ -12,38 +12,28 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 
     if(!JWT_SECRET){
         logError('Token authentication failed: JWT_SECRET environment variable is not defined', req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
+        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
     }
 
     const token: string = req.cookies.token;
 
     if (!token) {
-        res.status(401).json({ status: 401, message: 'No authentication token found.'}); return;
+        sendError(res, 401, 'No authentication token found.'); return;
     }
 
     try {
         req.user = verify(token, JWT_SECRET);
     } catch (error) {
-        res.status(403).json({ status: 403, message: 'Invalid or expired token.' }); return;
+        sendError(res, 403, 'Invalid or expired token.'); return;
     }
 
     if(typeof(req.user) !== 'object'){
         logError(`Token authentication failed: invalid token payload. Expected 'JwtPayload' but received '${typeof(req.user)}'`, req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: invalid token payload.' }); return;
+        sendError(res, 500, 'Internal Server Error: invalid token payload.'); return;
     }
     
-    const isAuthorizedUser = await User.findOne({ email: req.user.email }).catch((error) => { 
-        logError('Token authentication failed: database cannot be accessed', req, error);
-        return undefined;
-    });
-
-    if(isAuthorizedUser === undefined){
-        res.status(500).json({ status: 500, message: 'Internal Server Error: database could not be accessed.' }); return;
-    }
-
-    if (isAuthorizedUser === null) {
-        logError('Token authentication failed: unauthorized email', req);
-        res.status(401).json({ status: 401, message: 'Unauthorized email.' }); return;
+    if (!isWhitelistedUser(req.user.email)) {
+        sendError(res, 403, 'User not whitelisted.'); return;
     }
 
     next();
