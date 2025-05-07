@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
-import { log, logError } from '../utils/utils';
-import { User } from '../models/user.model';
+import { log, logError, sendSuccess, sendError } from '../utils/utils';
+import { getAccessToken, getUserData, isWhitelistedUser } from '../utils/auth.utils';
 
 export const redirectToTwitchAuth = (req: Request, res: Response) => {
     const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
@@ -9,7 +9,7 @@ export const redirectToTwitchAuth = (req: Request, res: Response) => {
 
     if (!TWITCH_CLIENT_ID || !BACKEND_SERVER_URL) {
         logError('Authorization redirect failed: environment variable(s) not defined', req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
+        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
     }
 
     const params = new URLSearchParams({
@@ -24,107 +24,41 @@ export const redirectToTwitchAuth = (req: Request, res: Response) => {
 };
 
 export const handleTwitchAuth = async (req: Request, res: Response) => {
-    const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-    const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
     const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
-    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
     const JWT_SECRET = process.env.JWT_SECRET;
     const NODE_ENV = process.env.NODE_ENV;
 
     // check if env variables are defined
-    if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET || !FRONTEND_SERVER_URL || !BACKEND_SERVER_URL || !JWT_SECRET || !NODE_ENV) {
+    if (!FRONTEND_SERVER_URL || !JWT_SECRET || !NODE_ENV) {
         logError('Token creation failed: environment variable(s) not defined', req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
+        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
     }
 
     const { code } = req.query;
 
     // check if Twitch API sent an auth code for token post request
-    if (!code) {
+    if (!code || typeof(code) !== 'string') {
         logError('Token creation failed: missing authorization code', req);
-        res.status(400).json({ status: 400, message: 'Missing authorization code.' }); return;
+        sendError(res, 400, 'Missing authorization code.'); return;
     }
 
     // use code to get access token
-    const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-            client_id: TWITCH_CLIENT_ID,
-            client_secret: TWITCH_CLIENT_SECRET,
-            code: code.toString(),
-            grant_type: 'authorization_code',
-            redirect_uri: `${BACKEND_SERVER_URL}/api/auth/twitch/callback`
-        }),
-    }).catch( (error) => {
-        logError('Token creation failed: error during Twitch token fetch', req, error);
-        return undefined;
-    });
+    const accessToken = await getAccessToken(code);
 
-    // check for errors in fetch response
-    if (!tokenResponse) {
-        res.status(500).json({ status: 500, message: 'Internal Server Error: failed to fetch Twitch token.' }); return;
+    if (!accessToken) {
+        sendError(res, 500, 'Internal Server Error: failed to fetch access token from Twitch API.'); return;
     }
 
-    if (!tokenResponse.ok) {
-        logError(`Token creation failed: received error response status '${tokenResponse.status}: ${tokenResponse.statusText}' when trying to fetch token`, req);
-        res.status(502).json({ status: 502, message: 'Failed to fetch Twitch token.' }); return;
-    }
-    
-    const responseData = await tokenResponse.json();
+    // use access token to get user data
+    const user = await getUserData(accessToken);
 
-    // check if there is a access token in response data and if it has proper type
-    if (!responseData || typeof(responseData.access_token) !== 'string') {
-        logError('Token creation failed: invalid response structure or missing access token', req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: invalid token response.' }); return;
+    if (!user || !user.email || typeof(user.email) !== 'string' || !user.id) {
+        sendError(res, 500, 'Internal Server Error: failed to fetch user from Twitch API.'); return;
     }
 
-    const { access_token } = responseData;
-
-    // use access token to receive twitch user details (id, email)
-    const userResponse = await fetch('https://api.twitch.tv/helix/users', {
-        headers: {
-            'Authorization': `Bearer ${access_token}`,
-            'Client-Id': TWITCH_CLIENT_ID
-        }
-    }).catch( (error) => {
-        logError('Token creation failed: error fetching user details from Twitch using access token', req, error);
-        return undefined;
-    });
-
-    // check for errors in fetch response
-    if (!userResponse) {
-        res.status(500).json({ status: 500, message: 'Internal Server Error: failed to fetch Twitch user.' }); return;
-    }
-
-    if (!userResponse.ok) {
-        logError(`Token creation failed: received error response status '${userResponse.status}: ${userResponse.statusText}' when trying to fetch user details`, req);
-        res.status(502).json({ status: 502, message: 'Failed to fetch Twitch user.' }); return;
-    }
-
-    const userData = await userResponse.json();
-
-    // check if userData has expected structure
-    if (!userData || !Array.isArray(userData.data) || userData.data.length === 0) {
-        logError('Token creation failed: invalid response structure or missing user data', req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: invalid user response.' }); return;
-    }
-
-    const user = userData.data[0];
-
-    // check if user is whitelisted
-    const isAuthorizedUser = await User.findOne({ email: user.email }).catch((error) => { 
-        logError('Token creation failed: database cannot be accessed', req, error);
-        return undefined;
-    });
-
-    if(isAuthorizedUser === undefined){
-        res.status(500).json({ status: 500, message: 'Internal Server Error: database could not be accessed.' }); return;
-    }
-
-    if (isAuthorizedUser === null) {
-        logError('Token creation failed: unauthorized email', req);
-        res.status(401).json({ status: 401, message: 'Unauthorized email.' }); return;
+    // check if user has whitelisted email address
+    if (!isWhitelistedUser(user.email)) {
+        sendError(res, 403, 'User not whitelisted.'); return;
     }
 
     // create a new token containing email and id of user
@@ -152,11 +86,11 @@ export const clearUserToken = (req: Request, res: Response) => {
 
     if(!FRONTEND_SERVER_URL || !NODE_ENV){
         logError('Clearing token failed: environment variable(s) not defined', req);
-        res.status(500).json({ status: 500, message: 'Internal Server Error: missing server configuration.' }); return;
+        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
     }
 
     if (!req.cookies.token) {
-        res.status(400).json({ status: 400, message: 'No token found.' }); return;
+        sendError(res, 400, 'No token found.'); return;
     }
 
     res.clearCookie('token', {
@@ -170,5 +104,5 @@ export const clearUserToken = (req: Request, res: Response) => {
 };
 
 export const sendStatusOK = (req: Request, res: Response) => {
-    res.status(200).json({ status: 200, message: 'OK.' }); return;
+    sendSuccess(res, 200, 'OK.');
 }
