@@ -7,12 +7,12 @@ import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';
 import { log, logError } from './utils/utils';
 
-const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
+const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
 const BACKEND_SERVER_PORT = process.env.BACKEND_SERVER_PORT;
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DATABASE_NAME = process.env.MONGODB_DATABASE_NAME;
 
-if (!BACKEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME) {
+if (!FRONTEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME) {
     logError('Server start failed: environment variable(s) not defined');
     process.exit(1);
 }
@@ -26,7 +26,8 @@ if (isNaN(port) || port < 1 || port > 65535) {
 const server = express();
 
 const corsOptions = {
-    origin: [`${BACKEND_SERVER_URL}`]
+    origin: [`${FRONTEND_SERVER_URL}`],
+    credentials: true
 };
 
 server.use(express.json());
