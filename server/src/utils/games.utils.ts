@@ -11,7 +11,7 @@ export const getGamesFromDatabase = async () => {
 };
 
 export const getGameName = async (gameId: number): Promise<string | null> => {
-    return fetch(`https://store.stempowered.com/api/appdetails?appids=${gameId}`)
+    return fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
         .then(res => res.json())
         .then(data => data[gameId]?.data?.name || null)
         .catch((error) => {

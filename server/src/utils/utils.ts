@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { createHmac } from 'crypto';
 
 const generateClientId = (ip: string, userAgent: string, secret: string): string => {
@@ -41,3 +41,17 @@ export const logError = (message: string, req? : Request, error?: Error) => {
 
     console.error(`${date}${type}${clientId}${message}${errorMessage}`);
 };
+
+export const sendSuccess = (res: Response, statusCode: number, message: string) => {
+    res.status(statusCode).json({
+        success: true,
+        message: message
+    });
+}
+
+export const sendError = (res: Response, statusCode: number, message: string) => {
+    res.status(statusCode).json({
+        success: false,
+        message: message
+    });
+}

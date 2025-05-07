@@ -5,7 +5,8 @@ const useGames = () =>
     useQuery({
         queryKey: [`games`],
         queryFn: async () : Promise<client.objects.IGame[]> => {
-            return (await fetch(`${API_BASE_URL}/api/games`)).json();
+            const response = await (await fetch(`${API_BASE_URL}/api/games`)).json();
+            return response.data;
         },
         staleTime: 1000 * 60 * 5,
     });
