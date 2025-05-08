@@ -1,6 +1,7 @@
 require('dotenv').config();
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
+import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -12,8 +13,10 @@ const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
 const BACKEND_SERVER_PORT = process.env.BACKEND_SERVER_PORT;
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DATABASE_NAME = process.env.MONGODB_DATABASE_NAME;
+const NODE_ENV = process.env.NODE_ENV;
+const SESSION_SECRET = process.env.SESSION_SECRET;
 
-if (!FRONTEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME) {
+if (!FRONTEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME || !NODE_ENV || !SESSION_SECRET) {
     logError('Server start failed: environment variable(s) not defined');
     process.exit(1);
 }
@@ -43,8 +46,28 @@ const corsOptions = {
     credentials: true
 };
 
+const sessionHandler = session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+        httpOnly: true,
+        secure: NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 15
+    }
+});
+
+// add custom session data
+declare module 'express-session' {
+    interface SessionData {
+        state?: string
+    }
+}
+
 server.use(limiter);
 server.use(cors(corsOptions));
+server.use(sessionHandler);
 server.use(express.json());
 server.use(cookieParser());
 
