@@ -1,5 +1,6 @@
 require('dotenv').config();
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -25,13 +26,26 @@ if (isNaN(port) || port < 1 || port > 65535) {
 
 const server = express();
 
+// allows 100 requests per minute per ip
+const limiter = rateLimit({
+    windowMs: 1000 * 60,
+    limit: 100,
+    message: {
+        success: false,
+        message: 'Too Many Requests. Please try again later.'
+    },
+    standardHeaders: 'draft-8',
+    legacyHeaders: false
+});
+
 const corsOptions = {
     origin: [`${FRONTEND_SERVER_URL}`],
     credentials: true
 };
 
-server.use(express.json());
+server.use(limiter);
 server.use(cors(corsOptions));
+server.use(express.json());
 server.use(cookieParser());
 
 server.use('/api/auth', AuthRouter);
