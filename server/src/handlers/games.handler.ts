@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { log, logError, sendSuccess, sendError } from '../utils/utils';
-import { getGamesFromDatabase, getGameName, isSteamApp, hasValidGameIdFormat } from '../utils/games.utils'; 
+import { getGamesFromDatabase, getGameDetails, isSteamApp, hasValidGameIdFormat } from '../utils/games.utils'; 
 import { Game } from '../models/game.model';
 
 export const getGames = async (req: Request, res: Response) => {
@@ -9,8 +9,8 @@ export const getGames = async (req: Request, res: Response) => {
     const games = gameDocuments.map((game) => ({
         id: game.id,
         name: game.name,
-        link: `https://store.steampowered.com/app/${game.id}`,
-        header: `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`,
+        steam_link: game.steam_link,
+        header_image: game.header_image
     }));
     
     res.status(200).json({
@@ -40,8 +40,8 @@ export const getGame = async (req: Request, res: Response) => {
         data: {
             id: game.id,
             name: game.name,
-            link: `https://store.steampowered.com/app/${game.id}`,
-            header: `https://steamcdn-a.akamaihd.net/steam/apps/${game.id}/header.jpg`
+            steam_link: game.steam_link,
+            header_image: game.header_image
         }
     });
 }
@@ -62,14 +62,14 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     }
 
     // Get game name through Steam API
-    const gameName = await getGameName(gameId);
-    if (!gameName) {
-        logError('Failed adding game to database: game name could not be fetched due to Steam API not responding', req);
+    const gameDetails = await getGameDetails(gameId);
+    if (!gameDetails) {
+        logError('Failed adding game to database: game details could not be fetched due to Steam API not responding.', req);
         sendError(res, 503, 'Steam API not responding.'); return;
     }
 
     // Save game details (id, name) in database
-    const newGame = new Game({ id: gameId, name: gameName });
+    const newGame = new Game({ id: gameId, name: gameDetails.name, steam_link: gameDetails.steam_link, header_image: gameDetails.header_image });
     try {
         await newGame.save();
     } catch (error) {
@@ -77,7 +77,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
         sendError(res, 502, 'Database not responding.'); return;
     }
 
-    log('database_add', `${gameName} (ID ${gameId}) successfully added to database`, req);
+    log('database_add', `${gameDetails.name} (ID ${gameId}) successfully added to database`, req);
     sendSuccess(res, 200, 'Game added.');
 };
 

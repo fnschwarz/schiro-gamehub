@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../../../configs/api.config.ts';
 import useAuth from '../../../hooks/useAuth.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
-function RemoveGameButton({ id }: client.props.IGameId){
+function RemoveGameButton({ id }: client.props.GameId){
     const [isOpen, setIsOpen] = useState(false)
     const { data: isAuthenticated } = useAuth();
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);

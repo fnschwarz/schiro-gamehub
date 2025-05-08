@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 const useGames = () =>
     useQuery({
         queryKey: [`games`],
-        queryFn: async () : Promise<client.objects.IGame[]> => {
+        queryFn: async () : Promise<client.objects.Game[]> => {
             const response = await (await fetch(`${API_BASE_URL}/api/games`)).json();
             return response.data;
         },

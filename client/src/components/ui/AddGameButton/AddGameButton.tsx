@@ -3,7 +3,7 @@ import style from './AddGameButton.module.css';
 import { API_BASE_URL } from '../../../configs/api.config.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
-function AddGameButton({ isFocused }: client.props.IButton){
+function AddGameButton({ isFocused }: client.props.Button){
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
     const handleClick = async () => {

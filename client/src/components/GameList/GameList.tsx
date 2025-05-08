@@ -20,11 +20,11 @@ function GameList() {
         <div className={style['game-list']}>
             {games.map((game) => (
                 <GameCard
-                    key={game.id}
-                    id={game.id}
-                    title={game.name}
-                    img={game.header}
-                    link={game.link}
+                    key = {game.id}
+                    id = {game.id}
+                    name = {game.name}
+                    steam_link = {game.steam_link}
+                    header_image = {game.header_image}
                 />
             ))}
         </div>
