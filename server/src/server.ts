@@ -7,7 +7,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';
-import { log, logError } from './utils/utils';
+import { handleError, log, logError } from './utils/utils';
 
 const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
 const BACKEND_SERVER_PORT = process.env.BACKEND_SERVER_PORT;
@@ -17,7 +17,7 @@ const NODE_ENV = process.env.NODE_ENV;
 const SESSION_SECRET = process.env.SESSION_SECRET;
 
 if (!FRONTEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME || !NODE_ENV || !SESSION_SECRET) {
-    logError('Server start failed: environment variable(s) not defined');
+    handleError('MISSING_ENV_VARIABLE');
     process.exit(1);
 }
 
@@ -50,7 +50,7 @@ const sessionHandler = session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { 
+    cookie: {
         httpOnly: true,
         secure: NODE_ENV === 'production',
         sameSite: 'lax',
