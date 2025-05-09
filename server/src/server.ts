@@ -3,6 +3,7 @@ import { log, logError } from './utils/utils';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -43,8 +44,13 @@ const corsOptions = {
 // session for state verification
 const sessionHandler = session({
     secret: SESSION_SECRET,
+    store: MongoStore.create({
+        mongoUrl: MONGODB_URI,
+        dbName: 'SchiroGameHub',
+        ttl: 15 * 60
+    }),
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         httpOnly: true,
         secure: NODE_ENV === 'production',
