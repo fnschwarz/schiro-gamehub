@@ -71,7 +71,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     // delete session state to guarantee one time usage
     delete req.session.state;
 
-    log(req, 'login', 'User logged in successfully');
+    log('login', 'User logged in successfully', req);
     res.redirect(FRONTEND_SERVER_URL);
 };
 
@@ -87,7 +87,7 @@ export const clearUserToken = (req: Request, res: Response) => {
         sameSite: 'lax'
     });
 
-    log(req, 'logout', 'User logged out successfully');
+    log('logout', 'User logged out successfully', req);
     res.redirect(FRONTEND_SERVER_URL);
 };
 

@@ -79,7 +79,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
         handleError('DATABASE_CONNECTION_ERROR', 'add_game', error as Error, req, res); return;
     }
 
-    log(req, 'add_game', `${gameDetails.name} (ID ${gameId}) successfully added to database`);
+    log('add_game', `${gameDetails.name} (ID ${gameId}) successfully added to database`, req);
     sendSuccess(res, 200, 'Game added.');
 };
 
@@ -105,6 +105,6 @@ export const removeGameFromDatabase = async (req: Request, res: Response) => {
         handleError('GAME_NOT_IN_DATABASE', 'remove_game', undefined, req, res); return;
     }
 
-    log(req, 'remove_game', `${gameToDelete.name || 'Game'} (ID ${gameId}) successfully removed from database`);
+    log('remove_game', `${gameToDelete.name || 'Game'} (ID ${gameId}) successfully removed from database`, req);
     sendSuccess(res, 200, 'Game removed.');
 };
