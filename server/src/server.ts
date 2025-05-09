@@ -1,5 +1,5 @@
 import { checkEnv, NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_PORT, MONGODB_URI, SESSION_SECRET } from './configs/config';
-import { log, logError } from './utils/utils';
+import { handleError, log } from './utils/utils';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import session from 'express-session';
@@ -16,7 +16,7 @@ checkEnv();
 // check if given port is valid
 const port = parseInt(BACKEND_SERVER_PORT, 10);
 if (isNaN(port) || port < 1 || port > 65535) {
-    logError('Server start failed: BACKEND_SERVER_PORT must be valid port number (1-65535)`');
+    handleError('INVALID_SERVER_PORT', 'server_start');
     process.exit(1);
 }
 
@@ -84,7 +84,7 @@ server.use('/api/games', GamesRouter);
     try {
         await mongoose.connect(MONGODB_URI, { dbName: 'SchiroGameHub' });
     } catch (error) {
-        logError('Server start failed: could not connect to database', undefined, error as Error);
+        handleError('DATABASE_CONNECTION_ERROR', 'server_start', error as Error);
         process.exit(1);
     }
 

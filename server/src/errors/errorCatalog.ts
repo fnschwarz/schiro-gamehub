@@ -1,4 +1,11 @@
 export const ErrorCatalog = {
+    INVALID_SERVER_PORT: {
+        code: 'INVALID_SERVER_PORT',
+        httpStatusCode: 500,
+        clientMessage: 'Internal Server Error.',
+        logMessage: 'Invalid server port',
+        isOperational: false
+    },
     NETWORK_ERROR: {
         code: 'NETWORK_ERROR',
         httpStatusCode: 503,

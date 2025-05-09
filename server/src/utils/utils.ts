@@ -18,7 +18,7 @@ export const handleError = (
         operation = `!!! FATAL ERROR !!! ${operation}`;
     }
 
-    logError(`${operation} ${err.logMessage}`, req, extra, err.code);
+    logError(err.code, `${operation} ${err.logMessage}`, req, extra);
 
     if (res) {
         sendError(res, err.httpStatusCode, err.clientMessage);
@@ -41,9 +41,9 @@ export const log = (type: string, message: string, req?: Request) => {
     console.log(`${date}${type}${clientId}${message}`);
 }
 
-export const logError = (message: string, req? : Request, error?: Error, type?: string) => { // TODO: make type required
+export const logError = (type: string, message: string, req? : Request, error?: Error) => {
     const date = `[${new Date().toISOString()}] `;
-    type = type ? `[${type}] ` : '[ERROR] ';
+    type = `[${type}] `;
 
     // provides hashed client ip and user agent reduced to 10 characters or empty string
     const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
