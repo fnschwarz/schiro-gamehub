@@ -3,6 +3,7 @@ import GameListReloadContext from './context/GameListReloadContext.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from './pages/Home.tsx';
+import NoPage from './pages/NoPage.tsx';
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function App() {
                 <BrowserRouter>
                     <Routes>
                         <Route path='/' element={<Home />}/>
+                        <Route path='*' element={<NoPage />}/>
                     </Routes>
                 </BrowserRouter>
             </QueryClientProvider>
