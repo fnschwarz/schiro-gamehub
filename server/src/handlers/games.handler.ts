@@ -1,4 +1,4 @@
-import { log, logError, sendSuccess, sendError } from '../utils/utils';
+import { handleError, log, sendSuccess } from '../utils/utils';
 import { getGamesFromDatabase, getGameDetails, isSteamApp, hasValidGameIdFormat } from '../utils/games.utils';
 import { Game } from '../models/game.model';
 import { Request, Response } from 'express';
@@ -24,15 +24,21 @@ export const getGame = async (req: Request, res: Response) => {
 
     // Check if game id has proper format
     if (!hasValidGameIdFormat(gameId)) {
-        logError(`Failed fetching game details: invalid game id format '${req?.params?.id}'`, req);
-        sendError(res, 400, 'Invalid game id format. Please provide a valid game id.'); return;
+        handleError('INVALID_GAME_ID_FORMAT', 'get_game', undefined, req, res); return;
     }
 
     // Get game details through database
-    const game = await Game.findOne({ id: gameId }).catch(() => { return null });
-    if (!game) {
-        logError(`Failed fetching game details: game (ID ${gameId}) does not exist in database`, req);
-        sendError(res, 404, 'Game does not exist in database.'); return;
+    const game = await Game.findOne({ id: gameId }).catch( (error) => {
+        handleError('DATABASE_CONNECTION_ERROR', 'get_game', error, req, res);
+        return undefined;
+    });
+
+    if (game === undefined) {
+        return;
+    }
+
+    if (game === null) {
+        handleError('GAME_NOT_IN_DATABASE', 'get_game', undefined, req, res); return;
     }
 
     res.status(200).json({
@@ -51,21 +57,18 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
 
     // Check if game id has proper format
     if (!hasValidGameIdFormat(gameId)) {
-        logError(`Failed adding game to database: invalid game id format '${gameId}'`, req);
-        sendError(res, 400, 'Invalid game id format. Please provide a valid game id.'); return;
+        handleError('INVALID_GAME_ID_FORMAT', 'add_game', undefined, req, res); return;
     }
 
     // Check if game is a Steam app
     if (!await isSteamApp(gameId)) {
-        logError(`Failed adding game to database: provided game id '${gameId}' does not refer to an existing Steam app`, req);
-        sendError(res, 404, 'Game not found. Please provide a valid game id.'); return;
+        handleError('GAME_NOT_A_STEAM_APP', 'add_game', undefined, req, res); return;
     }
 
     // Get game name through Steam API
     const gameDetails = await getGameDetails(gameId);
     if (!gameDetails) {
-        logError('Failed adding game to database: game details could not be fetched due to Steam API not responding.', req);
-        sendError(res, 503, 'Steam API not responding.'); return;
+        handleError('FETCH_GAME_DETAILS_ERROR', 'add_game', undefined, req, res); return;
     }
 
     // Save game details (id, name) in database
@@ -73,11 +76,10 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     try {
         await newGame.save();
     } catch (error) {
-        logError(`Failed adding game to database: couldn't save new game document in database`, req, error as Error);
-        sendError(res, 502, 'Database not responding.'); return;
+        handleError('DATABASE_CONNECTION_ERROR', 'add_game', error as Error, req, res); return;
     }
 
-    log('database_add', `${gameDetails.name} (ID ${gameId}) successfully added to database`, req);
+    log('add_game', `${gameDetails.name} (ID ${gameId}) successfully added to database`, req);
     sendSuccess(res, 200, 'Game added.');
 };
 
@@ -86,18 +88,23 @@ export const removeGameFromDatabase = async (req: Request, res: Response) => {
 
     // Check if game id has proper format
     if (!hasValidGameIdFormat(gameId)) {
-        logError(`Failed removing game from database: invalid game id format '${gameId}'`, req);
-        sendError(res, 400, 'Invalid game id format. Please provide a valid game id.'); return;
+        handleError('INVALID_GAME_ID_FORMAT', 'remove_game', undefined, req, res); return;
     }
 
-    const gameToDelete = await Game.findOneAndDelete({ id: gameId }).catch(() => { return null });
+    const gameToDelete = await Game.findOneAndDelete({ id: gameId }).catch( (error) => {
+        handleError('DATABASE_CONNECTION_ERROR', 'get_game', error, req, res);
+        return undefined;
+    });
+
+    if (gameToDelete === undefined) {
+        return;
+    }
 
     // Check if game has entry in database
-    if (!gameToDelete) {
-        logError(`Failed removing game from database: Game '${gameId}' not found`, req);
-        sendError(res, 404, 'Game not found.'); return;
+    if (gameToDelete === null) {
+        handleError('GAME_NOT_IN_DATABASE', 'remove_game', undefined, req, res); return;
     }
 
-    log('database_remove', `${gameToDelete.name || 'Game'} (ID ${gameId}) successfully removed from database`, req);
+    log('remove_game', `${gameToDelete.name || 'Game'} (ID ${gameId}) successfully removed from database`, req);
     sendSuccess(res, 200, 'Game removed.');
 };

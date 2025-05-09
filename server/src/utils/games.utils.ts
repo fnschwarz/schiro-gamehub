@@ -1,12 +1,12 @@
-import { logError } from './utils';
+import { handleError } from './utils';
 import { Game } from '../models/game.model';
 
 export const getGamesFromDatabase = async () => {
     const games = await Game.find({}).catch((error) => {
-        logError('Failed to fetch game entries from database', error);
+        handleError('DATABASE_CONNECTION_ERROR', 'get_games_from_database', error);
         return [];
     })
-    
+
     return games.reverse();
 };
 
@@ -14,15 +14,21 @@ export const getGameDetails = async (gameId: number): Promise<{ name: string, st
     const responseData = await fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
         .then(res => res.json())
         .catch((error) => {
-            logError(`Failed to fetch game name of game id '${gameId}' from Steam API`, undefined, error);
+            handleError('NETWORK_ERROR', 'get_game_details', error);
             return null;
     });
+
+    if (!responseData) {
+        handleError('UPSTREAM_SERVICE_ERROR', 'get_game_details');
+        return null;
+    }
 
     const name: string | null = responseData[gameId]?.data?.name || null;
     const steam_link: string = `https://store.steampowered.com/app/${gameId}`;
     const header_image: string | null = responseData[gameId]?.data?.header_image || null;
 
     if (!name || !header_image) {
+        handleError('INVALID_RESPONSE_FORMAT', 'get_game_details');
         return null;
     }
 
@@ -38,7 +44,7 @@ export const isSteamApp = async (gameId: number): Promise<boolean> => {
         .then(res => res.json())
         .then(data => data[gameId]?.success || false)
         .catch((error) => {
-            logError(`Failed to verify game id '${gameId}' from Steam API`, undefined, error);
+            handleError('NETWORK_ERROR', 'is_steam_app', error);
             return false;
         });
 };

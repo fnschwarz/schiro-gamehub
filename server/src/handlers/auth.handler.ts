@@ -1,5 +1,5 @@
 import { NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_URL, TWITCH_CLIENT_ID, JWT_SECRET } from '../configs/config';
-import { log, logError, sendSuccess, sendError } from '../utils/utils';
+import { handleError, log, sendSuccess } from '../utils/utils';
 import { getAccessToken, getUserData, isWhitelistedUser } from '../utils/auth.utils';
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
@@ -26,33 +26,31 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if delivered state parameter exists and is the same as the session state
     if (!req.session.state || state !== req.session.state) {
-        logError('Token creation failed: received state does not match with session state. CAUTION: Could be a sign of third-party attack!', req);
-        sendError(res, 400, 'Invalid session state.'); return;
+        handleError('STATE_MISMATCH', 'login', undefined, req, res); return;
     }
 
     // check if Twitch API sent an auth code for token post request
     if (!code || typeof(code) !== 'string') {
-        logError('Token creation failed: missing authorization code', req);
-        sendError(res, 400, 'Missing authorization code.'); return;
+        handleError('MISSING_AUTH_CODE', 'login', undefined, req, res); return;
     }
 
     // use code to get access token
     const accessToken = await getAccessToken(code);
 
     if (!accessToken) {
-        sendError(res, 500, 'Internal Server Error: failed to fetch access token from Twitch API.'); return;
+        handleError('ACCESS_TOKEN_EXCHANGE_ERROR', 'login', undefined, req, res); return;
     }
 
     // use access token to get user data
     const user = await getUserData(accessToken);
 
     if (!user || !user.email || typeof(user.email) !== 'string' || !user.id) {
-        sendError(res, 500, 'Internal Server Error: failed to fetch user from Twitch API.'); return;
+        handleError('USER_DATA_EXCHANGE_ERROR', 'login', undefined, req, res); return;
     }
 
     // check if user has whitelisted email address
     if (!await isWhitelistedUser(user.email)) {
-        sendError(res, 403, 'User not whitelisted.'); return;
+        handleError('NOT_WHITELISTED', 'login', undefined, req, res); return;
     }
 
     // create a new token containing email and id of user
@@ -79,7 +77,8 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
 export const clearUserToken = (req: Request, res: Response) => {
     if (!req.cookies.token) {
-        sendError(res, 400, 'No token found.'); return;
+        res.redirect(FRONTEND_SERVER_URL);
+        return;
     }
 
     res.clearCookie('token', {
