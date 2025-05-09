@@ -31,7 +31,7 @@ const generateClientId = (ip: string, userAgent: string, secret: string): string
     return hash.digest('hex').substring(0, 10);
 }
 
-export const log = (type: string, message: string, req?: Request) => {
+export const log = (req: Request, type: string, message: string) => {
     const date = `[${new Date().toISOString()}] `;
     type = `[${type}] `;
 
