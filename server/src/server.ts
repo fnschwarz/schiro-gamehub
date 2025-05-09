@@ -1,4 +1,5 @@
-require('dotenv').config();
+import { checkEnv, NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_PORT, MONGODB_URI, SESSION_SECRET } from './configs/config';
+import { log, logError } from './utils/utils';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import session from 'express-session';
@@ -7,26 +8,18 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';
-import { handleError, log, logError } from './utils/utils';
 
-const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
-const BACKEND_SERVER_PORT = process.env.BACKEND_SERVER_PORT;
-const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DATABASE_NAME = process.env.MONGODB_DATABASE_NAME;
-const NODE_ENV = process.env.NODE_ENV;
-const SESSION_SECRET = process.env.SESSION_SECRET;
+// check if all env variables are set
+checkEnv();
 
-if (!FRONTEND_SERVER_URL || !BACKEND_SERVER_PORT || !MONGODB_URI || !MONGODB_DATABASE_NAME || !NODE_ENV || !SESSION_SECRET) {
-    handleError('MISSING_ENV_VARIABLE');
-    process.exit(1);
-}
-
+// check if given port is valid
 const port = parseInt(BACKEND_SERVER_PORT, 10);
 if (isNaN(port) || port < 1 || port > 65535) {
     logError('Server start failed: BACKEND_SERVER_PORT must be valid port number (1-65535)`');
     process.exit(1);
 }
 
+// create express server
 const server = express();
 
 // allows 100 requests per minute per ip
@@ -41,11 +34,13 @@ const limiter = rateLimit({
     legacyHeaders: false
 });
 
+// set options to avoid cors errors
 const corsOptions = {
     origin: [`${FRONTEND_SERVER_URL}`],
     credentials: true
 };
 
+// session for state verification
 const sessionHandler = session({
     secret: SESSION_SECRET,
     resave: false,
@@ -58,26 +53,30 @@ const sessionHandler = session({
     }
 });
 
-// add custom session data
+// add custom session data fields
 declare module 'express-session' {
     interface SessionData {
         state?: string
     }
 }
 
+// setup middlewares
 server.use(limiter);
 server.use(cors(corsOptions));
 server.use(sessionHandler);
 server.use(express.json());
 server.use(cookieParser());
 
+// setup server routes
 server.use('/api/auth', AuthRouter);
 server.use('/api/games', GamesRouter);
 
+
+// server start logic
 (async () => {
     // connect to database
     try {
-        await mongoose.connect(MONGODB_URI, { dbName: MONGODB_DATABASE_NAME });
+        await mongoose.connect(MONGODB_URI, { dbName: 'SchiroGameHub' });
     } catch (error) {
         logError('Server start failed: could not connect to database', undefined, error as Error);
         process.exit(1);

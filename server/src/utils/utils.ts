@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { HASH_SECRET } from '../configs/config';
 import { ErrorCatalog } from '../errors/errorCatalog';
+import { Request, Response } from 'express';
 import { createHmac } from 'crypto';
 
 export const handleError = (
@@ -24,12 +25,6 @@ const generateClientId = (ip: string, userAgent: string, secret: string): string
 }
 
 export const log = (type: string, message: string, req?: Request) => {
-    const HASH_SECRET = process.env.HASH_SECRET;
-
-    if(!HASH_SECRET){
-        console.log('Logging failed: HASH_SECRET environment variable is not defined.'); return;
-    }
-
     const date = `[${new Date().toISOString()}] `;
     type = `[${type}] `;
 
@@ -40,12 +35,6 @@ export const log = (type: string, message: string, req?: Request) => {
 }
 
 export const logError = (message: string, req? : Request, error?: Error) => {
-    const HASH_SECRET = process.env.HASH_SECRET;
-
-    if(!HASH_SECRET){
-        console.log('Logging failed: HASH_SECRET environment variable is not defined.'); return;
-    }
-
     const date = `[${new Date().toISOString()}] `;
     const type = '[error] ';
 

@@ -1,20 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { JWT_SECRET } from '../configs/config';
 import { logError, sendError } from '../utils/utils';
 import { isWhitelistedUser } from '../utils/auth.utils';
+import { Request, Response, NextFunction } from 'express';
+import { JwtPayload, verify } from 'jsonwebtoken';
 
 interface AuthRequest extends Request {
     user?: string | JwtPayload;
 }
 
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const JWT_SECRET = process.env.JWT_SECRET;
-
-    if(!JWT_SECRET){
-        logError('Token authentication failed: JWT_SECRET environment variable is not defined', req);
-        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
-    }
-
     const token: string = req.cookies.token;
 
     if (!token) {
@@ -31,7 +25,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
         logError(`Token authentication failed: invalid token payload. Expected 'JwtPayload' but received '${typeof(req.user)}'`, req);
         sendError(res, 500, 'Internal Server Error: invalid token payload.'); return;
     }
-    
+
     if (!await isWhitelistedUser(req.user.email)) {
         sendError(res, 403, 'User not whitelisted.'); return;
     }

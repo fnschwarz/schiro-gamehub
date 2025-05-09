@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
 import { log, logError, sendSuccess, sendError } from '../utils/utils';
-import { getGamesFromDatabase, getGameDetails, isSteamApp, hasValidGameIdFormat } from '../utils/games.utils'; 
+import { getGamesFromDatabase, getGameDetails, isSteamApp, hasValidGameIdFormat } from '../utils/games.utils';
 import { Game } from '../models/game.model';
+import { Request, Response } from 'express';
 
 export const getGames = async (req: Request, res: Response) => {
     const gameDocuments = await getGamesFromDatabase();
@@ -12,7 +12,7 @@ export const getGames = async (req: Request, res: Response) => {
         steam_link: game.steam_link,
         header_image: game.header_image
     }));
-    
+
     res.status(200).json({
         success: true,
         data: games

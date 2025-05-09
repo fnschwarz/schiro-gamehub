@@ -1,15 +1,8 @@
+import { BACKEND_SERVER_URL, TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET } from '../configs/config';
 import { logError } from './utils';
 import { User } from '../models/user.model';
 
 export const getAccessToken = async (code: string): Promise<string | undefined> => {
-    const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-    const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
-    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
-
-    if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET || !BACKEND_SERVER_URL) {
-        logError('Token creation failed: environment variable(s) not defined'); return undefined;
-    }
-
     const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -31,7 +24,7 @@ export const getAccessToken = async (code: string): Promise<string | undefined> 
     if (!tokenResponse.ok) {
         logError(`Received error response '${tokenResponse.status}: ${tokenResponse.statusText}' from Twitch API when trying to fetch token data`); return undefined;
     }
-    
+
     const responseData = await tokenResponse.json();
 
     // check if there is a access token in response data and if it has proper type
@@ -43,12 +36,6 @@ export const getAccessToken = async (code: string): Promise<string | undefined> 
 }
 
 export const getUserData = async (accessToken: string) => {
-    const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-
-    if (!TWITCH_CLIENT_ID) {
-        logError('Failed to get user data: TWITCH_CLIENT_ID environment variable is not defined.'); return undefined;
-    }
-
     const userResponse = await fetch('https://api.twitch.tv/helix/users', {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -78,7 +65,7 @@ export const getUserData = async (accessToken: string) => {
 }
 
 export const isWhitelistedUser = async (email: string): Promise<boolean> => {
-    const user = await User.findOne({ email: email }).catch((error) => { 
+    const user = await User.findOne({ email: email }).catch((error) => {
         logError('Database could not be accessed', undefined, error); return undefined;
     });
 

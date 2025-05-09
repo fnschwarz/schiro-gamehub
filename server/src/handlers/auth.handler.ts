@@ -1,18 +1,11 @@
+import { NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_URL, TWITCH_CLIENT_ID, JWT_SECRET } from '../configs/config';
+import { log, logError, sendSuccess, sendError } from '../utils/utils';
+import { getAccessToken, getUserData, isWhitelistedUser } from '../utils/auth.utils';
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
-import { log, logError, sendSuccess, sendError } from '../utils/utils';
-import { getAccessToken, getUserData, isWhitelistedUser } from '../utils/auth.utils';
 
 export const redirectToTwitchAuth = (req: Request, res: Response) => {
-    const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-    const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL;
-
-    if (!TWITCH_CLIENT_ID || !BACKEND_SERVER_URL) {
-        logError('Authorization redirect failed: environment variable(s) not defined', req);
-        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
-    }
-
     // create a session state to verify that oauth process was initiated by server
     req.session.state = randomUUID();
 
@@ -29,16 +22,6 @@ export const redirectToTwitchAuth = (req: Request, res: Response) => {
 };
 
 export const handleTwitchAuth = async (req: Request, res: Response) => {
-    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
-    const JWT_SECRET = process.env.JWT_SECRET;
-    const NODE_ENV = process.env.NODE_ENV;
-
-    // check if env variables are defined
-    if (!FRONTEND_SERVER_URL || !JWT_SECRET || !NODE_ENV) {
-        logError('Token creation failed: environment variable(s) not defined', req);
-        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
-    }
-
     const { code, state } = req.query;
 
     // check if delivered state parameter exists and is the same as the session state
@@ -95,14 +78,6 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 };
 
 export const clearUserToken = (req: Request, res: Response) => {
-    const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL;
-    const NODE_ENV = process.env.NODE_ENV;
-
-    if(!FRONTEND_SERVER_URL || !NODE_ENV){
-        logError('Clearing token failed: environment variable(s) not defined', req);
-        sendError(res, 500, 'Internal Server Error: missing server configuration.'); return;
-    }
-
     if (!req.cookies.token) {
         sendError(res, 400, 'No token found.'); return;
     }
