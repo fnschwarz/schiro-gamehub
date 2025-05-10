@@ -14,11 +14,15 @@
 }
 
 .footer-items-container a {
-    padding: 0;
-    margin: 0;
+    display: inline-flex;
+    padding: 0.25rem;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
     color: white;
 }
 
 .footer-items-container a:hover {
-    color: #6c757d;
+    color: #111827;
+    background-color: #20f110;
 }
