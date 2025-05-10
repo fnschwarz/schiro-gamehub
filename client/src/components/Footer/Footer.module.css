@@ -1,0 +1,19 @@
+.footer-items-container {
+    display: flex;
+    margin: 0 auto;
+    padding: 1rem;
+    max-width: 80rem;
+    justify-content: space-between;
+    align-items: center;
+    color: #6c757d;
+}
+
+.footer-items-container a {
+    padding: 0;
+    margin: 0;
+    color: white;
+}
+
+.footer-items-container a:hover {
+    color: #6c757d;
+}
