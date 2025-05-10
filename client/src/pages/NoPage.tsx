@@ -1,4 +1,4 @@
-import PageNotFound from "../components/NoPage/PageNotFound";
+import PageNotFound from "../components/PageNotFound/PageNotFound";
 
 function NoPage() {
     document.title = '404 Not Found';
@@ -8,4 +8,4 @@ function NoPage() {
     )
 }
 
-export default NoPage
+export default NoPage;

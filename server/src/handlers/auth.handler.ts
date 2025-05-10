@@ -50,7 +50,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if user has whitelisted email address
     if (!await isWhitelistedUser(user.email)) {
-        handleError('NOT_WHITELISTED', 'login', undefined, req, res); return;
+        res.redirect(`${FRONTEND_SERVER_URL}/access-denied`); return;
     }
 
     // create a new token containing email and id of user
@@ -77,8 +77,7 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
 export const clearUserToken = (req: Request, res: Response) => {
     if (!req.cookies.token) {
-        res.redirect(FRONTEND_SERVER_URL);
-        return;
+        res.redirect(FRONTEND_SERVER_URL); return;
     }
 
     res.clearCookie('token', {
