@@ -1,4 +1,4 @@
-.header__nav-bar {
+.header-nav-bar {
     display: flex;
     margin: 0 auto;
     padding-left: 2rem;
@@ -8,26 +8,26 @@
     align-items: center;
 }
 
-.header__nav-logo {
+.header-nav-logo {
     display: flex;
     gap: 0.313rem;
 }
 
-.header__nav-logo img {
+.header-nav-logo img {
     display: block;
     height: 1.5rem;
     width: auto;
 }
 
-@media (max-width: 300px) {
-    .header__nav-bar {
+@media (width <= 300px) {
+    .header-nav-bar {
         padding-left: 1rem;
         padding-right: 1rem;
     }
 }
 
-@media (max-width: 600px) {
-    .header__nav-logo1 {
+@media (width <= 600px) {
+    .header-nav-logo1 {
         display: none !important;
     }
 }

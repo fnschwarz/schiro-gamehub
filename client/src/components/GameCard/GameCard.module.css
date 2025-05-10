@@ -6,22 +6,18 @@
     height: 14.638rem;
     border: 0.063rem solid #1F2937;
     border-radius: 0.625rem;
-    box-shadow: 0.313rem 0.313rem 0.313rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0.313rem 0.313rem 0.313rem rgb(0 0 0 / 10%);
     background-color: #111827;
     text-align: center;
 }
 
-.game-card__image-container {
+.game-card-image-container {
     flex: 1;
     overflow: hidden;
     position: relative;
 }
 
-.game-card__image-container:hover .game-card__image {
-    transform: scale(1.1);
-}
-
-.game-card__image {
+.game-card-image {
     top: 0;
     right: 0;
     min-width: 100%;
@@ -31,13 +27,17 @@
     transition: transform .5s;
 }
 
-.game-card__remove-game-button {
+.game-card-image-container:hover .game-card-image {
+    transform: scale(1.1);
+}
+
+.game-card-remove-game-button {
     position: absolute;
     top: 0.625rem;
     right: 0.625rem;
 }
 
-.game-card__title-container {
+.game-card-title-container {
     display: flex;
     height: 2.5rem;
     justify-content: center;
@@ -45,13 +45,13 @@
     overflow: hidden;
 }
 
-.game-card__title {
+.game-card-title {
     font-family: "League Spartan", sans-serif;
     font-weight: 400;
     font-size: 1rem;
 }
 
-@media (max-width: 730px) {
+@media (width <= 730px) {
     .game-card {
         height: 12rem;
     }

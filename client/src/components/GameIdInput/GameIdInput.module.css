@@ -3,8 +3,8 @@
     align-items: center;
     padding-bottom: 1rem;
 }
-  
-.game-id-input__input-field {
+
+.game-id-input-input-field {
     padding: 0 1rem;
     min-height: 3rem;
     max-width: 9.375rem;
@@ -17,7 +17,7 @@
     transition: border-color .2s ease-in-out;
 }
 
-.game-id-input__input-field:focus, .game-id-input__input-field:focus-visible {
+.game-id-input-input-field:focus, .game-id-input-input-field:focus-visible {
     border-color: #20f110;
     outline: none;
 }

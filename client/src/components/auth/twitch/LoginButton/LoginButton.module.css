@@ -17,7 +17,7 @@
     background-color: #6034b2;
 }
 
-.login-button__text {
+.login-button-text {
     padding-bottom: 0.1rem;
 }
 
@@ -30,6 +30,6 @@
     background-color: white;
 }
 
-.logout-button__text {
+.logout-button-text {
     padding-bottom: 0.025rem;
 }

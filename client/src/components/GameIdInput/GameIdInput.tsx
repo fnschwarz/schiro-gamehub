@@ -21,9 +21,9 @@ function GameIdInput(){
     if(isAuthenticated){
         return(
             <div className={style['game-id-input']}>
-                <input className={style['game-id-input__input-field']}
+                <input className={style['game-id-input-input-field']}
                     id="game-id-input"
-                    type="text" 
+                    type="text"
                     placeholder="Steam Game ID"
                     value={inputValue}
                     onChange={handleChange}

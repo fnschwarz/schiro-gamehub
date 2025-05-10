@@ -5,9 +5,9 @@ import logo2 from '../../assets/images/logo2.png';
 
 function Header(){
     return(
-        <div className={style['header__nav-bar']}>
-            <div className={style['header__nav-logo']}>
-                <img className={style['header__nav-logo1']} src={logo1} /><img src={logo2} />
+        <div className={style['header-nav-bar']}>
+            <div className={style['header-nav-logo']}>
+                <img className={style['header-nav-logo1']} src={logo1} /><img src={logo2} />
             </div>
             <LoginButton />
         </div>
