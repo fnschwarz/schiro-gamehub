@@ -1,13 +1,15 @@
-import style from './AccessDeniedPage.module.css';
+import style from './AccessDenied.module.css';
 
-function AccessDeniedPage() {
+function AccessDenied() {
+    document.title = '403 Forbidden';
+
     return (
-        <div className={style['page-container']}>
+        <div className={style.body}>
             <h1>403 Forbidden</h1>
             <h1>uhm, not whitelisted... ☝️🤓</h1>
             <a href='/'><button className={style['button']}>sorry</button></a>
         </div>
-    )
+    );
 }
 
-export default AccessDeniedPage;
+export default AccessDenied;

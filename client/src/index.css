@@ -15,36 +15,6 @@
     background-color: #111827;
 }
 
-.body {
-    display: grid;
-    grid-template-rows: 1fr auto;
-    min-height: 100dvh;
-}
-
-header {
-    position: fixed;
-    z-index: 10;
-    top: 0;
-    right: 0;
-    left: 0;
-    padding: 1.25rem 0;
-    border-bottom: 0.063rem solid #1F2937;
-    background-color: rgb(17 24 39 / 80%);
-    backdrop-filter: blur(7px);
-}
-
-section {
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    padding: 5rem 2rem 1rem;
-}
-
-footer {
-    padding: 0 2rem;
-    border-top: 1px solid #1F2937;
-}
-
 a {
     line-height: 0;
     color: inherit;

@@ -5,13 +5,15 @@ import logo2 from '../../assets/images/logo2.png';
 
 function Header(){
     return(
-        <div className={style['header-nav-bar']}>
-            <a href='/'>
-                <div className={style['header-nav-logo']}>
-                    <img className={style['header-nav-logo1']} src={logo1} /><img src={logo2} />
-                </div>
-            </a>
-            <LoginButton />
+        <div className={style.header}>
+            <div className={style['header-nav-bar']}>
+                <a href='/'>
+                    <div className={style['header-nav-logo']}>
+                        <img className={style['header-nav-logo1']} src={logo1} /><img src={logo2} />
+                    </div>
+                </a>
+                <LoginButton />
+            </div>
         </div>
     );
 }
