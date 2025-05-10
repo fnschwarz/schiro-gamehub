@@ -8,7 +8,7 @@ function Footer(){
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 500) {
+            if (window.innerWidth < 510) {
                 setCopyrightText('© 2025 Finn Schwarz');
             } else {
                 setCopyrightText('Copyright © 2025 Finn Schwarz. All rights reserved.');
