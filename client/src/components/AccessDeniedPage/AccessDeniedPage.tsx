@@ -1,8 +1,6 @@
 import style from './AccessDeniedPage.module.css';
 
-function AccessDenied() {
-    document.title = '403 Forbidden';
-
+function AccessDeniedPage() {
     return (
         <div className={style['page-container']}>
             <h1>403 Forbidden</h1>
@@ -12,4 +10,4 @@ function AccessDenied() {
     )
 }
 
-export default AccessDenied;
+export default AccessDeniedPage;
