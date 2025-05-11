@@ -103,6 +103,13 @@ export const ErrorCatalog = {
         logMessage: 'Got request with game id that does not exist in database',
         isOperational: true
     },
+    GAME_ALREADY_EXISTS: {
+        code: 'GAME_ALREADY_EXISTS',
+        httpStatusCode: 409,
+        clientMessage: 'Game already exists.',
+        logMessage: 'Got request with game id that already exists in database',
+        isOperational: true
+    },
     GAME_NOT_A_STEAM_APP: {
         code: 'GAME_NOT_A_STEAM_APP',
         httpStatusCode: 404,

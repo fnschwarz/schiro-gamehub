@@ -49,6 +49,23 @@ export const isSteamApp = async (gameId: number): Promise<boolean | null> => {
         });
 };
 
+export const isExistingGame = async (gameId: number): Promise<boolean | undefined> => {
+    const game = await Game.findOne({ id: gameId }).catch( (error) => {
+        handleError('DATABASE_CONNECTION_ERROR', 'is_existing_game', error);
+        return undefined;
+    });
+
+    if (game === undefined) {
+        return undefined;
+    }
+
+    if (game === null) {
+        return false;
+    }
+
+    return true;
+}
+
 export const hasValidGameIdFormat = (gameId: number): boolean => {
     const MAX_UINT32 = 2 ** 32;
     return Number.isSafeInteger(gameId) && gameId >= 10 && gameId < MAX_UINT32;

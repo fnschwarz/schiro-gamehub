@@ -1,5 +1,5 @@
 import { handleError, log, sendSuccess } from '../utils/utils';
-import { getGamesFromDatabase, getGameDetails, isSteamApp, hasValidGameIdFormat } from '../utils/games.utils';
+import { getGamesFromDatabase, getGameDetails, isSteamApp, isExistingGame, hasValidGameIdFormat } from '../utils/games.utils';
 import { Game } from '../models/game.model';
 import { Request, Response } from 'express';
 
@@ -61,13 +61,23 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     }
 
     // Check if game is a Steam app
-    const isSteamAppResponse = await isSteamApp(gameId);
-    if (isSteamAppResponse === null) {
+    const isSteamAppRes = await isSteamApp(gameId);
+    if (isSteamAppRes === null) {
         handleError('STEAM_APP_VALIDATION_ERROR', 'add_game', undefined, req, res); return;
     }
 
-    if (isSteamAppResponse === false) {
+    if (isSteamAppRes === false) {
         handleError('GAME_NOT_A_STEAM_APP', 'add_game', undefined, req, res); return;
+    }
+
+    // check if game is a duplicate
+    const isExistingGameRes = await isExistingGame(gameId);
+    if (isExistingGameRes === undefined) {
+        handleError('DATABASE_CONNECTION_ERROR', 'add_game', undefined, req, res); return;
+    }
+
+    if (isExistingGameRes) {
+        handleError('GAME_ALREADY_EXISTS', 'add_game', undefined, req, res); return;
     }
 
     // Get game name through Steam API
@@ -75,6 +85,7 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     if (!gameDetails) {
         handleError('FETCH_GAME_DETAILS_ERROR', 'add_game', undefined, req, res); return;
     }
+
 
     // Save game details (id, name) in database
     const newGame = new Game({ id: gameId, name: gameDetails.name, steam_link: gameDetails.steam_link, header_image: gameDetails.header_image });
