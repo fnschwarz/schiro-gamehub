@@ -110,6 +110,13 @@ export const ErrorCatalog = {
         logMessage: 'Got request with game id that does not refer to a steam app',
         isOperational: true
     },
+    STEAM_APP_VALIDATION_ERROR: {
+        code: 'STEAM_APP_VALIDATION_ERROR',
+        httpStatusCode: 502,
+        clientMessage: 'Steam not responding.',
+        logMessage: 'Game could not be validated due to Steam not responding',
+        isOperational: true
+    },
     FETCH_GAME_DETAILS_ERROR: {
         code: 'FETCH_GAME_DETAILS_ERROR',
         httpStatusCode: 502,

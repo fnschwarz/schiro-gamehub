@@ -61,7 +61,12 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
     }
 
     // Check if game is a Steam app
-    if (!await isSteamApp(gameId)) {
+    const isSteamAppResponse = await isSteamApp(gameId);
+    if (isSteamAppResponse === null) {
+        handleError('STEAM_APP_VALIDATION_ERROR', 'add_game', undefined, req, res); return;
+    }
+
+    if (isSteamAppResponse === false) {
         handleError('GAME_NOT_A_STEAM_APP', 'add_game', undefined, req, res); return;
     }
 

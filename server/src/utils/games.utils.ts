@@ -39,13 +39,13 @@ export const getGameDetails = async (gameId: number): Promise<{ name: string, st
     }
 };
 
-export const isSteamApp = async (gameId: number): Promise<boolean> => {
+export const isSteamApp = async (gameId: number): Promise<boolean | null> => {
     return fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
         .then(res => res.json())
         .then(data => data[gameId]?.success || false)
         .catch((error) => {
             handleError('NETWORK_ERROR', 'is_steam_app', error);
-            return false;
+            return null;
         });
 };
 
