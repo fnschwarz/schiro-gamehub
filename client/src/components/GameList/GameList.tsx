@@ -16,6 +16,16 @@ function GameList() {
         return <div>Loading...</div>;
     }
 
+    if (games.length === 0) {
+        return (
+            <div className={style['missing-game-list']}>
+                <p>Keine Spiele? 🥺</p>
+                <br />
+                <p>Das glaub ich nicht. <a href='https://www.twitch.tv/xschiro'>Schau lieber nochmal nach.</a></p>
+            </div>
+        );
+    }
+
     return (
         <div className={style['game-list']}>
             {games.map((game) => (
