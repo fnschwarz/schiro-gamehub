@@ -12,9 +12,8 @@ function GameIdInput(){
     const { reloadTrigger, setReloadTrigger } = useContext(GameListReloadContext);
     const [inputValue, setInputValue] = useState('');
     const [isFocused, setIsFocused] = useState(false);
-
     const [errorIcon, setErrorIcon] = useState<ReactElement | null>(null);
-        const [errorMessage, setErrorMessage] = useState<ReactElement | null>(null);
+    const [errorMessage, setErrorMessage] = useState<ReactElement | null>(null);
 
     useEffect(() => {
         setInputValue('');
