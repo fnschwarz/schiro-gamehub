@@ -6,7 +6,7 @@ function AccessDenied() {
     return (
         <div className={style.body}>
             <h1>403 Forbidden</h1>
-            <h1>uhm, not whitelisted... ☝️🤓</h1>
+            <h1>ähm, du stehst nicht auf der liste... ☝️🤓</h1>
             <a href='/'><button className={style['button']}>sorry</button></a>
         </div>
     );

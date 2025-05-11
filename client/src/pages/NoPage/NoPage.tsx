@@ -6,8 +6,8 @@ function NoPage(){
     return (
         <div className={style.body}>
             <h1>404 Not Found</h1>
-            <h1>congrats, you found the void... 🧑‍🚀🚀</h1>
-            <a href='/'><button className={style['button']}>please let me go</button></a>
+            <h1>bro, hier ist nichts... 💔🥀</h1>
+            <a href='/'><button className={style['button']}>lass mich gehen</button></a>
         </div>
     );
 }
