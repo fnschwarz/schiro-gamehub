@@ -86,7 +86,6 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
         handleError('FETCH_GAME_DETAILS_ERROR', 'add_game', undefined, req, res); return;
     }
 
-
     // Save game details (id, name) in database
     const newGame = new Game({ id: gameId, name: gameDetails.name, steam_link: gameDetails.steam_link, header_image: gameDetails.header_image });
     try {
