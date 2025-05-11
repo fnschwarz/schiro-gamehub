@@ -30,6 +30,7 @@ namespace client {
 
         interface Button {
             isFocused: boolean;
+            onClick: () => void;
         }
     }
 

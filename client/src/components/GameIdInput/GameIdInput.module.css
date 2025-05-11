@@ -1,7 +1,13 @@
+.game-id-input-container {
+    display: flex;
+    padding-bottom: 1rem;
+    align-items: center;
+    gap: 2rem;
+}
+
 .game-id-input {
     display: flex;
     align-items: center;
-    padding-bottom: 1rem;
 }
 
 .game-id-input-input-field {
@@ -20,4 +26,19 @@
 .game-id-input-input-field:focus, .game-id-input-input-field:focus-visible {
     border-color: #20f110;
     outline: none;
+}
+
+.game-id-input-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #f33;
+}
+
+@media (width < 780px) {
+    .game-id-input-container {
+        align-items: flex-start;
+        gap: 0.5rem;
+        flex-direction: column;
+    }
 }
