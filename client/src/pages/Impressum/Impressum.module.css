@@ -13,3 +13,8 @@
 .section a {
     text-decoration: underline;
 }
+
+.section ul, ol  {
+    margin-left: 1.5rem;
+    padding-left: 0;
+}
