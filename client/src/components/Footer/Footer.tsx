@@ -4,14 +4,14 @@ import Icon from '@mdi/react';
 import { mdiFileDocumentOutline, mdiGithub } from '@mdi/js';
 
 function Footer(){
-    const [copyrightText, setCopyrightText] = useState('Copyright © 2025 Finn Schwarz. All rights reserved.');
+    const [copyrightText, setCopyrightText] = useState('Copyright © 2025 Finn Schwarz. Alle Rechte vorbehalten.');
 
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 510) {
                 setCopyrightText('© 2025 Finn Schwarz');
             } else {
-                setCopyrightText('Copyright © 2025 Finn Schwarz. All rights reserved.');
+                setCopyrightText('Copyright © 2025 Finn Schwarz. Alle Rechte vorbehalten.');
             }
         }
 

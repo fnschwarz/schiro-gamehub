@@ -41,13 +41,13 @@ function RemoveGameButton({ id }: client.props.GameId){
                         <div className={style['dialog-backdrop']} onClick={() => setIsOpen(false)}>
                             <div className={style['dialog']}>
                                 <div className={style['dialog-panel']}>
-                                    <h2 className={style['dialog-title']}>Are you sure?</h2>
+                                    <h2 className={style['dialog-title']}>Sicher?</h2>
                                     <p className={style['dialog-description']}>
-                                        This will delete the game from the list.
+                                        Das Spiel wird dauerhaft von der Liste entfernt.
                                     </p>
                                     <div className={style['dialog-buttons']}>
-                                        <button className={style['dialog-button-cancel']} onClick={() => setIsOpen(false)}>Cancel</button>
-                                        <button className={style['dialog-button-delete']} onClick={() => {setIsOpen(false); handleClick()}}>Delete</button>
+                                        <button className={style['dialog-button-cancel']} onClick={() => setIsOpen(false)}>Abbrechen</button>
+                                        <button className={style['dialog-button-delete']} onClick={() => {setIsOpen(false); handleClick()}}>L&ouml;schen</button>
                                     </div>
                                 </div>
                             </div>

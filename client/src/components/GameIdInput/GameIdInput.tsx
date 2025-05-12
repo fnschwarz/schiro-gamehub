@@ -55,7 +55,7 @@ function GameIdInput(){
                     <input className={style['game-id-input-input-field']}
                         id="game-id-input"
                         type="text"
-                        placeholder="Steam Game ID"
+                        placeholder="Steam Spiel ID"
                         value={inputValue}
                         onChange={handleChange}
                         onFocus={() => setIsFocused(true)}
