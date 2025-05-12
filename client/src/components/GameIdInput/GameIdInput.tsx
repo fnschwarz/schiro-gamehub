@@ -1,6 +1,6 @@
 import { ReactElement, useState, useEffect, useContext } from 'react';
 import style from './GameIdInput.module.css';
-import { API_BASE_URL } from '../../configs/api.config';
+import { API_BASE_URL } from '../../configs/env.config.ts';
 import Icon from '@mdi/react';
 import { mdiAlertBox } from '@mdi/js';
 import GameListReloadContext from '../../context/GameListReloadContext.tsx';

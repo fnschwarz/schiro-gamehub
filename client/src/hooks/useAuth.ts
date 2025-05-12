@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../configs/api.config';
+import { API_BASE_URL } from '../configs/env.config';
 import { useQuery } from '@tanstack/react-query';
 
 const useAuth = () =>

@@ -1,5 +1,5 @@
 import style from './Impressum.module.css';
-import { IMPRINT_NAME, IMPRINT_STREET, IMPRINT_CITY, IMPRINT_COUNTRY, IMPRINT_EMAIL } from '../../configs/api.config';
+import { IMPRINT_NAME, IMPRINT_STREET, IMPRINT_CITY, IMPRINT_COUNTRY, IMPRINT_EMAIL } from '../../configs/env.config';
 import Header from './../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 

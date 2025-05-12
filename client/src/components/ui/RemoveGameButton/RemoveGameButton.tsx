@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import style from './RemoveGameButton.module.css';
-import { API_BASE_URL } from '../../../configs/api.config.ts';
+import { API_BASE_URL } from '../../../configs/env.config.ts';
 import useAuth from '../../../hooks/useAuth.ts';
 import GameListReloadContext from '../../../context/GameListReloadContext.tsx';
 
