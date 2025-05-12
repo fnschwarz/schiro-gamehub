@@ -8,14 +8,14 @@ beforeAll(() => {
 
 describe('testing games.utils file', () => {
     test('testing isSteamApp function', async () => {
-        expect(await isSteamApp(NaN)).toBe(false);
+        expect(await isSteamApp(NaN)).toBe(null);
         expect(await isSteamApp(1)).toBe(false);
         expect(await isSteamApp(5)).toBe(false);
-        expect(await isSteamApp(-10)).toBe(false);
+        expect(await isSteamApp(-10)).toBe(null);
         expect(await isSteamApp(1000000000000000)).toBe(false);
-        expect(await isSteamApp(-1000000000000000)).toBe(false);
+        expect(await isSteamApp(-1000000000000000)).toBe(null);
         expect(await isSteamApp(1000000000000000000)).toBe(false);
-        expect(await isSteamApp(-1000000000000000000)).toBe(false);
+        expect(await isSteamApp(-1000000000000000000)).toBe(null);
         expect(await isSteamApp(10)).toBe(true);
         expect(await isSteamApp(730)).toBe(true);
         expect(await isSteamApp(2967990)).toBe(true);
