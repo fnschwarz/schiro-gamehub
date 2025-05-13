@@ -21,7 +21,7 @@ describe('testing games.utils file', () => {
         expect(await isSteamApp(2967990)).toBe(true);
         expect(await isSteamApp(813780)).toBe(true);
         expect(await isSteamApp(2524890)).toBe(true);
-    })
+    });
 
     test('testing hasValidGameIdFormat function', () => {
         expect(hasValidGameIdFormat(NaN)).toBe(false);
