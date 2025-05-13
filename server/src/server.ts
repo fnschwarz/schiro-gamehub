@@ -1,5 +1,6 @@
 import { checkEnv, NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_PORT, MONGODB_URI, SESSION_SECRET } from './configs/config';
 import { handleError, log } from './utils/utils';
+import path from 'path';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import session from 'express-session';
@@ -77,6 +78,12 @@ server.use(cookieParser());
 server.use('/api/auth', AuthRouter);
 server.use('/api/games', GamesRouter);
 
+const frontDistPath = NODE_ENV === 'dev' ? path.join(__dirname, '..', '..', 'client', 'dist') : path.join(__dirname, '..', '..', '..', 'client', 'dist');
+server.use(express.static(frontDistPath));
+
+server.get('*', (req: express.Request, res: express.Response) => {
+    res.sendFile(path.join(frontDistPath, 'index.html'));
+});
 
 // server start logic
 (async () => {
