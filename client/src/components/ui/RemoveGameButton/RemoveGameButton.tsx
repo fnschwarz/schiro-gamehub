@@ -10,7 +10,7 @@ function RemoveGameButton({ id }: client.props.GameId){
     const { reloadTrigger, setReloadTrigger} = useContext(GameListReloadContext);
 
     const handleClick = async () => {
-        const app = {
+        const game = {
             id: id,
         };
 
@@ -21,7 +21,7 @@ function RemoveGameButton({ id }: client.props.GameId){
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(app),
+            body: JSON.stringify(game),
         });
 
         if (response.ok) {
