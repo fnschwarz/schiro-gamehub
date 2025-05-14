@@ -1,0 +1,20 @@
+.body {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100dvh;
+}
+
+.section {
+    margin: 0 auto;
+    padding: 5rem 2rem 1rem;
+    max-width: 80rem;
+}
+
+.section a {
+    text-decoration: underline;
+}
+
+.section ul, ol  {
+    margin-left: 1.5rem;
+    padding-left: 0;
+}

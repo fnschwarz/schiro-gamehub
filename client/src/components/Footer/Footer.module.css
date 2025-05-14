@@ -1,0 +1,28 @@
+.footer {
+    padding: 0 2rem;
+    border-top: 1px solid #1F2937;
+}
+
+.footer-items-container {
+    display: flex;
+    margin: 0 auto;
+    padding: 1rem;
+    max-width: 80rem;
+    justify-content: space-between;
+    align-items: center;
+    color: #6c757d;
+}
+
+.footer-items-container a {
+    display: inline-flex;
+    padding: 0.25rem;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    color: white;
+}
+
+.footer-items-container a:hover {
+    color: #111827;
+    background-color: #20f110;
+}

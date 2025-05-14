@@ -2,28 +2,64 @@
 
 #
 
-Schiro's GameHub is a React-based web application developed for Twitch streamer [xSchiro](https://www.twitch.tv/xschiro). It provides a visual overview of games scheduled to be played in the future, functioning as a public wishlist. Editing rights are restricted to whitelisted users. User authentication is handled via [Twitch OAuth 2.0](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/) and [JSON Web Tokens (JWT)](https://jwt.io/introduction). All data is stored in a [MongoDB](https://www.mongodb.com/) database.
+Schiro’s GameHub is a React-based web application developed for Twitch streamer [xSchiro](https://www.twitch.tv/xschiro). The application provides a visual and interactive list of games that are planned to be streamed in the future. It acts as a public wishlist, allowing viewers to stay informed and engaged with upcoming content.
 
-## 🚀 Features
+Only whitelisted users are granted permission to manage and update the list. User authentication is seamlessly integrated using [Twitch OAuth 2.0](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/) and secured through [JSON Web Tokens (JWT)](https://jwt.io/introduction). All application data - including game entries, user whitelist and session data - is stored in a [MongoDB](https://www.mongodb.com/) database.
 
-- Add games to the list by entering their **Steam App ID** in the input field and clicking `Add Game`
-- Delete games from the list by clicking the **$\times$ icon** in the top right corner of each list item
+# Installation
 
-## 🛠️ API Endpoints
+To get started, you need to clone the GitHub repository to your local device using the following command:
 
-- `GET /login` — Redirects the user to Twitch OAuth 2.0
-- `GET /logout` — Deletes the JWT from cookie storage
-- `GET /auth/twitch/callback` — Generates a new JWT if Twitch authorization succeeds
-- `GET /api/authenticate` — Verifies the JWT and returns the authenticated user's `id` and `email`
-- `GET /api/apps` — Returns a list of all stored Steam App IDs
-- `POST /api/apps/add` — Adds a new app entry to the database using Steam App details
-- `POST /api/apps/remove` — Removes a app entry from the database
+```bash
+git clone https://github.com/fiscdev/schiro-gamehub.git
+```
 
-## 🤝 Contributing
+Because this repository is a monorepo, it contains three package information files. In the root directory `/`, in `/client` and in `/server`. To install all the required node modules, you need to run
 
-This project is private. For contribution requests, please contact the repository owner directly.
+```bash
+npm install
+```
 
-## 📄 License
+in all three directories.
 
-This project is private and copyrighted.  
-All rights reserved.
+You also need a `.env` file in `/client` and `/server` to properly setup the environment variables of the application.
+
+`/client/.env`
+
+```env
+VITE_API_URL=<backend URL>                              (e.g. http://localhost:8080/)
+VITE_IMPRINT_NAME=<your name>                           (optional)
+VITE_IMPRINT_STREET=<your street>                       (optional)
+VITE_IMPRINT_CITY=<your postal code> <your city>        (optional)
+VITE_IMPRINT_COUNTRY=<your county>                      (optional)
+VITE_IMPRINT_EMAIL=<your email>                         (optional)
+```
+
+`/server/.env`
+
+```env
+NODE_ENV=dev|test|production
+FRONTEND_SERVER_URL=<frontend URL>                      (e.g. http://localhost:5173/)
+BACKEND_SERVER_URL=<backend URL>                        (e.g. http://localhost:8080/)
+BACKEND_SERVER_PORT=<backend port>
+MONGODB_URI=<mongodb URI>
+TWITCH_CLIENT_ID=<twitch id>
+TWITCH_CLIENT_SECRET=<twitch secret>
+JWT_SECRET=<string>
+HASH_SECRET=<string>
+SESSION_SECRET=<string>
+```
+
+> **_ATTENTION:_** If you build the application and then start the server with `npm run start`, you will need to set `NODE_ENV=test|production` and may need to set `FRONTEND_SERVER_URL` and `BACKEND_SERVER_URL` to the same URL as the backend serves the frontend in production environment.
+
+> **_NOTE:_** You need to create a Twitch application [here](https://dev.twitch.tv/console/apps) and get the client id and the secret. You will also need to add `<backend url>/api/auth/twitch/callback` to **OAuth Redirect URLs**.
+
+To finally start both the vite development server and the backend server in development mode, just run the the following command in `/client` and `/server` in different terminal instances:
+
+```bash
+npm run dev
+```
+
+# License
+
+Licensed under Copyright © 2025 Finn Schwarz. All rights reserved.

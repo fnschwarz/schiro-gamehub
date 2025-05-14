@@ -1,15 +1,24 @@
 import style from './GameCard.module.css';
 import RemoveGameButton from '../ui/RemoveGameButton/RemoveGameButton.tsx';
+import missing_header from '../../assets/images/missing_header.png';
 
-function GameCard({ id, title, img, link, alt}: client.props.IGame){
+function GameCard({ id, name, steam_link, header_image }: client.props.Game){
     return(
         <div className={style['game-card']} id={id.toString()}>
-            <a href={link}>
-                <img className={style['game-card-image']} src={img} alt={alt} />
-            </a>
-            <RemoveGameButton id={id} />
-            <div className={style['game-card-title-wrapper']}>
-                <h2 className={style['game-card-title']}>{title}</h2>
+            <div className={style['game-card-image-container']}>
+                <a href={steam_link}>
+                    <img className={style['game-card-image']} src={header_image} onError={ (e) => {
+                        const img = e.currentTarget;
+                        img.onerror = null;
+                        img.src = missing_header;
+                    }} alt='Game header is currently unavailable' />
+                </a>
+            </div>
+            <div className={style['game-card-remove-game-button']}>
+                <RemoveGameButton id={id} />
+            </div>
+            <div className={style['game-card-title-container']}>
+                <h2 className={style['game-card-title']}>{name}</h2>
             </div>
         </div>
     );

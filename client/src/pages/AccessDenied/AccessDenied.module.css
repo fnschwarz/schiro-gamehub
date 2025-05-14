@@ -1,0 +1,22 @@
+.body {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.button {
+    margin-top: 1rem;
+    padding: 0.5rem 2rem;
+    border: unset;
+    border-radius: 1rem;
+    font-weight: 600;
+    font-size: 17px;
+    box-shadow: 4px 8px 19px -3px rgb(0 0 0 / 27%);
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.button:hover {
+    background-color: #aaa;
+}

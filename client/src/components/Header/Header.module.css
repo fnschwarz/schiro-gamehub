@@ -1,16 +1,45 @@
 .header {
-    background-color: #1F2937;
-    text-align: center;
-    padding: 5px;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 1.25rem 0;
+    border-bottom: 0.063rem solid #1F2937;
+    background-color: rgb(17 24 39 / 80%);
+    backdrop-filter: blur(7px);
 }
 
-.header-content-wrapper {
+.header-nav-bar {
     display: flex;
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 80rem;
     justify-content: space-between;
-    margin-left: 20%;
-    margin-right: 20%;
+    align-items: center;
 }
-  
-.header-content-wrapper h2 {
-    margin: 0;
+
+.header-nav-logo {
+    display: flex;
+    gap: 0.313rem;
+}
+
+.header-nav-logo img {
+    display: block;
+    height: 1.5rem;
+    width: auto;
+}
+
+@media (width <= 300px) {
+    .header-nav-bar {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+@media (width <= 600px) {
+    .header-nav-logo1 {
+        display: none !important;
+    }
 }

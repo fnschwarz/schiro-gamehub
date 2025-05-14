@@ -1,9 +1,11 @@
-.section-container {
-    max-width: 60%;
-    margin:auto;
-    margin-top: 15px;
+.section {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 5rem 2rem 1rem;
 }
 
-.game-list-wrapper {
-    margin-top: 15px;
+.section-items-container {
+    width: 100%;
+    max-width: 80rem;
 }

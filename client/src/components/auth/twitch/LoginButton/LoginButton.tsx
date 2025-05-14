@@ -1,4 +1,7 @@
 import style from './LoginButton.module.css';
+import { API_BASE_URL } from '../../../../configs/env.config.ts';
+import Icon from '@mdi/react';
+import { mdiTwitch, mdiLogout } from '@mdi/js';
 import useAuth from '../../../../hooks/useAuth.ts';
 
 function LoginButton() {
@@ -6,16 +9,22 @@ function LoginButton() {
 
     if(isAuthenticated){
         return (
-            <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/logout`}>
-                Logout
-            </button>
+            <a href={`${API_BASE_URL}/api/auth/logout`}>
+                <button className={style['logout-button']}>
+                    <Icon path={mdiLogout} size={0.9} />
+                    <div className={style['logout-button-text']}>Ausloggen</div>
+                </button>
+            </a>
         )
     }
 
     return (
-        <button className={style['login-button']} onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/twitch`}>
-            Login with Twitch
-        </button>
+        <a href={`${API_BASE_URL}/api/auth/twitch`}>
+            <button className={style['login-button']}>
+                <Icon path={mdiTwitch} size={0.9} />
+                <div className={style['login-button-text']}>Login mit Twitch</div>
+            </button>
+        </a>
     );
 }
 

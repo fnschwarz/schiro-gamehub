@@ -1,49 +1,69 @@
-import { Game } from '../models/game.model';
+import { HASH_SECRET } from '../configs/config';
+import { ErrorCatalog } from '../errors/errorCatalog';
+import { Request, Response } from 'express';
+import { createHmac } from 'crypto';
 
-export const log = (type: string, message: string) => {
-    const date = new Date().toISOString();
-    console.log(`[${date}] [${type}] ${message}`);
-}
+export const handleError = (
+    errorKey: keyof typeof ErrorCatalog,
+    operation: string,
+    extra?: Error,
+    req?: Request,
+    res?: Response
+) => {
+    const err = ErrorCatalog[errorKey];
 
-export const logError = (message: string, error?: Error) => {
-    const date = new Date().toISOString();
-    const errorMessage = error ? ` // ${error}` : '';
-    console.error(`[${date}] [error] ${message}${errorMessage}`);
-};
+    operation = `@${operation}:`;
 
-export const getGamesFromDatabase = () => {
-    return Game.find({})
-        .then(games => games.reverse())
-        .catch((error) => {
-            logError('Failed to fetch game entries from database', error);
-            return [];
-        });
-};
-
-export const getGameName = (gameId: number): Promise<string> => {
-    return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
-        .then(response => response.json())
-        .then(data => data[gameId]?.data?.name || null)
-        .catch((error) => {
-            logError(`Failed to fetch game name of game id '${gameId}' from Steam API`, error);
-            return null;
-        });
-};
-
-export const isSteamApp = (gameId: number): Promise<boolean> => {
-    return fetch(`${process.env.STEAM_BASE_URL}/api/appdetails?appids=${gameId}`)
-        .then(response => response.json())
-        .then(data => data[gameId]?.success || false)
-        .catch((error) => {
-            logError(`Failed to verify game id '${gameId}' from Steam API`, error);
-            return false;
-        });
-};
-
-export const hasValidGameIdFormat = (gameId: number): boolean => {
-    if (!isNaN(gameId) || gameId > 0 || gameId < Math.pow(2, 32)) {
-        return true;
+    if(!err.isOperational) {
+        operation = `!!! FATAL ERROR !!! ${operation}`;
     }
 
-    return false;
+    logError(err.code, `${operation} ${err.logMessage}`, req, extra);
+
+    if (res) {
+        sendError(res, err.httpStatusCode, err.clientMessage);
+    }
+}
+
+const generateClientId = (ip: string, userAgent: string, secret: string): string => {
+    const hash = createHmac('sha256', secret);
+    hash.update(`${ip}${userAgent}`);
+    return hash.digest('hex').substring(0, 10);
+}
+
+export const log = (type: string, message: string, req?: Request) => {
+    const date = `[${new Date().toISOString()}] `;
+    type = `[${type}] `;
+
+    // provides hashed client ip and user agent reduced to 10 characters or empty string
+    const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
+
+    console.log(`${date}${type}${clientId}${message}`);
+}
+
+export const logError = (type: string, message: string, req? : Request, error?: Error) => {
+    const date = `[${new Date().toISOString()}] `;
+    type = `[${type}] `;
+
+    // provides hashed client ip and user agent reduced to 10 characters or empty string
+    const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
+
+    // provides error message or empty string
+    const errorMessage = error ? ` // ${error}` : '';
+
+    console.error(`${date}${type}${clientId}${message}${errorMessage}`);
 };
+
+export const sendSuccess = (res: Response, statusCode: number, message: string) => {
+    res.status(statusCode).json({
+        success: true,
+        message: message
+    });
+}
+
+export const sendError = (res: Response, statusCode: number, message: string) => {
+    res.status(statusCode).json({
+        success: false,
+        message: message
+    });
+}

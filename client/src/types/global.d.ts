@@ -17,29 +17,29 @@ namespace client {
     }
 
     namespace props {
-        interface IGame {
+        interface Game {
             id: number;
-            title: string;
-            img: string;
-            link: string;
-            alt: string;
+            name: string;
+            steam_link: string;
+            header_image: string;
         }
 
-        interface IGameId {
+        interface GameId {
             id: number;
         }
 
-        interface IButton {
+        interface Button {
             isFocused: boolean;
+            onClick: () => void;
         }
     }
 
     namespace objects {
-        interface IGame {
+        interface Game {
             id: number;
             name: string;
-            link: string;
-            header: string;
+            steam_link: string;
+            header_image: string;
         }
     }
 }

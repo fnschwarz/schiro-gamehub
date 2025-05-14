@@ -1,0 +1,18 @@
+{
+  "name": "schiro-gamehub",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "ci": "npm ci && cd client && npm ci && cd .. && cd server && npm ci",
+    "build": "cd client && npm run build && cd .. & cd server && npm run build",
+    "test": "npm run playwright && npm run eslint && npm run jest",
+    "playwright": "npx playwright test",
+    "eslint": "cd client && npm run lint",
+    "jest": "cd server && npm run test"
+  },
+  "devDependencies": {
+    "playwright": "^1.52.0",
+    "playwright-core": "^1.52.0",
+    "@playwright/test": "^1.52.0"
+  }
+}
