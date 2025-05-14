@@ -10,7 +10,7 @@ function GameList() {
 
     useEffect(() => {
         refetch();
-    }, [reloadTrigger]);
+    }, [refetch, reloadTrigger]);
 
     if (isLoading) {
         return <div>Loading...</div>;

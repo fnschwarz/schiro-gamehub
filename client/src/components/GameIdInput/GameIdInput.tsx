@@ -19,7 +19,7 @@ function GameIdInput(){
         setInputValue('');
     }, [reloadTrigger]);
 
-    const handleChange = (e: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value.replace(/\D/g, ''));
     };
 
