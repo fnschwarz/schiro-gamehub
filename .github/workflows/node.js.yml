@@ -15,6 +15,18 @@ jobs:
       matrix:
         node-version: [18.x, 20.x, 22.x]
 
+    env:
+      NODE_ENV: ${{ secrets.NODE_ENV }}
+      FRONTEND_SERVER_URL: ${{ secrets.FRONTEND_SERVER_URL }}
+      BACKEND_SERVER_URL: ${{ secrets.BACKEND_SERVER_URL }}
+      BACKEND_SERVER_PORT: ${{ secrets.BACKEND_SERVER_PORT }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+      TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      HASH_SECRET: ${{ secrets.HASH_SECRET }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
