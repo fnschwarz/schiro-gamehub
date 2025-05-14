@@ -78,12 +78,15 @@ server.use(cookieParser());
 server.use('/api/auth', AuthRouter);
 server.use('/api/games', GamesRouter);
 
-const frontDistPath = NODE_ENV === 'dev' ? path.join(__dirname, '..', '..', 'client', 'dist') : path.join(__dirname, '..', '..', '..', 'client', 'dist');
-server.use(express.static(frontDistPath));
+// backend serves frontend in production environment
+if (NODE_ENV !== 'dev') {
+    const frontDistPath = path.join(__dirname, '..', '..', '..', 'client', 'dist');
+    server.use(express.static(frontDistPath));
 
-server.get('*', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.join(frontDistPath, 'index.html'));
-});
+    server.get('*', (req: express.Request, res: express.Response) => {
+        res.sendFile(path.join(frontDistPath, 'index.html'));
+    });
+}
 
 // server start logic
 (async () => {
