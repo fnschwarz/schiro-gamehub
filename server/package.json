@@ -1,17 +1,13 @@
 {
   "name": "server",
+  "private": true,
   "version": "1.0.0",
-  "main": "server.js",
   "scripts": {
     "test": "npx jest",
     "build": "tsc --build",
     "start": "node ./dist/src/server.js",
     "dev": "nodemon ./src/server.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.7",
