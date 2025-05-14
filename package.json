@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "build": "cd client && npm run build && cd .. & cd server && npm run build",
     "test": "npm run playwright && npm run eslint && npm run jest",
     "playwright": "npx playwright test",
     "eslint": "cd client && npm run lint",
