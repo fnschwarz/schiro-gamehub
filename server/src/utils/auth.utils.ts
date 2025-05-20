@@ -3,7 +3,7 @@ import { handleError } from './utils';
 import { User } from '../models/user.model';
 
 export const getAccessToken = async (code: string): Promise<string | undefined> => {
-    const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token`, {
+    const tokenResponse = await fetch(`https://id.titch.tv/oauth2/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
