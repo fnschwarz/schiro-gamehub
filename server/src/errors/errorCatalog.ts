@@ -42,7 +42,7 @@ export const ErrorCatalog = {
         httpStatusCode: 400,
         clientMessage: 'Invalid session state.',
         logMessage: 'Received a state that does not match with given session state',
-        isOperational: true
+        isOperational: false
     },
     MISSING_AUTH_CODE: {
         code: 'MISSING_AUTH_CODE',
@@ -56,20 +56,27 @@ export const ErrorCatalog = {
         httpStatusCode: 502,
         clientMessage: 'Unable to retrieve access token from Twitch.',
         logMessage: 'Twitch did not return valid access token',
-        isOperational: true
+        isOperational: false
     },
     USER_DATA_EXCHANGE_ERROR: {
         code: 'USER_DATA_EXCHANGE_ERROR',
         httpStatusCode: 502,
         clientMessage: 'Unable to retrieve user data from Twitch.',
         logMessage: 'Twitch did not return valid twitch user data',
-        isOperational: true
+        isOperational: false
     },
     NOT_WHITELISTED: {
         code: 'NOT_WHITELISTED',
         httpStatusCode: 403,
         clientMessage: 'Access denied: not whitelisted.',
         logMessage: 'User tried logging in without being on whitelist',
+        isOperational: true
+    },
+    MISSING_TOKEN: {
+        code: 'MISSING_TOKEN',
+        httpStatusCode: 401,
+        clientMessage: 'No token found.',
+        logMessage: 'User has no token.',
         isOperational: true
     },
     INVALID_TOKEN: {
@@ -84,7 +91,7 @@ export const ErrorCatalog = {
         httpStatusCode: 500,
         clientMessage: 'Internal Server Error: invalid token payload.',
         logMessage: 'Invalid token payload.',
-        isOperational: true
+        isOperational: false
     },
 
     // GAMES
@@ -122,13 +129,13 @@ export const ErrorCatalog = {
         httpStatusCode: 502,
         clientMessage: 'Steam not responding.',
         logMessage: 'Game could not be validated due to Steam not responding',
-        isOperational: true
+        isOperational: false
     },
     FETCH_GAME_DETAILS_ERROR: {
         code: 'FETCH_GAME_DETAILS_ERROR',
         httpStatusCode: 502,
         clientMessage: 'Steam not responding.',
         logMessage: 'Game details could not be fetched due to Steam not responding',
-        isOperational: true
+        isOperational: false
     }
 }
