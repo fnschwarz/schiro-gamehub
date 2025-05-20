@@ -29,7 +29,7 @@ function Footer(){
                 {copyrightText}
                 <div>
                     <a title='Impressum' href='/impressum'><Icon path={mdiFileDocumentOutline} size={1} /></a>
-                    <a title='GitHub' href='https://github.com/fiscdev'><Icon path={mdiGithub} size={1} /></a>
+                    <a title='GitHub' href='https://github.com/fnschwarz'><Icon path={mdiGithub} size={1} /></a>
                 </div>
             </div>
         </div>
