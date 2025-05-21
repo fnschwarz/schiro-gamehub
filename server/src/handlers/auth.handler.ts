@@ -1,4 +1,5 @@
 import { NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_URL, TWITCH_CLIENT_ID, JWT_SECRET } from '../configs/config';
+import { ServerError } from '../errors/error';
 import { handleError, log, sendSuccess } from '../utils/utils';
 import { getAccessToken, getUserData, isWhitelistedUser } from '../utils/auth.utils';
 import { Request, Response } from 'express';
@@ -37,8 +38,8 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     // use code to get access token
     const accessToken = await getAccessToken(code);
 
-    if (!accessToken) {
-        handleError('ACCESS_TOKEN_EXCHANGE_ERROR', 'login', undefined, req, res); return;
+    if (accessToken instanceof ServerError) {
+        handleError(accessToken.type, accessToken.operation, accessToken.extra, req, res); return;
     }
 
     // use access token to get user data

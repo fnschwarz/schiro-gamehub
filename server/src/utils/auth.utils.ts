@@ -1,8 +1,9 @@
 import { BACKEND_SERVER_URL, TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET } from '../configs/config';
+import { ServerError } from '../errors/error';
 import { handleError } from './utils';
 import { User } from '../models/user.model';
 
-export const getAccessToken = async (code: string): Promise<string | undefined> => {
+export const getAccessToken = async (code: string): Promise<string | ServerError> => {
     const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -14,18 +15,22 @@ export const getAccessToken = async (code: string): Promise<string | undefined> 
             redirect_uri: `${BACKEND_SERVER_URL}/api/auth/twitch/callback`
         }),
     }).catch( (error) => {
-        handleError('NETWORK_ERROR', 'get_access_token', error); return undefined;
+        return new ServerError('NETWORK_ERROR', 'get_access_token', error);
     });
 
+    if (tokenResponse instanceof ServerError) {
+        return tokenResponse;
+    }
+
     if (!tokenResponse || !tokenResponse.ok) {
-        handleError('UPSTREAM_SERVICE_ERROR', 'get_access_token'); return undefined;
+        return new ServerError('UPSTREAM_SERVICE_ERROR', 'get_access_token');
     }
 
     const responseData = await tokenResponse.json();
 
     // check if there is a access token in response data and if it has proper type
     if (!responseData || typeof(responseData.access_token) !== 'string') {
-        handleError('INVALID_RESPONSE_FORMAT', 'get_access_token'); return undefined;
+        return new ServerError('INVALID_RESPONSE_FORMAT', 'get_access_token');
     }
 
     return responseData.access_token;

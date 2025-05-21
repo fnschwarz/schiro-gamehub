@@ -76,7 +76,7 @@ export const ErrorCatalog = {
         code: 'MISSING_TOKEN',
         httpStatusCode: 401,
         clientMessage: 'No token found.',
-        logMessage: 'User has no token.',
+        logMessage: 'No token found',
         isOperational: true
     },
     INVALID_TOKEN: {
@@ -138,4 +138,6 @@ export const ErrorCatalog = {
         logMessage: 'Game details could not be fetched due to Steam not responding',
         isOperational: false
     }
-}
+} as const;
+
+export type ErrorCatalogKey = keyof typeof ErrorCatalog;
