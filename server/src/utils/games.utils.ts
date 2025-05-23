@@ -10,7 +10,7 @@ export const getGamesFromDatabase = async () => {
 };
 
 export const getGameDetails = async (gameId: number): Promise<{ name: string, steam_link: string, header_image: string}> => {
-    const responseData = await fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)//asdasd
+    const responseData = await fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
         .then(res => res.json())
         .catch((error) => {
             throw new AppError('NETWORK_ERROR', 'get_game_details', error);
