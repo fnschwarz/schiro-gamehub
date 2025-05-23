@@ -3,6 +3,7 @@ import { handleError, log } from './utils/utils';
 import path from 'path';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
+import helmet from 'helmet';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
@@ -68,6 +69,7 @@ declare module 'express-session' {
 }
 
 // setup middlewares
+server.use(helmet());
 server.use(limiter);
 server.use(cors(corsOptions));
 server.use(sessionHandler);
