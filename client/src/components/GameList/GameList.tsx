@@ -21,7 +21,7 @@ function GameList() {
             <div className={style['missing-game-list']}>
                 <p>Keine Spiele? 🥺</p>
                 <br />
-                <p>Das glaub ich nicht. <a href='https://www.twitch.tv/xschiro'>Schau lieber nochmal nach.</a></p>
+                <p>Dann schau doch mal bei <a href='https://www.twitch.tv/xschiro'>xSchiro</a> vorbei!</p>
             </div>
         );
     }
