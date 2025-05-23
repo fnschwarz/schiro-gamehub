@@ -34,12 +34,11 @@ export const getGame = async (req: Request, res: Response) => {
 
     // Get game details through database
     const game = await Game.findOne({ id: gameId }).catch( (error) => {
-        handleError('DATABASE_CONNECTION_ERROR', 'get_game', error, req, res);
-        return undefined;
+        return new AppError('DATABASE_CONNECTION_ERROR', 'get_game', error);
     });
 
-    if (game === undefined) {
-        return;
+    if (game instanceof AppError) {
+        handleError(game.errorKey, game.operation, game.extra, req, res); return;
     }
 
     if (game === null) {
@@ -71,18 +70,10 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
         handleError(isSteamAppRes.errorKey, isSteamAppRes.operation, isSteamAppRes.extra, req, res); return;
     }
 
-    if (isSteamAppRes === false) {
-        handleError('GAME_NOT_A_STEAM_APP', 'add_game', undefined, req, res); return;
-    }
-
     // check if game is a duplicate
     const isExistingGameRes = await isExistingGame(gameId);
     if (isExistingGameRes instanceof AppError) {
         handleError(isExistingGameRes.errorKey, isExistingGameRes.operation, isExistingGameRes.extra, req, res); return;
-    }
-
-    if (isExistingGameRes) {
-        handleError('GAME_ALREADY_EXISTS', 'add_game', undefined, req, res); return;
     }
 
     // Get game name through Steam API
@@ -112,12 +103,11 @@ export const removeGameFromDatabase = async (req: Request, res: Response) => {
     }
 
     const gameToDelete = await Game.findOneAndDelete({ id: gameId }).catch( (error) => {
-        handleError('DATABASE_CONNECTION_ERROR', 'get_game', error, req, res);
-        return undefined;
+        return new AppError('DATABASE_CONNECTION_ERROR', 'get_game', error);
     });
 
-    if (gameToDelete === undefined) {
-        return;
+    if (gameToDelete instanceof AppError) {
+        handleError(gameToDelete.errorKey, gameToDelete.operation, gameToDelete.extra, req, res); return;
     }
 
     // Check if game has entry in database

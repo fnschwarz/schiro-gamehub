@@ -1,5 +1,4 @@
 import { AppError } from '../errors/error';
-import { handleError } from './utils';
 import { Game } from '../models/game.model';
 
 export const getGamesFromDatabase = async () => {
@@ -43,8 +42,17 @@ export const getGameDetails = async (gameId: number): Promise<{ name: string, st
 export const isSteamApp = async (gameId: number): Promise<boolean | AppError> => {
     return fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
         .then(res => res.json())
-        .then(data => data[gameId]?.success || false)
-        .catch((error) => {
+        .then((data) => {
+            if(data[gameId]?.success) {
+                return true;
+            }
+
+            return new AppError('GAME_NOT_A_STEAM_APP', 'is_steam_app');
+        }).catch((error) => {
+            if (error instanceof TypeError) {
+                return new AppError('INVALID_GAME_ID_FORMAT', 'is_steam_app');
+            }
+
             return new AppError('NETWORK_ERROR', 'is_steam_app', error);
         });
 };
@@ -58,11 +66,15 @@ export const isExistingGame = async (gameId: number): Promise<boolean | AppError
         return game;
     }
 
+    /**
+     * When no document with the given id is found (i.e. game is not on the list)
+     * mongoose returns null and the functions returns false
+     */
     if (game === null) {
         return false;
     }
 
-    return true;
+    return new AppError('GAME_ALREADY_EXISTS', 'is_existing_game');
 }
 
 export const hasValidGameIdFormat = (gameId: number): boolean => {

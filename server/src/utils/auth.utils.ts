@@ -1,6 +1,5 @@
 import { BACKEND_SERVER_URL, TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET } from '../configs/config';
 import { AppError } from '../errors/error';
-import { handleError } from './utils';
 import { User } from '../models/user.model';
 
 export const getAccessToken = async (code: string): Promise<string | AppError> => {
