@@ -9,14 +9,14 @@ beforeAll(() => {
 
 describe('testing games.utils file', () => {
     test('testing isSteamApp function', async () => {
-        expect(await isSteamApp(NaN)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(1)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(5)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(-10)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(1000000000000000)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(-1000000000000000)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(1000000000000000000)).toBeInstanceOf(AppError);
-        expect(await isSteamApp(-1000000000000000000)).toBeInstanceOf(AppError);
+        await expect(isSteamApp(NaN)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(1)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(5)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(-10)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(1000000000000000)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(-1000000000000000)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(1000000000000000000)).rejects.toBeInstanceOf(AppError);
+        await expect(isSteamApp(-1000000000000000000)).rejects.toBeInstanceOf(AppError);
         expect(await isSteamApp(10)).toBe(true);
         expect(await isSteamApp(730)).toBe(true);
         expect(await isSteamApp(2967990)).toBe(true);

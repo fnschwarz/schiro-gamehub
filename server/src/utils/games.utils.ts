@@ -32,14 +32,14 @@ export const getGameDetails = async (gameId: number): Promise<{ name: string, st
 };
 
 export const isSteamApp = async (gameId: number): Promise<boolean> => {
+    if(!hasValidGameIdFormat(gameId)) {
+        throw new AppError('INVALID_GAME_ID_FORMAT', 'is_steam_app');
+    }
+
     return fetch(`https://store.steampowered.com/api/appdetails?appids=${gameId}`)
         .then(res => res.json())
         .then((data) => { return data[gameId]?.success || false })
         .catch((error) => {
-            if (error instanceof TypeError) {
-                throw new AppError('INVALID_GAME_ID_FORMAT', 'is_steam_app');
-            }
-
             throw new AppError('NETWORK_ERROR', 'is_steam_app', error);
         });
 };
