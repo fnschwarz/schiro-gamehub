@@ -27,36 +27,22 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
 
     // check if delivered state parameter exists and is the same as the session state
     if (!req.session.state || state !== req.session.state) {
-        handleError('STATE_MISMATCH', 'login', undefined, req, res); return;
+        throw new AppError('STATE_MISMATCH', 'login');
     }
 
     // check if Twitch API sent an auth code for token post request
     if (!code || typeof(code) !== 'string') {
-        handleError('MISSING_AUTH_CODE', 'login', undefined, req, res); return;
+        throw new AppError('MISSING_AUTH_CODE', 'login');
     }
 
     // use code to get access token
     const accessToken = await getAccessToken(code);
 
-    if (accessToken instanceof AppError) {
-        handleError(accessToken.errorKey, accessToken.operation, accessToken.extra, req, res); return;
-    }
-
     // use access token to get user data
     const email = await getUserEmail(accessToken);
 
-    if (email instanceof AppError) {
-        handleError(email.errorKey, email.operation, email.extra, req, res); return;
-    }
-
     // check if user has whitelisted email address
-    const isWhitelisted = await isWhitelistedUser(email);
-
-    if (isWhitelisted instanceof AppError) {
-        handleError(isWhitelisted.errorKey, isWhitelisted.operation, isWhitelisted.extra, req, res); return;
-    }
-
-    if (!isWhitelisted) {
+    if (!await isWhitelistedUser(email)) {
         res.redirect(`${FRONTEND_SERVER_URL}/access-denied`); return;
     }
 
