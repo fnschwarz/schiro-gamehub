@@ -1,7 +1,7 @@
 import { NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_URL, TWITCH_CLIENT_ID, JWT_SECRET } from '../configs/config';
-import { ServerError } from '../errors/error';
+import { AppError } from '../errors/error';
 import { handleError, log, sendSuccess } from '../utils/utils';
-import { getAccessToken, getUserData, isWhitelistedUser } from '../utils/auth.utils';
+import { getAccessToken, getUserEmail, isWhitelistedUser } from '../utils/auth.utils';
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
@@ -38,25 +38,31 @@ export const handleTwitchAuth = async (req: Request, res: Response) => {
     // use code to get access token
     const accessToken = await getAccessToken(code);
 
-    if (accessToken instanceof ServerError) {
-        handleError(accessToken.type, accessToken.operation, accessToken.extra, req, res); return;
+    if (accessToken instanceof AppError) {
+        handleError(accessToken.errorKey, accessToken.operation, accessToken.extra, req, res); return;
     }
 
     // use access token to get user data
-    const user = await getUserData(accessToken);
+    const email = await getUserEmail(accessToken);
 
-    if (!user || !user.email || typeof(user.email) !== 'string' || !user.id) {
-        handleError('USER_DATA_EXCHANGE_ERROR', 'login', undefined, req, res); return;
+    if (email instanceof AppError) {
+        handleError(email.errorKey, email.operation, email.extra, req, res); return;
     }
 
     // check if user has whitelisted email address
-    if (!await isWhitelistedUser(user.email)) {
+    const isWhitelisted = await isWhitelistedUser(email);
+
+    if (isWhitelisted instanceof AppError) {
+        handleError(isWhitelisted.errorKey, isWhitelisted.operation, isWhitelisted.extra, req, res); return;
+    }
+
+    if (!isWhitelisted) {
         res.redirect(`${FRONTEND_SERVER_URL}/access-denied`); return;
     }
 
     // create a new token containing email and id of user
     const token = sign(
-        { email: user.email, id: user.id },
+        { email: email },
         JWT_SECRET,
         { expiresIn: '2h' }
     );

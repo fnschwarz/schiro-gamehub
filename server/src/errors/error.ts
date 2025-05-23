@@ -1,12 +1,12 @@
 import { ErrorCatalogKey } from './errorCatalog';
 
-export class ServerError {
-    type: ErrorCatalogKey;
+export class AppError {
+    errorKey: ErrorCatalogKey;
     operation: string;
     extra?: Error
 
-    constructor (type: ErrorCatalogKey, operation: string, extra?: Error) {
-        this.type = type;
+    constructor (errorKey: ErrorCatalogKey, operation: string, extra?: Error) {
+        this.errorKey = errorKey;
         this.operation = operation;
         if (extra) this.extra = extra;
     }

@@ -51,20 +51,6 @@ export const ErrorCatalog = {
         logMessage: 'Did not receive required authorization code in request query',
         isOperational: true
     },
-    ACCESS_TOKEN_EXCHANGE_ERROR: {
-        code: 'ACCESS_TOKEN_EXCHANGE_ERROR',
-        httpStatusCode: 502,
-        clientMessage: 'Unable to retrieve access token from Twitch.',
-        logMessage: 'Twitch did not return valid access token',
-        isOperational: false
-    },
-    USER_DATA_EXCHANGE_ERROR: {
-        code: 'USER_DATA_EXCHANGE_ERROR',
-        httpStatusCode: 502,
-        clientMessage: 'Unable to retrieve user data from Twitch.',
-        logMessage: 'Twitch did not return valid twitch user data',
-        isOperational: false
-    },
     NOT_WHITELISTED: {
         code: 'NOT_WHITELISTED',
         httpStatusCode: 403,
@@ -75,7 +61,7 @@ export const ErrorCatalog = {
     MISSING_TOKEN: {
         code: 'MISSING_TOKEN',
         httpStatusCode: 401,
-        clientMessage: 'No token found.',
+        clientMessage: 'Not logged in.',
         logMessage: 'No token found',
         isOperational: true
     },

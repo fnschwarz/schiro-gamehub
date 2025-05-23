@@ -1,3 +1,4 @@
+import { AppError } from '../errors/error';
 import { handleError, log, sendSuccess } from '../utils/utils';
 import { getGamesFromDatabase, getGameDetails, isSteamApp, isExistingGame, hasValidGameIdFormat } from '../utils/games.utils';
 import { Game } from '../models/game.model';
@@ -5,6 +6,10 @@ import { Request, Response } from 'express';
 
 export const getGames = async (req: Request, res: Response) => {
     const gameDocuments = await getGamesFromDatabase();
+
+    if (gameDocuments instanceof AppError) {
+        handleError(gameDocuments.errorKey, gameDocuments.operation, gameDocuments.extra, req, res); return;
+    }
 
     const games = gameDocuments.map((game) => ({
         id: game.id,
@@ -62,8 +67,8 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
 
     // Check if game is a Steam app
     const isSteamAppRes = await isSteamApp(gameId);
-    if (isSteamAppRes === null) {
-        handleError('STEAM_APP_VALIDATION_ERROR', 'add_game', undefined, req, res); return;
+    if (isSteamAppRes instanceof AppError) {
+        handleError(isSteamAppRes.errorKey, isSteamAppRes.operation, isSteamAppRes.extra, req, res); return;
     }
 
     if (isSteamAppRes === false) {
@@ -72,8 +77,8 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
 
     // check if game is a duplicate
     const isExistingGameRes = await isExistingGame(gameId);
-    if (isExistingGameRes === undefined) {
-        handleError('DATABASE_CONNECTION_ERROR', 'add_game', undefined, req, res); return;
+    if (isExistingGameRes instanceof AppError) {
+        handleError(isExistingGameRes.errorKey, isExistingGameRes.operation, isExistingGameRes.extra, req, res); return;
     }
 
     if (isExistingGameRes) {
@@ -82,8 +87,8 @@ export const addGameToDatabase = async (req: Request, res: Response) => {
 
     // Get game name through Steam API
     const gameDetails = await getGameDetails(gameId);
-    if (!gameDetails) {
-        handleError('FETCH_GAME_DETAILS_ERROR', 'add_game', undefined, req, res); return;
+    if (gameDetails instanceof AppError) {
+        handleError(gameDetails.errorKey, gameDetails.operation, gameDetails.extra, req, res); return;
     }
 
     // Save game details (id, name) in database
