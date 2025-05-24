@@ -27,6 +27,7 @@ jobs:
         run: npm run eslint
   test:
     name: build & test
+    fail-fast: false
     strategy:
       matrix:
         node-version: [lts/*, latest]
