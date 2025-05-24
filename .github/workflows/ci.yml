@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    name: lint
+    strategy:
+      matrix:
+        node-version: [lts/*]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Use Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm run ci-client
+      - name: Check for lint/formatting errors
+        run: npm run eslint
+  test:
+    name: build & test
+    strategy:
+      matrix:
+        node-version: [lts/*, latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      NODE_ENV: ${{ secrets.NODE_ENV }}
+      LOG_OPERATIONAL: ${{ secrets.LOG_OPERATIONAL }}
+      TEST_ENV_USERNAME: ${{ secrets.TEST_ENV_USERNAME }}
+      TEST_ENV_PASSWORD: ${{ secrets.TEST_ENV_PASSWORD }}
+      FRONTEND_SERVER_URL: ${{ secrets.FRONTEND_SERVER_URL }}
+      BACKEND_SERVER_URL: ${{ secrets.BACKEND_SERVER_URL }}
+      BACKEND_SERVER_PORT: ${{ secrets.BACKEND_SERVER_PORT }}
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+      TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      HASH_SECRET: ${{ secrets.HASH_SECRET }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Use Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm run ci
+      - name: Build
+        run: npm run build
+      - name: Run unit tests
+        run: npm run jest
+      - name: Install Playwright and required libs
+        run: npx playwright install --with-deps
+      - name: Run end-to-end tests
+        run: npm run playwright
