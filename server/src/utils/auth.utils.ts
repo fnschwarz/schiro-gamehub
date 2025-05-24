@@ -1,8 +1,8 @@
 import { BACKEND_SERVER_URL, TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET } from '../configs/config';
-import { handleError } from './utils';
+import { AppError } from '../errors/error';
 import { User } from '../models/user.model';
 
-export const getAccessToken = async (code: string): Promise<string | undefined> => {
+export const getAccessToken = async (code: string): Promise<string> => {
     const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -14,51 +14,56 @@ export const getAccessToken = async (code: string): Promise<string | undefined> 
             redirect_uri: `${BACKEND_SERVER_URL}/api/auth/twitch/callback`
         }),
     }).catch( (error) => {
-        handleError('NETWORK_ERROR', 'get_access_token', error); return undefined;
+        throw new AppError('NETWORK_ERROR', 'get_access_token', error);
     });
 
     if (!tokenResponse || !tokenResponse.ok) {
-        handleError('UPSTREAM_SERVICE_ERROR', 'get_access_token'); return undefined;
+        throw new AppError('UPSTREAM_SERVICE_ERROR', 'get_access_token');
     }
 
     const responseData = await tokenResponse.json();
 
     // check if there is a access token in response data and if it has proper type
     if (!responseData || typeof(responseData.access_token) !== 'string') {
-        handleError('INVALID_RESPONSE_FORMAT', 'get_access_token'); return undefined;
+        throw new AppError('INVALID_RESPONSE_FORMAT', 'get_access_token');
     }
 
     return responseData.access_token;
 }
 
-export const getUserData = async (accessToken: string) => {
+export const getUserEmail = async (accessToken: string): Promise<string> => {
     const userResponse = await fetch('https://api.twitch.tv/helix/users', {
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Client-Id': TWITCH_CLIENT_ID
         }
     }).catch( (error) => {
-        handleError('NETWORK_ERROR', 'get_twitch_user', error); return undefined;
+        throw new AppError('NETWORK_ERROR', 'get_twitch_user_email', error);
     });
 
     // check for errors in fetch response
     if (!userResponse || !userResponse.ok) {
-        handleError('UPSTREAM_SERVICE_ERROR', 'get_twitch_user'); return undefined;
+        throw new AppError('UPSTREAM_SERVICE_ERROR', 'get_twitch_user_email');
     }
 
     const userData = await userResponse.json();
 
     // check if userData has expected structure
-    if (!userData || !Array.isArray(userData.data) || userData.data.length === 0) {
-        handleError('INVALID_RESPONSE_FORMAT', 'get_twitch_user'); return undefined;
+    if (!userData ||
+        !Array.isArray(userData.data) ||
+        userData.data.length === 0 ||
+        !userData.data[0].email ||
+        typeof(userData.data[0].email) !== 'string'
+    ) {
+        throw new AppError('INVALID_RESPONSE_FORMAT', 'get_twitch_user_email');
     }
 
-    return userData.data[0];
+    return userData.data[0].email;
 }
 
 export const isWhitelistedUser = async (email: string): Promise<boolean> => {
     const user = await User.findOne({ email: email }).catch((error) => {
-        handleError('DATABASE_CONNECTION_ERROR', 'check_user_whitelist', error); return undefined;
+        throw new AppError('DATABASE_CONNECTION_ERROR', 'check_user_whitelist', error);
     });
 
     if (user) {

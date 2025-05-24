@@ -1,4 +1,4 @@
-import { HASH_SECRET } from '../configs/config';
+import { LOG_OPERATIONAL, HASH_SECRET } from '../configs/config';
 import { ErrorCatalog } from '../errors/errorCatalog';
 import { Request, Response } from 'express';
 import { createHmac } from 'crypto';
@@ -12,13 +12,11 @@ export const handleError = (
 ) => {
     const err = ErrorCatalog[errorKey];
 
-    operation = `@${operation}:`;
-
-    if(!err.isOperational) {
-        operation = `!!! FATAL ERROR !!! ${operation}`;
+    if (err.isOperational && !LOG_OPERATIONAL) {
+        return;
     }
 
-    logError(err.code, `${operation} ${err.logMessage}`, req, extra);
+    logError(err.isOperational, err.code, `@${operation}: ${err.logMessage}`, req, extra);
 
     if (res) {
         sendError(res, err.httpStatusCode, err.clientMessage);
@@ -41,17 +39,23 @@ export const log = (type: string, message: string, req?: Request) => {
     console.log(`${date}${type}${clientId}${message}`);
 }
 
-export const logError = (type: string, message: string, req? : Request, error?: Error) => {
+export const logError = (isOperational: boolean, errorCode: string, message: string, req? : Request, error?: Error) => {
     const date = `[${new Date().toISOString()}] `;
-    type = `[${type}] `;
+    errorCode = `[${errorCode}] `;
 
     // provides hashed client ip and user agent reduced to 10 characters or empty string
     const clientId = req && req.ip && req.headers['user-agent'] ? `[client ${generateClientId(req.ip, req.headers['user-agent'], HASH_SECRET)}] ` : '';
 
     // provides error message or empty string
-    const errorMessage = error ? ` // ${error}` : '';
+    const errorMessage = error ? ` - ${error}` : '';
 
-    console.error(`${date}${type}${clientId}${message}${errorMessage}`);
+    const logMessage = `${date}${errorCode}${clientId}${message}${errorMessage}`;
+
+    if (isOperational) {
+        console.log(`[info] ${logMessage}`);
+    } else {
+        console.error(`[error] ${logMessage}`);
+    }
 };
 
 export const sendSuccess = (res: Response, statusCode: number, message: string) => {

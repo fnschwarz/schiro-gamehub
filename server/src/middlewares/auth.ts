@@ -12,7 +12,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     const token: string = req.cookies.token;
 
     if (!token) {
-        return;
+        handleError('MISSING_TOKEN', 'authenticate_token', undefined, req, res); return;
     }
 
     try {

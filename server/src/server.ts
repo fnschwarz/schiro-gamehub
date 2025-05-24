@@ -3,11 +3,13 @@ import { handleError, log } from './utils/utils';
 import path from 'path';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
+import helmet from 'helmet';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import { checkHttpAuth } from './middlewares/httpAuth';
 import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';
 
@@ -23,6 +25,13 @@ if (isNaN(port) || port < 1 || port > 65535) {
 
 // create express server
 const server = express();
+
+const helmetPolicy = helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https://shared.akamai.steamstatic.com"]
+    }
+})
 
 // allows 100 requests per minute per ip
 const limiter = rateLimit({
@@ -68,11 +77,17 @@ declare module 'express-session' {
 }
 
 // setup middlewares
+server.use(helmet());
+server.use(helmetPolicy);
 server.use(limiter);
 server.use(cors(corsOptions));
 server.use(sessionHandler);
 server.use(express.json());
 server.use(cookieParser());
+
+if (NODE_ENV === 'test') {
+    server.use(checkHttpAuth);
+}
 
 // setup server routes
 server.use('/api/auth', AuthRouter);
@@ -80,7 +95,7 @@ server.use('/api/games', GamesRouter);
 
 // backend serves frontend in production environment
 if (NODE_ENV !== 'dev') {
-    const frontDistPath = path.join(__dirname, '..', '..', '..', 'client', 'dist');
+    const frontDistPath = path.join(process.cwd(), '..', 'client', 'dist');
     server.use(express.static(frontDistPath));
 
     server.get('*', (req: express.Request, res: express.Response) => {
