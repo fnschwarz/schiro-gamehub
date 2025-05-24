@@ -55,11 +55,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm run ci
+      - name: Install Playwright and required libs
+        run: npx playwright install --with-deps
       - name: Build
         run: npm run build
       - name: Run unit tests
         run: npm run jest
-      - name: Install Playwright and required libs
-        run: npx playwright install --with-deps
       - name: Run end-to-end tests
         run: npm run playwright
