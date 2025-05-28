@@ -49,6 +49,7 @@ const limiter = rateLimit({
 
 // set options to avoid cors errors
 const corsOptions = {
+    origin: [`${FRONTEND_SERVER_URL}`],
     credentials: true
 };
 
