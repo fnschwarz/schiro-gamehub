@@ -26,6 +26,8 @@ if (isNaN(port) || port < 1 || port > 65535) {
 // create express server
 const server = express();
 
+server.set('trust proxy', 1);
+
 const helmetPolicy = helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
