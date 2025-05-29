@@ -38,7 +38,7 @@ VITE_IMPRINT_EMAIL=<your email>                         (optional)
 `/server/.env`
 
 ```env
-NODE_ENV=dev|test|production
+NODE_ENV=dev|production
 FRONTEND_SERVER_URL=<frontend URL>                      (e.g. http://localhost:5173/)
 BACKEND_SERVER_URL=<backend URL>                        (e.g. http://localhost:8080/)
 BACKEND_SERVER_PORT=<backend port>
@@ -50,7 +50,7 @@ HASH_SECRET=<string>
 SESSION_SECRET=<string>
 ```
 
-> **_ATTENTION:_** If you build the application and then start the server with `npm run start`, you will need to set `NODE_ENV=test|production` and may need to set `FRONTEND_SERVER_URL` and `BACKEND_SERVER_URL` to the same URL as the backend serves the frontend in production environment.
+> **_ATTENTION:_** If you build the application and then start the server with `npm run start`, you will need to set `NODE_ENV=production` and may need to set `FRONTEND_SERVER_URL` and `BACKEND_SERVER_URL` to the same URL as the backend serves the frontend in production environment.
 
 > **_NOTE:_** You need to create a Twitch application [here](https://dev.twitch.tv/console/apps) and get the client id and the secret. You will also need to add `<backend url>/api/auth/twitch/callback` to **OAuth Redirect URLs**.
 

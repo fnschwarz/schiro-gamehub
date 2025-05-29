@@ -9,7 +9,6 @@ import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import { checkHttpAuth } from './middlewares/httpAuth';
 import AuthRouter from './routes/auth.routes';
 import GamesRouter from './routes/games.routes';
 
@@ -87,16 +86,12 @@ server.use(sessionHandler);
 server.use(express.json());
 server.use(cookieParser());
 
-if (NODE_ENV === 'test') {
-    server.use(checkHttpAuth);
-}
-
 // setup server routes
 server.use('/api/auth', AuthRouter);
 server.use('/api/games', GamesRouter);
 
 // backend serves frontend in production environment
-if (NODE_ENV !== 'dev') {
+if (NODE_ENV === 'production') {
     const frontDistPath = path.join(process.cwd(), '..', 'client', 'dist');
     server.use(express.static(frontDistPath));
 

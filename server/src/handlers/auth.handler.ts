@@ -1,6 +1,6 @@
 import { NODE_ENV, FRONTEND_SERVER_URL, BACKEND_SERVER_URL, TWITCH_CLIENT_ID, JWT_SECRET } from '../configs/config';
 import { AppError } from '../errors/error';
-import { handleError, log, sendSuccess } from '../utils/utils';
+import { log, sendSuccess } from '../utils/utils';
 import { getAccessToken, getUserEmail, isWhitelistedUser } from '../utils/auth.utils';
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
