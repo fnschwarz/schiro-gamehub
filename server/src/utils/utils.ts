@@ -12,15 +12,13 @@ export const handleError = (
 ) => {
     const err = ErrorCatalog[errorKey];
 
+    if (res) sendError(res, err.httpStatusCode, err.clientMessage);
+
     if (err.isOperational && !LOG_OPERATIONAL) {
         return;
     }
 
     logError(err.isOperational, err.code, `@${operation}: ${err.logMessage}`, req, extra);
-
-    if (res) {
-        sendError(res, err.httpStatusCode, err.clientMessage);
-    }
 }
 
 const generateClientId = (ip: string, userAgent: string, secret: string): string => {
